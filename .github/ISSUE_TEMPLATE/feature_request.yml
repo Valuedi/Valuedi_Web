@@ -1,3 +1,4 @@
+---
 name: ✨ 기능 제안
 description: 새로운 기능을 제안할 때 사용하는 템플릿입니다.
 title: "[FEAT] "
@@ -32,3 +33,4 @@ body:
       label: 참고 이미지 (선택사항)
       description: 참고할 만한 이미지나 목업이 있다면 첨부해주세요.
       placeholder: 이미지를 드래그 앤 드롭하거나 붙여넣기 해주세요...
+
