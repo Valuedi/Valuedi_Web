@@ -31,7 +31,9 @@ const SignUpContainer: React.FC<SignUpContainerProps> = ({ className }) => {
   );
 
   return (
-    <div className={cn('flex items-center justify-center w-full min-h-screen bg-white px-4 sm:px-6 lg:px-8', className)}>
+    <div
+      className={cn('flex items-center justify-center w-full min-h-screen bg-white px-4 sm:px-6 lg:px-8', className)}
+    >
       <div className="w-[320px] py-8">
         {/* 헤더 */}
         <div className="text-center space-y-4 mb-8">

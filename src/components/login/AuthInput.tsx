@@ -15,7 +15,7 @@ interface AuthInputProps {
   rightElement?: ReactNode;
   timer?: string;
   className?: string;
-  width?: 'full' | 'withButton' | string; // string은 사용자 커스텀 폭
+  width?: 'full' | 'withButton' | string;
   isGrayBg?: boolean;
   isDouble?: boolean;
   readOnly?: boolean;
@@ -54,19 +54,16 @@ const AuthInput = ({
 
   const hasRightArea = width === 'withButton' || !!rightElement || !!timer;
 
-  // ✅ 데스크탑/모바일 동일 크기: rem 고정
-  // 320px = 20rem, 232px = 14.5rem
   const inputWidthClass =
     width === 'full'
       ? 'w-[20rem]'
       : width === 'withButton'
         ? 'w-[14.5rem]'
         : typeof width === 'string'
-          ? `w-[${width}]` // 예: width="18rem" 같은 커스텀 가능
+          ? `w-[${width}]`
           : 'w-[20rem]';
 
   return (
-    // ✅ w-full 제거: 상위 폭에 끌려 늘어나지 않게
     <div className={cn('inline-flex flex-col text-left transition-all py-4', className)}>
       {label && (
         <div className="mb-2">
@@ -97,8 +94,8 @@ const AuthInput = ({
               getBgClass(),
               getBorderClass(),
               readOnly && 'cursor-not-allowed opacity-70',
-              inputWidthClass,               // ✅ 고정폭 적용
-              hasRightArea && 'pr-[4.5rem]'  // ✅ 타이머 겹침 방지
+              inputWidthClass,
+              hasRightArea && 'pr-[4.5rem]'
             )}
           />
 
