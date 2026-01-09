@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import AuthInput from './AuthInput';
+import AuthInput from '../login/AuthInput';
 import AuthRequestButton from '@/components/buttons/AuthRequestButton';
-import { TermsAgreement } from './TermsAgreement';
+import { TermsAgreement } from '../login/TermsAgreement';
 import { useEmailForm } from '@/hooks/SignUp/useEmailForm';
 import { Typography } from '../typography';
 import { LoginButton } from '../buttons';
@@ -43,17 +43,16 @@ const SignUpEmailContainer = () => {
 
       {/* 인증번호 */}
       <AuthInput
-        name="verifyCode"
-        label="인증번호"
-        value={auth.verifyCode}
-        onChange={auth.handleVerifyCodeChange}
-        placeholder="인증번호를 입력해주세요."
-        width="withButton"
-        success={auth.verifySuccess}
-        error={auth.verifyError}
-        readOnly={auth.isVerified}
-        timer={auth.timerText}
-        rightElement={
+          name="verifyCode"
+          label="인증번호"
+          value={auth.verifyCode}
+          onChange={auth.handleVerifyCodeChange}
+          placeholder="인증번호를 입력해주세요."
+          success={auth.verifySuccess}
+          error={auth.verifyError}
+          readOnly={auth.isVerified}
+          timer={auth.timerText}
+          rightElement={
           auth.verifyCode.length === 6 ? (
             <AuthRequestButton disabled={auth.isVerified} onClick={auth.confirmVerification} />
           ) : (

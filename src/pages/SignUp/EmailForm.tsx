@@ -1,4 +1,4 @@
-import SignUpEmailContainer from '@/components/login/SignUpEmailContainer';
+import SignUpEmailContainer from '@/components/signup/SignUpEmailContainer';
 
 const EmailForm = () => {
   return (

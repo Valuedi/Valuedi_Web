@@ -15,7 +15,7 @@ interface AuthInputProps {
   rightElement?: ReactNode;
   timer?: string;
   className?: string;
-  width?: 'full' | 'withButton' | string;
+  width?: 'full' | 'withButton' | string; // string은 사용자 커스텀 폭
   isGrayBg?: boolean;
   isDouble?: boolean;
   readOnly?: boolean;
@@ -52,17 +52,24 @@ const AuthInput = ({
     return 'bg-white';
   };
 
-  const resolvedWidth = (() => {
-    if (width === 'full') return '320px';
-    if (width === 'withButton') return '232px';
-    if (width) return width;
-    return rightElement ? '232px' : '320px';
-  })();
+  const hasRightArea = width === 'withButton' || !!rightElement || !!timer;
+
+  // ✅ 데스크탑/모바일 동일 크기: rem 고정
+  // 320px = 20rem, 232px = 14.5rem
+  const inputWidthClass =
+    width === 'full'
+      ? 'w-[20rem]'
+      : width === 'withButton'
+        ? 'w-[14.5rem]'
+        : typeof width === 'string'
+          ? `w-[${width}]` // 예: width="18rem" 같은 커스텀 가능
+          : 'w-[20rem]';
 
   return (
-    <div className={cn('flex flex-col text-left justify-start transition-all w-full', className)}>
+    // ✅ w-full 제거: 상위 폭에 끌려 늘어나지 않게
+    <div className={cn('inline-flex flex-col text-left transition-all py-4', className)}>
       {label && (
-        <div className="h-[28px] flex items-start">
+        <div className="mb-2">
           <Typography variant="body-2" weight="semi-bold" className="text-text-body">
             {label}
           </Typography>
@@ -70,44 +77,50 @@ const AuthInput = ({
       )}
 
       <div className="flex items-center gap-2 h-[48px]">
-        <input
-          name={name}
-          type={type}
-          value={value}
-          placeholder={placeholder}
-          onChange={onChange}
-          onFocus={(e) => {
-            if (readOnly) return;
-            setIsFocused(true);
-            onFocus?.(e);
-          }}
-          onBlur={() => setIsFocused(false)}
-          readOnly={readOnly}
-          style={{ width: resolvedWidth }}
-          className={cn(
-            'h-full px-[12px] border rounded-[8px] outline-none transition-all text-[14px] font-pretendard',
-            'placeholder:text-text-body',
-            getBgClass(),
-            getBorderClass(),
-            readOnly && 'cursor-not-allowed opacity-70'
-          )}
-        />
+        <div className="relative h-full">
+          <input
+            name={name}
+            type={type}
+            value={value ?? ''}
+            placeholder={placeholder}
+            onChange={onChange}
+            onFocus={(e) => {
+              if (readOnly) return;
+              setIsFocused(true);
+              onFocus?.(e);
+            }}
+            onBlur={() => setIsFocused(false)}
+            readOnly={readOnly}
+            className={cn(
+              'h-full px-[12px] border rounded-[8px] outline-none transition-all text-[14px] font-pretendard',
+              'placeholder:text-neutral-40',
+              getBgClass(),
+              getBorderClass(),
+              readOnly && 'cursor-not-allowed opacity-70',
+              inputWidthClass,               // ✅ 고정폭 적용
+              hasRightArea && 'pr-[4.5rem]'  // ✅ 타이머 겹침 방지
+            )}
+          />
 
-        {(timer || rightElement) && (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {timer && (
-              <Typography variant="caption-2" weight="medium" className="text-text-body">
+          {timer && (
+            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+              <Typography variant="caption-2" className="text-neutral-60">
                 {timer}
               </Typography>
-            )}
-            {rightElement}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
+
+        {rightElement && <div className="shrink-0">{rightElement}</div>}
       </div>
 
       {error || success ? (
-        <div className="my-1.5 ml-2 flex items-start">
-          <Typography variant="caption-2" weight="medium" className={error ? 'text-status-error' : 'text-status-abled'}>
+        <div className="h-[24px] mt-1 flex items-center">
+          <Typography
+            variant="caption-2"
+            weight="medium"
+            className={cn('ml-2', error ? 'text-status-error' : 'text-status-abled')}
+          >
             {error || success}
           </Typography>
         </div>

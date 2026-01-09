@@ -3,7 +3,7 @@ import { HomePage } from '@/pages';
 import LoginPage from '@/pages/Login/LoginPage';
 import SignUpPage from '@/pages/SignUp/SignUpPage';
 import DefaultLogin from '@/pages/Login/DefaultLogin';
-import SignUpEmailContainer from '@/components/login/SignUpEmailContainer';
+import SignUpEmailContainer from '@/components/signup/SignUpEmailContainer';
 
 export const router = createBrowserRouter([
   {

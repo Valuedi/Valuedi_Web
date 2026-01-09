@@ -1,4 +1,4 @@
-import SignUpContainer from '@/components/login/SignUpContainer';
+import SignUpContainer from '@/components/signup/SignUpContainer';
 
 const SignupPage = () => {
   return (
