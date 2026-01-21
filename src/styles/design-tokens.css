@@ -300,6 +300,15 @@
   /* Colors - Line */
   --color-line-900: #151a38;
 
+  /* Colors - Bank */
+  --color-bank-plus: #c8d1f5;
+  --color-bank-kb: #f1e2c0a6;
+  --color-bank-citi: #c0d8f1a6;
+  --color-bank-kbank: #c0c9f1a6;
+  --color-bank-saemaul: #c0e8f1a6;
+  --color-bank-ibk: #abb7eea6;
+  --color-bank-gwangju_jeonbuk: #aab6eea6;
+
   /* Typography - Font Families */
   --font-family-pretendard: 'Pretendard', sans-serif;
   --font-family-preahvihear: 'Preahvihear', sans-serif;

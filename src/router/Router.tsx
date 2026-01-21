@@ -31,6 +31,19 @@ import {
   CardConnectedPage,
   CardAdditionalConnectionPage,
 } from '@/pages/Card';
+import { AssetAccountDetailPage } from '@/pages/Asset/tab/AssetDetails/AssetAccountDetailPage';
+import { MbtiPage } from '@/features/mbti/MbtiPage';
+
+export const paths = {
+  goal: {
+    current: '/goal/current',
+    past: '/goal/past',
+    amountAchieved: (id: string | number) => `/goal/detail/${id}/amount-achieved`,
+    savingsSimulation: (id: string | number) => `/goal/detail/${id}/savingsimulation`,
+    amountAchievedRoute: '/goal/detail/:id/amount-achieved',
+    savingsSimulationRoute: '/goal/detail/:id/savingsimulation',
+  },
+} as const;
 
 export const paths = {
   goal: {
@@ -51,6 +64,7 @@ export const router = createBrowserRouter([
       { path: 'onboarding', element: <OnboardingPage /> },
       { path: 'home', element: <HomePage /> },
       { path: 'asset', element: <AssetPage /> },
+      { path: 'asset/account/:id', element: <AssetAccountDetailPage /> },
       { path: 'recommend', element: <RecommendPage /> },
       { path: paths.goal.current, element: <CurrentGoalPage /> },
       { path: paths.goal.past, element: <PastGoalPage /> },
@@ -60,6 +74,7 @@ export const router = createBrowserRouter([
       { path: 'login/form', element: <LoginPage /> },
       { path: 'signup', element: <SignUpPage /> },
       { path: '/signup/email', element: <EmailForm /> },
+      { path: 'mbti', element: <MbtiPage /> },
       { path: 'bank/start', element: <BankConnectionStartPage /> },
       { path: 'bank/select', element: <BankSelectPage /> },
       { path: 'bank/input-id', element: <BankIdInputPage /> },

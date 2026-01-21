@@ -53,6 +53,17 @@ export default {
           heavy: 'var(--color-pri-heavy)',
           light: 'var(--color-pri-light)',
         },
+
+        // Bank Colors
+        bank: {
+          plus: 'var(--color-bank-plus)',
+          kb: 'var(--color-bank-kb)',
+          citi: 'var(--color-bank-citi)',
+          kbank: 'var(--color-bank-kbank)',
+          saemaul: 'var(--color-bank-saemaul)',
+          ibk: 'var(--color-bank-ibk)',
+          gwanju_jeonbuk: 'var(--color-bank-gwanju_jeonbuk)'
+        },
         // Atomic Colors
         atomic: {
           common: {

@@ -28,8 +28,8 @@ export type { MenuButtonProps } from './MenuButton';
 export { default as CheckBoxButton } from './CheckBoxButton';
 export type { CheckBoxButtonProps } from './CheckBoxButton';
 
-export { default as ViewToggleButton } from './ViewToggleButtont';
-export type { ViewToggleButtonProps, ViewMode } from './ViewToggleButtont';
+export { default as ViewToggleButton } from './ViewToggleButton';
+export type { ViewToggleButtonProps, ViewMode } from './ViewToggleButton';
 
 export { default as CategoryButton } from './CategoryButton';
 export type { CategoryButtonProps } from './CategoryButton';

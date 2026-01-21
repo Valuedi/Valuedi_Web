@@ -27,7 +27,14 @@ export type ColorToken =
   | 'text-disabled'
   | 'status-error'
   | 'status-abled'
-  | 'line-900';
+  | 'line-900'
+  | 'bank-plus'
+  | 'bank-kb'
+  | 'bank-citi'
+  | 'bank-kbank'
+  | 'bank-saemaul'
+  | 'bank-ibk'
+  | 'bank-gwangju_jeonbuk';
 
 export type FontFamily = 'pretendard' | 'preahvihear';
 
