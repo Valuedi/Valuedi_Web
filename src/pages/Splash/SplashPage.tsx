@@ -20,13 +20,7 @@ const SplashPage = () => {
   return (
     <div className={cn('relative min-h-screen w-full overflow-hidden bg-white')}>
       <div className={cn('absolute inset-0', 'flex items-center justify-center', 'overflow-hidden')}>
-        <div
-          className={cn(
-            'relative',
-            'w-screen h-screen min-w-full min-h-full',
-            'md:w-screen md:h-screen'
-          )}
-        >
+        <div className={cn('relative', 'w-screen h-screen min-w-full min-h-full', 'md:w-screen md:h-screen')}>
           <img
             src={splashBg}
             alt=""
@@ -53,13 +47,7 @@ const SplashPage = () => {
           </div>
 
           {/* 중앙 로고 - Figma 디자인 기준: left-[908.13px] top-[425.31px] w-[100px] h-[23px] */}
-          <div
-            className={cn(
-              'flex items-center justify-center',
-              'w-[100px] h-[23px]',
-              'md:w-[140px] md:h-[32px]'
-            )}
-          >
+          <div className={cn('flex items-center justify-center', 'w-[100px] h-[23px]', 'md:w-[140px] md:h-[32px]')}>
             <img src={splashLogo} alt="Valuedi" className={cn('w-full h-full object-contain')} />
           </div>
         </div>

@@ -13,12 +13,13 @@ import kbIcon from '@/assets/icons/bank/kb.svg';
 import SpendTodayIcon from '@/assets/icons/home/SpendToday.svg';
 import SpendYesterdayIcon from '@/assets/icons/home/SpendYesterday.svg';
 import MbtiHomeIcon from '@/assets/icons/home/MbtiHome.svg';
-import { getAccountsApi, Account } from '@/features/asset/asset.api';
+import { getAccountsApi, Account, getDailyTransactionsApi } from '@/features/asset/asset.api';
 import { getTransactionSummaryApi } from '@/features/transaction/transaction.api';
 import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
 import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
 import { getGoalDetailApi } from '@/features/goal/goal.api';
 import { ApiError } from '@/utils/api';
+import { useGetMbtiTestResult } from '@/hooks/Mbti/useGetMbtiTestResult';
 
 // 목표 색상 배열
 const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];
@@ -51,6 +52,11 @@ export const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [totalGoalCount, setTotalGoalCount] = useState(0);
   const [totalAccountCount, setTotalAccountCount] = useState(0);
+  const [todayExpense, setTodayExpense] = useState(0);
+  const [yesterdayExpense, setYesterdayExpense] = useState(0);
+
+  // MBTI 결과 조회 (캐릭터 아이콘용)
+  const { data: mbtiTestResult } = useGetMbtiTestResult();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,13 +68,15 @@ export const HomePage = () => {
         const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
         // 병렬로 모든 API 호출
-        const [accountsRes, transactionRes, mbtiRes, mbtiTypesRes, recommendRes] = await Promise.all([
-          getAccountsApi(),
-          getTransactionSummaryApi(yearMonth),
-          getFinanceMbtiResultApi().catch(() => null), // MBTI 결과가 없을 수 있음
-          getMbtiTypeDetails().catch(() => null), // MBTI 타입 상세 정보
-          getTop3RecommendationsApi().catch(() => null), // 추천 상품이 없을 수 있음
-        ]);
+        const [accountsRes, transactionRes, dailyTransactionsRes, mbtiRes, mbtiTypesRes, recommendRes] =
+          await Promise.all([
+            getAccountsApi(),
+            getTransactionSummaryApi(yearMonth),
+            getDailyTransactionsApi(yearMonth).catch(() => null), // 일별 거래 내역
+            getFinanceMbtiResultApi().catch(() => null), // MBTI 결과가 없을 수 있음
+            getMbtiTypeDetails().catch(() => null), // MBTI 타입 상세 정보
+            getTop3RecommendationsApi().catch(() => null), // 추천 상품이 없을 수 있음
+          ]);
 
         // 계좌 목록 처리
         if (accountsRes.result) {
@@ -128,6 +136,19 @@ export const HomePage = () => {
             totalExpense: transactionRes.result.totalExpense || 0,
             diffFromLastMonth: transactionRes.result.diffFromLastMonth || 0,
           });
+        }
+
+        // 오늘 및 어제 지출 내역 처리
+        if (dailyTransactionsRes?.result) {
+          const now = new Date();
+          const today = now.toISOString().slice(0, 10); // YYYY-MM-DD
+          const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10); // YYYY-MM-DD
+
+          const todayData = dailyTransactionsRes.result.find((item) => item.date === today);
+          const yesterdayData = dailyTransactionsRes.result.find((item) => item.date === yesterday);
+
+          setTodayExpense(todayData?.totalExpense || 0);
+          setYesterdayExpense(yesterdayData?.totalExpense || 0);
         }
 
         // MBTI 결과 처리
@@ -418,7 +439,7 @@ export const HomePage = () => {
                               className="text-neutral-90"
                               fontFamily="pretendard"
                             >
-                              {formatCurrency(0)}
+                              {formatCurrency(todayExpense)}
                             </Typography>
                           </div>
                         </div>
@@ -440,7 +461,7 @@ export const HomePage = () => {
                               className="text-neutral-90"
                               fontFamily="pretendard"
                             >
-                              {formatCurrency(0)}
+                              {formatCurrency(yesterdayExpense)}
                             </Typography>
                           </div>
                         </div>
@@ -473,8 +494,31 @@ export const HomePage = () => {
                       </Typography>
                     )}
                   </div>
-                  <div className="w-full h-[146px] md:h-[180px] bg-atomic-yellow-95 rounded-[4px] flex items-center justify-center">
-                    <img src={MbtiHomeIcon} alt="금융 MBTI" className="w-full h-full object-contain" />
+                  <div className="w-full h-[146px] md:h-[180px] rounded-[4px] flex items-center justify-center overflow-hidden">
+                    {mbtiTestResult?.icon ? (
+                      <div className="w-full h-full flex items-center justify-center">
+                        {(() => {
+                          const Icon = mbtiTestResult.icon;
+                          return Icon ? (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Icon
+                                style={{
+                                  width: '120%',
+                                  height: '120%',
+                                  maxWidth: '120%',
+                                  maxHeight: '120%',
+                                  objectFit: 'contain',
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <img src={MbtiHomeIcon} alt="금융 MBTI" className="w-full h-full object-contain" />
+                          );
+                        })()}
+                      </div>
+                    ) : (
+                      <img src={MbtiHomeIcon} alt="금융 MBTI" className="w-full h-full object-contain" />
+                    )}
                   </div>
                 </div>
               </div>
