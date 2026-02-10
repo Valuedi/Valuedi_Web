@@ -1,8 +1,8 @@
 import React from 'react';
 import { cn } from '@/utils/cn';
 import { Typography } from '../typography';
-import BankIcon from '@/assets/icons/mypage/bank.svg';
-import CardIcon from '@/assets/icons/mypage/card.svg';
+import BankIcon from '@/assets/icons/mypage/Bank.svg';
+import CardIcon from '@/assets/icons/mypage/Card.svg';
 
 export interface ConnectionDetailListItemProps {
   displayName: string;

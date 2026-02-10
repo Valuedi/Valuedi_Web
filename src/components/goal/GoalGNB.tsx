@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import Hamburger from '@/assets/icons/hamburger.svg';
+import Hamburger from '@/assets/icons/Hamburger.svg';
 import { paths } from '@/router/paths';
 
 const GoalGNB = () => {

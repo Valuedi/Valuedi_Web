@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/utils/cn';
 import { Typography } from '@/components';
 import LoginButton from '@/components/buttons/LoginButton';
-import KakaoIcon from '@/assets/icons/kakao.svg?react';
+import KakaoIcon from '@/assets/icons/Kakao.svg?react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { getKakaoLoginUrlApi } from '@/features/auth';
