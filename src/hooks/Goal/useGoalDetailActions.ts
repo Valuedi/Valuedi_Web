@@ -9,7 +9,7 @@ import {
   getColorNameFromHex,
 } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { basenameNoExt } from '@/utils/goal/goalHelpers';
+import { basenameNoExt, toInputDate } from '@/utils/goal/goalHelpers';
 
 /** 목표 상세 공통 액션 (달성 금액 / 절약 시뮬레이션 공유) */
 export function useGoalDetailActions() {
@@ -65,8 +65,8 @@ export function useGoalDetailActions() {
     navigate(paths.goal.edit(id), {
       state: {
         goalName: detail.title,
-        startDate: detail.startDate?.replace(/^20/, '') ?? '',
-        endDate: detail.endDate?.replace(/^20/, '') ?? '',
+        startDate: toInputDate(detail.startDate) ?? '',
+        endDate: toInputDate(detail.endDate) ?? '',
         goalAmount: detail.targetAmount != null ? String(detail.targetAmount) : '',
         selectedAccount: detail.account
           ? {

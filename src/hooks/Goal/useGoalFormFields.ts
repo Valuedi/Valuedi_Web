@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import type { GoalStep, GoalFormField, GoalFormValues, GoalFormMode } from './goalForm.types';
+import { formatDateInput, formatAmountInput } from '@/utils/goal/goalHelpers';
 
 export interface UseGoalFormFieldsOptions {
   mode?: GoalFormMode;
@@ -43,8 +44,20 @@ export function useGoalFormFields(options: UseGoalFormFieldsOptions = {}) {
 
   const updateField = useCallback(
     (field: GoalFormField, value: string) => {
-      setFields((prev) => ({ ...prev, [field]: value }));
-      markInputStarted(value);
+      // 날짜 필드인 경우 자동 포맷팅 적용
+      if (field === 'startDate' || field === 'endDate') {
+        const formattedValue = formatDateInput(value);
+        setFields((prev) => ({ ...prev, [field]: formattedValue }));
+        markInputStarted(formattedValue);
+      } else if (field === 'goalAmount') {
+        // 금액 필드인 경우 자동 포맷팅 적용 (3자리마다 콤마)
+        const formattedValue = formatAmountInput(value);
+        setFields((prev) => ({ ...prev, [field]: formattedValue }));
+        markInputStarted(formattedValue);
+      } else {
+        setFields((prev) => ({ ...prev, [field]: value }));
+        markInputStarted(value);
+      }
     },
     [markInputStarted]
   );

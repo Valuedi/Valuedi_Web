@@ -53,11 +53,11 @@ const GoalCreateStep = () => {
       },
     ],
     2: [
-      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
     3: [
-      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'startDate', label: '시작일', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
