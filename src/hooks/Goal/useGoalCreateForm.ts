@@ -72,7 +72,8 @@ export function useGoalForm() {
       setHasInputStarted(false);
       return;
     }
-    navigate('/goal/create');
+    // 히스토리 스택에 중복을 방지하기 위해 replace 사용
+    navigate('/goal/create', { replace: true });
   }, [currentStep, navigate]);
 
   const handleAccountSelect = useCallback((account: SelectedAccount) => {
