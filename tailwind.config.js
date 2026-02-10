@@ -287,6 +287,7 @@ export default {
         'trophy-card': '0 16px 16px 0 rgba(25, 25, 20, 0.04)',
       },
       fontFamily: {
+        sans: ['var(--font-family-pretendard)', 'sans-serif'],
         pretendard: ['var(--font-family-pretendard)', 'sans-serif'],
         preahvihear: ['var(--font-family-preahvihear)', 'sans-serif'],
       },
