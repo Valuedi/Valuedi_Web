@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/layout/MobileLayout';
 import { BottomNavigation } from '@/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
 import { Typography } from '@/components/typography';
 import { cn } from '@/utils/cn';
 import { RecommendListItem } from './components/RecommendListItem';
@@ -115,120 +116,136 @@ export const RecommendPage = () => {
 
   return (
     <MobileLayout className="bg-white">
-      <div className="sticky top-0 z-10 w-full">
-        <HomeGNB title="추천" />
-      </div>
+      {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
+      <div className="flex flex-row min-h-screen md:h-screen">
+        {/* 데스크탑 사이드바 */}
+        <SidebarNavigation activeItem="recommend" onItemClick={handleNavClick} />
 
-      <div className="mt-[20px] flex flex-col gap-[48px] pl-[20px] pb-[80px]">
-        <div className={cn('flex gap-[12px] overflow-x-auto')}>
-          <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
-          <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
-        </div>
-
-        <div className={cn('flex flex-col gap-[12px] w-[320px]')}>
-          <div className={cn('flex gap-[4px]')}>
-            {categoryList.map((category) => (
-              <CategoryButton
-                key={category.type}
-                text={category.label}
-                isSelected={filter === category.type}
-                onClick={() => {
-                  setFilter(category.type);
-                  setIsExpanded(false);
-                }}
-              />
-            ))}
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          <div className="sticky top-0 z-10 w-full">
+            <HomeGNB title="추천" />
           </div>
 
-          <div className={cn('flex flex-col gap-[12px]')}>
-            {(isLoading || isPolling) && (
-              <div className="flex flex-col gap-[8px] py-[20px]">
-                <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                  {isPolling ? '추천 상품을 생성하고 있습니다...' : '추천 상품을 불러오는 중...'}
-                </Typography>
-                {isPolling && (
-                  <Typography style="text-caption-1-12-regular" className="text-neutral-50 text-center">
-                    잠시만 기다려주세요
-                  </Typography>
-                )}
-              </div>
-            )}
-            {isError && (
-              <div className="flex flex-col gap-[8px] py-[20px]">
-                <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                  추천 상품을 불러오는데 실패했습니다.
-                </Typography>
-                <button
-                  onClick={() => createRecommendationsMutation.mutate()}
-                  disabled={createRecommendationsMutation.isPending}
-                  className={cn(
-                    'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
-                    createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
-                  )}
-                >
-                  {createRecommendationsMutation.isPending ? '추천 생성 중...' : '새로 추천 받기'}
-                </button>
-              </div>
-            )}
-            {isEmptyResult && (
-              <div className="flex flex-col gap-[8px] py-[20px]">
-                <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                  {recommendationsData?.message || '해당 적립 유형의 추천 결과가 없습니다.'}
-                </Typography>
-              </div>
-            )}
-            {!isLoading && !isError && !isEmptyResult && filteredList.length === 0 && (
-              <div className="flex flex-col gap-[8px] py-[20px]">
-                <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                  추천 상품이 없습니다.
-                </Typography>
-                <button
-                  onClick={() => createRecommendationsMutation.mutate()}
-                  disabled={createRecommendationsMutation.isPending}
-                  className={cn(
-                    'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
-                    createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
-                  )}
-                >
-                  {createRecommendationsMutation.isPending ? '추천 생성 중...' : '추천 받기'}
-                </button>
-              </div>
-            )}
-            {!isLoading && !isError && filteredList.length > 0 && (
-              <>
-                <div className={cn('flex flex-col gap-[4px]')}>
-                  {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product) => (
-                    <RecommendListItem
-                      key={product.finPrdtCd}
-                      bankName={product.korCoNm}
-                      productName={product.finPrdtNm}
-                      description={`${product.rsrvTypeNm} | ${product.korCoNm}`}
-                      onClick={() => navigate(`/recommend/detail/${product.finPrdtCd}`)}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
+          <div className="mt-[20px] md:mt-[32px] flex flex-col gap-[48px] md:gap-[32px] pl-[20px] md:pl-[32px] lg:pl-[40px] pr-[20px] md:pr-[32px] lg:pr-[40px] pb-[80px] md:pb-[24px]">
+            <div
+              className={cn(
+                'flex gap-[12px] overflow-x-auto',
+                'md:grid md:grid-cols-2 md:overflow-x-visible md:gap-[20px]',
+                'lg:gap-[24px]'
+              )}
+            >
+              <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
+              <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
+            </div>
 
-            {!isLoading && !isError && filteredList.length > 6 && (
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className={cn(
-                  'flex items-center justify-center gap-[8px] border border-neutral-10 rounded-[4px] p-[8px] shadow-[0px_0px_16px_0px_rgba(25,25,20,0.04)] cursor-pointer'
+            <div className={cn('flex flex-col gap-[12px] w-full md:max-w-none')}>
+              <div className={cn('flex gap-[4px]')}>
+                {categoryList.map((category) => (
+                  <CategoryButton
+                    key={category.type}
+                    text={category.label}
+                    isSelected={filter === category.type}
+                    onClick={() => {
+                      setFilter(category.type);
+                      setIsExpanded(false);
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className={cn('flex flex-col gap-[12px]')}>
+                {(isLoading || isPolling) && (
+                  <div className="flex flex-col gap-[8px] py-[20px]">
+                    <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                      {isPolling ? '추천 상품을 생성하고 있습니다...' : '추천 상품을 불러오는 중...'}
+                    </Typography>
+                    {isPolling && (
+                      <Typography style="text-caption-1-12-regular" className="text-neutral-50 text-center">
+                        잠시만 기다려주세요
+                      </Typography>
+                    )}
+                  </div>
                 )}
-              >
-                <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                  {isExpanded ? '목록 접기' : '목록 더 보기'}
-                </Typography>
-                <CheckDownIcon className={cn('text-neutral-70', isExpanded && 'rotate-180')} />
-              </button>
-            )}
+                {isError && (
+                  <div className="flex flex-col gap-[8px] py-[20px]">
+                    <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                      추천 상품을 불러오는데 실패했습니다.
+                    </Typography>
+                    <button
+                      onClick={() => createRecommendationsMutation.mutate()}
+                      disabled={createRecommendationsMutation.isPending}
+                      className={cn(
+                        'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
+                        createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      {createRecommendationsMutation.isPending ? '추천 생성 중...' : '새로 추천 받기'}
+                    </button>
+                  </div>
+                )}
+                {isEmptyResult && (
+                  <div className="flex flex-col gap-[8px] py-[20px]">
+                    <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                      {recommendationsData?.message || '해당 적립 유형의 추천 결과가 없습니다.'}
+                    </Typography>
+                  </div>
+                )}
+                {!isLoading && !isError && !isEmptyResult && filteredList.length === 0 && (
+                  <div className="flex flex-col gap-[8px] py-[20px]">
+                    <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                      추천 상품이 없습니다.
+                    </Typography>
+                    <button
+                      onClick={() => createRecommendationsMutation.mutate()}
+                      disabled={createRecommendationsMutation.isPending}
+                      className={cn(
+                        'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
+                        createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      {createRecommendationsMutation.isPending ? '추천 생성 중...' : '추천 받기'}
+                    </button>
+                  </div>
+                )}
+                {!isLoading && !isError && filteredList.length > 0 && (
+                  <>
+                    <div className={cn('flex flex-col gap-[4px] md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-[12px]')}>
+                      {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product) => (
+                        <RecommendListItem
+                          key={product.finPrdtCd}
+                          bankName={product.korCoNm}
+                          productName={product.finPrdtNm}
+                          description={`${product.rsrvTypeNm} | ${product.korCoNm}`}
+                          onClick={() => navigate(`/recommend/detail/${product.finPrdtCd}`)}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {!isLoading && !isError && filteredList.length > 6 && (
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={cn(
+                      'flex items-center justify-center gap-[8px] border border-neutral-10 rounded-[4px] p-[8px] shadow-[0px_0px_16px_0px_rgba(25,25,20,0.04)] cursor-pointer'
+                    )}
+                  >
+                    <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                      {isExpanded ? '목록 접기' : '목록 더 보기'}
+                    </Typography>
+                    <CheckDownIcon className={cn('text-neutral-70', isExpanded && 'rotate-180')} />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Navigation - 모바일 전용 */}
+          <div className="fixed bottom-0 left-0 w-full md:hidden">
+            <BottomNavigation activeItem="recommend" onItemClick={handleNavClick} />
           </div>
         </div>
-      </div>
-
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[360px]">
-        <BottomNavigation activeItem="recommend" onItemClick={handleNavClick} />
       </div>
     </MobileLayout>
   );

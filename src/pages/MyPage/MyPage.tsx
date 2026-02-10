@@ -67,7 +67,7 @@ export const MyPage = () => {
         <SegmentedButton<TabType> value={activeTab} onChange={setActiveTab} options={tabOptions} />
       </div>
 
-      <div className={cn('flex-1 pb-[80px] px-[20px]')}>
+      <div className={cn('flex-1 px-[20px]')}>
         {activeTab === 'mbti' && <MyMbti />}
         {activeTab === 'trophy' && <MyTrophy />}
       </div>

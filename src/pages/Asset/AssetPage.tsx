@@ -1,6 +1,7 @@
 import { MobileLayout } from '@/components/layout/MobileLayout';
 import { HomeGNB } from '@/components/gnb/HomeGNB';
 import { BottomNavigation } from '@/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Typography } from '@/components';
 import { cn } from '@/utils/cn';
@@ -26,59 +27,69 @@ export const AssetPage = () => {
 
   return (
     <MobileLayout className="bg-neutral-0">
-      <div className="sticky top-0 z-10 w-full">
-        <HomeGNB />
-      </div>
+      {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
+      <div className="flex flex-row min-h-screen md:h-screen">
+        {/* 데스크탑 사이드바 */}
+        <SidebarNavigation activeItem="asset" onItemClick={handleNavClick} />
 
-      <div className="flex w-full px-[20px] border-b border-neutral-30 z-20">
-        <button
-          onClick={() => handleTabClick('details')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'details' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'details' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            자산 내역
-          </Typography>
-        </button>
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          <div className="sticky top-0 z-10 w-full">
+            <HomeGNB />
+          </div>
 
-        <button
-          onClick={() => handleTabClick('sector')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'sector' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'sector' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            분야별 내역
-          </Typography>
-        </button>
+          <div className="flex w-full px-[20px] md:px-[32px] lg:px-[40px] border-b border-neutral-30 z-20">
+            <button
+              onClick={() => handleTabClick('details')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'details' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'details' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                자산 내역
+              </Typography>
+            </button>
 
-        <button
-          onClick={() => handleTabClick('compare')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'compare' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'compare' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            비교 내역
-          </Typography>
-        </button>
-      </div>
+            <button
+              onClick={() => handleTabClick('sector')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'sector' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'sector' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                분야별 내역
+              </Typography>
+            </button>
 
-      <div className="flex-1 pb-[80px] overflow-y-auto">
-        {activeTab === 'details' && <AssetDetails />}
-        {activeTab === 'sector' && <SectorAnalysis />}
-        {activeTab === 'compare' && <CompareAnalysis />}
-      </div>
+            <button
+              onClick={() => handleTabClick('compare')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'compare' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'compare' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                비교 내역
+              </Typography>
+            </button>
+          </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[360px]">
-        <BottomNavigation activeItem="asset" onItemClick={handleNavClick} />
+          <div className="flex-1 pb-[80px] md:pb-0 overflow-y-auto">
+            {activeTab === 'details' && <AssetDetails />}
+            {activeTab === 'sector' && <SectorAnalysis />}
+            {activeTab === 'compare' && <CompareAnalysis />}
+          </div>
+
+          {/* Bottom Navigation - 모바일 전용 */}
+          <div className="fixed bottom-0 left-0 w-full md:hidden">
+            <BottomNavigation activeItem="asset" onItemClick={handleNavClick} />
+          </div>
+        </div>
       </div>
     </MobileLayout>
   );

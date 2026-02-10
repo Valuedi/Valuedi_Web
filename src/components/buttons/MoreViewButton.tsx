@@ -10,10 +10,15 @@ export const MoreViewButton: React.FC<MoreViewButtonProps> = ({ className, ...pr
   return (
     <button
       type="button"
-      className={cn('flex items-center justify-center', 'w-[18px] h-[18px]', 'cursor-pointer', className)}
+      className={cn(
+        'flex items-center justify-center',
+        'w-[18px] h-[18px] md:w-[20px] md:h-[20px]',
+        'cursor-pointer',
+        className
+      )}
       {...props}
     >
-      <MoreViewIcon className="text-neutral-50" />
+      <MoreViewIcon className="text-neutral-50 w-full h-full" />
     </button>
   );
 };

@@ -55,13 +55,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeItem =
   return (
     <nav
       className={cn(
+        // 모바일: 하단 고정
+        'md:hidden',
         'w-full h-[64px] flex items-center justify-center',
         'bg-white border-t border-neutral-10',
         'shadow-[0px_-8px_16px_0px_rgba(25,25,25,0.04)]',
         className
       )}
     >
-      <div className="flex items-center justify-center w-full max-w-[360px]">
+      <div className="flex items-center justify-center w-full">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           const iconSrc = isActive ? item.iconActive : item.iconInactive;
@@ -70,7 +72,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeItem =
               key={item.id}
               type="button"
               onClick={() => handleItemClick(item.id)}
-              className={cn('flex flex-col gap-[4px] items-center justify-center', 'p-[10px] w-[90px]')}
+              className={cn('flex flex-col gap-[4px] items-center justify-center', 'p-[10px] flex-1 max-w-[90px]')}
             >
               <div className="w-[24px] h-[24px] flex items-center justify-center">
                 <img src={iconSrc} alt={item.label} className="w-full h-full" />
