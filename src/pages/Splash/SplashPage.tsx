@@ -4,6 +4,7 @@ import { Typography } from '@/components';
 import { cn } from '@/utils/cn';
 import splashBg from '@/assets/images/splash/splash_bg.svg';
 import splashLogo from '@/assets/images/splash/splash_logo.svg';
+import splashRotated from '@/assets/images/splash/splash_rotated.svg';
 
 const SplashPage = () => {
   const navigate = useNavigate();
@@ -18,14 +19,11 @@ const SplashPage = () => {
 
   return (
     <div className={cn('relative min-h-screen w-full overflow-hidden bg-white')}>
-      {/* PC 전체 화면 배경 - 회전된 배경 이미지 */}
       <div className={cn('absolute inset-0', 'flex items-center justify-center', 'overflow-hidden')}>
         <div
           className={cn(
             'relative',
-            // 모바일: 화면 전체를 채우도록 충분히 큰 크기
             'w-screen h-screen min-w-full min-h-full',
-            // PC: 화면 전체를 채우는 배경
             'md:w-screen md:h-screen'
           )}
         >
@@ -47,15 +45,17 @@ const SplashPage = () => {
         )}
       >
         {/* 중앙 콘텐츠 영역 */}
-        <div className={cn('flex flex-col items-center justify-center', 'transform-none')}>
-          {/* 회전된 카드 이미지 - Figma 디자인 기준: left-[901px] top-[343.7px] w-[118.26px] h-[65.615px] */}
-          <div className={cn('flex items-center justify-center mb-10', 'w-[118.26px] h-[65.615px]', 'md:mb-0')}></div>
+        <div className={cn('flex flex-col items-center justify-center gap-4', 'transform-none')}>
+          <div className={cn('flex items-center justify-center', 'w-[118.26px] h-[65.615px]')}>
+            <div>
+              <img src={splashRotated} alt="" className={cn('w-[65.615px] h-[118.26px]')} />
+            </div>
+          </div>
 
           {/* 중앙 로고 - Figma 디자인 기준: left-[908.13px] top-[425.31px] w-[100px] h-[23px] */}
           <div
             className={cn(
               'flex items-center justify-center',
-              // Figma 디자인 기준: w-[100px] h-[23px]
               'w-[100px] h-[23px]',
               'md:w-[140px] md:h-[32px]'
             )}
