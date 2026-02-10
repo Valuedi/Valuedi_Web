@@ -22,9 +22,9 @@ const WITHDRAW_REASON_CODE_MAP: Record<string, WithdrawReasonCode> = {
   '금융 관리에 도움이 되지 않았어요': 'NOT_HELPFUL',
   '사용이 어려워요': 'DIFFICULT_TO_USE',
   '필요한 기능이 없어요': 'MISSING_FEATURES',
-  '보안이 걱정돼요': 'PRIVACY_CONCERNS',
+  '보안이 걱정돼요': 'SECURITY_CONCERNS',
   '오류가 자주 발생해요': 'FREQUENT_ERRORS',
-  기타: 'OTHERS',
+  기타: 'OTHER',
 };
 
 export const WithdrawPage = () => {

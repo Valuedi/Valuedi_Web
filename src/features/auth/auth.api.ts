@@ -69,9 +69,9 @@ export type WithdrawReasonCode =
   | 'NOT_HELPFUL' // 금융 관리에 도움이 되지 않았어요
   | 'DIFFICULT_TO_USE' // 사용이 어려워요
   | 'MISSING_FEATURES' // 필요한 기능이 없어요
-  | 'PRIVACY_CONCERNS' // 보안이 걱정돼요
+  | 'SECURITY_CONCERNS' // 보안이 걱정돼요
   | 'FREQUENT_ERRORS' // 오류가 자주 발생해요
-  | 'OTHERS'; // 기타
+  | 'OTHER'; // 기타
 
 export interface WithdrawRequest {
   // Swagger/curl 기준 필드명: reason
