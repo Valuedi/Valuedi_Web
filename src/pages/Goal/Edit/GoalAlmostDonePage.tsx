@@ -32,8 +32,10 @@ const GoalAlmostDonePage = () => {
     return (
       <MobileLayout>
         <div className="flex flex-col items-center justify-center min-h-screen p-5">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">잘못된 접근</h1>
-          <p className="text-base text-gray-600 mb-8 text-center">목표 정보를 찾을 수 없습니다. 다시 시도해주세요.</p>
+          <h1 className="text-2xl font-bold text-red-500 mb-4 font-pretendard">잘못된 접근</h1>
+          <p className="text-base text-gray-600 mb-8 text-center font-pretendard">
+            목표 정보를 찾을 수 없습니다. 다시 시도해주세요.
+          </p>
           <BaseButton
             size="large"
             variant="primary"
@@ -126,11 +128,13 @@ const GoalAlmostDonePage = () => {
           className="flex-1 flex flex-col items-start justify-start p-8 cursor-pointer"
           onClick={() => !isPending && setIsIconPickerOpen(true)}
         >
-          <h1 className="text-lg font-bold text-gray-900 mb-2 text-left">거의 다 왔어요!</h1>
-          <p className="text-xs text-gray-600 mb-8 text-left">마지막으로 목표의 대표 이미지를 선택해 주세요</p>
+          <h1 className="text-lg font-bold text-gray-900 mb-2 text-left font-pretendard">거의 다 왔어요!</h1>
+          <p className="text-xs text-gray-600 mb-8 text-left font-pretendard">
+            마지막으로 목표의 대표 이미지를 선택해 주세요
+          </p>
 
-          {isPending && <p className="text-blue-500 mb-4">목표를 생성 중입니다...</p>}
-          {isError && <p className="text-red-500 mb-4">목표 생성 실패: {error?.message}</p>}
+          {isPending && <p className="text-blue-500 mb-4 font-pretendard">목표를 생성 중입니다...</p>}
+          {isError && <p className="text-red-500 mb-4 font-pretendard">목표 생성 실패: {error?.message}</p>}
         </div>
         {/* 아이콘 선택 바텀시트 */}
         <GoalIconPickerBottomSheet

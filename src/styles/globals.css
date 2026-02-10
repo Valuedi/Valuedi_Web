@@ -9,7 +9,12 @@
 /* 커스텀 스타일 */
 @layer base {
   body {
-    @apply antialiased;
+    @apply antialiased font-pretendard;
+    font-family: var(--font-family-pretendard);
+  }
+
+  * {
+    font-family: inherit;
   }
 }
 

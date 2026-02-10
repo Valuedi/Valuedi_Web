@@ -33,12 +33,14 @@ export const RecommendBannerCard = ({ title, subTitle, bankId, onClick }: Recomm
         <Typography
           style="text-body-1-16-semi-bold"
           className="text-neutral-90 md:text-headline-3-18-semi-bold lg:text-headline-2-20-semi-bold"
+          fontFamily="pretendard"
         >
           {title}
         </Typography>
         <Typography
           style="text-body-3-13-regular"
           className="text-neutral-70 md:text-body-2-14-regular lg:text-body-1-16-regular"
+          fontFamily="pretendard"
         >
           {subTitle}
         </Typography>

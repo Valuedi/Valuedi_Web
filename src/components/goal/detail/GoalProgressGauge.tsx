@@ -17,7 +17,7 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
   if (loading) {
     return (
       <div className="p-3 bg-white rounded-3xl shadow-sm flex items-center justify-center">
-        <p className="text-gray-500 text-sm">로딩 중...</p>
+        <p className="text-gray-500 text-sm font-pretendard">로딩 중...</p>
       </div>
     );
   }
@@ -53,15 +53,17 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
               <img src={ExBank} alt="" className="w-6 h-6" />
             )}
           </div>
-          <span className="text-sm font-semibold text-[#171714]">{goalData.title}</span>
+          <span className="text-sm font-semibold text-[#171714] font-pretendard">{goalData.title}</span>
         </div>
 
-        <div className="px-1 mb-1.5 text-sm font-medium text-gray-600">총 모인 금액</div>
+        <div className="px-1 mb-1.5 text-sm font-medium text-gray-600 font-pretendard">총 모인 금액</div>
 
         <div className="flex items-center gap-4 px-1">
-          <span className="text-2xl font-bold text-black leading-tight">{formatAmount(goalData.savedAmount)}원</span>
+          <span className="text-2xl font-bold text-black leading-tight font-pretendard">
+            {formatAmount(goalData.savedAmount)}원
+          </span>
 
-          <div className="px-3 py-1 bg-primary-normal rounded-full text-xs font-bold text-[#171714]">
+          <div className="px-3 py-1 bg-primary-normal rounded-full text-xs font-bold text-[#171714] font-pretendard">
             {goalData.achievementRate}% 달성
           </div>
         </div>
