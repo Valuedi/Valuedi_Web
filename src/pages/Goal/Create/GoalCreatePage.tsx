@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileLayout } from '@/components/layout/MobileLayout';
 import { Typography } from '@/components/typography';
 import { BaseButton } from '@/components/buttons/BaseButton';
@@ -8,11 +9,43 @@ import { GOAL_COLOR_NAME_TO_CODE } from '@/features/goal';
 
 const GoalCreatePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const previousPathRef = useRef<string>(location.pathname);
 
   const handleBack = () => {
-    navigate(-1);
+    // location.state에 이전 경로 정보가 있으면 사용, 없으면 뒤로가기
+    if (location.state?.from) {
+      navigate(location.state.from);
+    } else {
+      // 히스토리가 있으면 뒤로가기, 없으면 홈으로 이동
+      navigate(-1);
+    }
   };
 
+  // 브라우저 뒤로가기 버튼 처리
+  // 히스토리 스택에 /goal/create/step이 있는 경우를 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      const currentPath = window.location.pathname;
+
+      // 현재 경로가 /goal/create이고, 이전 경로가 /goal/create/step인 경우
+      // /goal/create/step으로 다시 이동하는 것을 방지하기 위해 한 번 더 뒤로가기를 실행
+      if (currentPath === '/goal/create' && previousPathRef.current === '/goal/create/step') {
+        setTimeout(() => {
+          navigate(-1);
+        }, 0);
+      }
+    };
+
+    // 이전 경로 업데이트
+    previousPathRef.current = location.pathname;
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate, location.pathname]);
   const handleStartGoal = () => {
     navigate('/goal/create/step');
   };

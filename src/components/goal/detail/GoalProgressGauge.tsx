@@ -30,11 +30,14 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
   const bgColor = goalData.colorCode ? toHexColor(goalData.colorCode) : undefined;
   const iconSrc = goalData.iconId != null ? GOAL_ICON_SRC[goalData.iconId] : null;
 
+  // achievementRate를 0-100 범위로 제한
+  const clampedRate = Math.min(Math.max(goalData.achievementRate, 0), 100);
+
   return (
     <div className="relative overflow-hidden bg-white min-h-[50px] flex flex-col justify-start pb-6 px-5 rounded-2xl mx-5">
       <div
         className="absolute bottom-0 left-0 w-full transition-all duration-1000 ease-out bg-primary-normal"
-        style={{ height: `${goalData.achievementRate}%` }}
+        style={{ height: `${clampedRate}%` }}
       />
 
       <div className="relative z-10">
@@ -64,7 +67,7 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
           </span>
 
           <div className="px-3 py-1 bg-primary-normal rounded-full text-xs font-bold text-[#171714] font-pretendard">
-            {goalData.achievementRate}% 달성
+            {clampedRate}% 달성
           </div>
         </div>
       </div>

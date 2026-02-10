@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateGoal, useLinkAccount } from '@/features/goal';
 import { paths } from '@/router/paths';
+import { formatDateInput, formatAmountInput } from '@/utils/goal/goalHelpers';
 
 export type GoalStep = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -50,13 +51,16 @@ export function useGoalForm() {
           setGoalName(value);
           break;
         case 'startDate':
-          setStartDate(value);
+          // 날짜 자동 포맷팅 적용
+          setStartDate(formatDateInput(value));
           break;
         case 'endDate':
-          setEndDate(value);
+          // 날짜 자동 포맷팅 적용
+          setEndDate(formatDateInput(value));
           break;
         case 'goalAmount':
-          setGoalAmount(value);
+          // 금액 자동 포맷팅 적용 (3자리마다 콤마)
+          setGoalAmount(formatAmountInput(value));
           break;
         default:
           break;
@@ -72,7 +76,8 @@ export function useGoalForm() {
       setHasInputStarted(false);
       return;
     }
-    navigate('/goal/create');
+    // 히스토리 스택에 중복을 방지하기 위해 replace 사용
+    navigate('/goal/create', { replace: true });
   }, [currentStep, navigate]);
 
   const handleAccountSelect = useCallback((account: SelectedAccount) => {

@@ -53,11 +53,11 @@ const GoalCreateStep = () => {
       },
     ],
     2: [
-      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
     3: [
-      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'startDate', label: '시작일', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
@@ -68,7 +68,7 @@ const GoalCreateStep = () => {
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
     5: [
-      { kind: 'account', label: '계좌 연동', placeholder: '계좌를 선택해주세요' },
+      { kind: 'account', label: '계좌 연동', placeholder: '계좌를 선택해주세요', readOnly: false, isGrayBg: false },
       { kind: 'input', field: 'goalAmount', label: '목표 금액', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'endDate', label: '종료일', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'startDate', label: '시작일', readOnly: true, isGrayBg: true },
@@ -101,11 +101,15 @@ const GoalCreateStep = () => {
               {steps[currentStep].map((item, idx) => {
                 if (item.kind === 'account') {
                   const value = accountDisplay;
-                  const readOnly = item.readOnly ?? true;
+                  const readOnly = item.readOnly ?? false;
                   const isGrayBg = item.isGrayBg ?? false;
 
                   return (
-                    <div key={`account-${idx}`} onClick={openAccountSheet} className="cursor-pointer">
+                    <div
+                      key={`account-${idx}`}
+                      onClick={!readOnly ? openAccountSheet : undefined}
+                      className={!readOnly ? 'cursor-pointer' : ''}
+                    >
                       <AuthInput
                         label={item.label}
                         name="linkedAccount"
@@ -115,7 +119,7 @@ const GoalCreateStep = () => {
                         readOnly={readOnly}
                         isGrayBg={isGrayBg}
                         width="full"
-                        className="cursor-pointer"
+                        className={!readOnly ? 'cursor-pointer' : ''}
                       />
                     </div>
                   );

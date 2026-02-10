@@ -135,7 +135,7 @@ function GoalEditForm({
             name="endDate"
             value={endDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('endDate', e.target.value)}
-            placeholder="YY-MM-DD"
+            placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
           />
@@ -145,7 +145,7 @@ function GoalEditForm({
             name="startDate"
             value={startDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('startDate', e.target.value)}
-            placeholder="YY-MM-DD"
+            placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
           />
