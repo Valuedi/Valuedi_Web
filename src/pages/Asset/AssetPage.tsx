@@ -39,45 +39,45 @@ export const AssetPage = () => {
           </div>
 
           <div className="flex w-full px-[20px] md:px-[32px] lg:px-[40px] border-b border-neutral-30 z-20">
-        <button
-          onClick={() => handleTabClick('details')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'details' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'details' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            자산 내역
-          </Typography>
-        </button>
+            <button
+              onClick={() => handleTabClick('details')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'details' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'details' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                자산 내역
+              </Typography>
+            </button>
 
-        <button
-          onClick={() => handleTabClick('sector')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'sector' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'sector' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            분야별 내역
-          </Typography>
-        </button>
+            <button
+              onClick={() => handleTabClick('sector')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'sector' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'sector' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                분야별 내역
+              </Typography>
+            </button>
 
-        <button
-          onClick={() => handleTabClick('compare')}
-          className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'compare' && 'border-b border-neutral-90')}
-        >
-          <Typography
-            style="text-body-2-14-medium"
-            className={`${activeTab === 'compare' ? 'text-neutral-90' : 'text-neutral-70'}`}
-            fontFamily="pretendard"
-          >
-            비교 내역
-          </Typography>
-        </button>
-      </div>
+            <button
+              onClick={() => handleTabClick('compare')}
+              className={cn('flex-1 px-[12px] py-[6px] ', activeTab === 'compare' && 'border-b border-neutral-90')}
+            >
+              <Typography
+                style="text-body-2-14-medium"
+                className={`${activeTab === 'compare' ? 'text-neutral-90' : 'text-neutral-70'}`}
+                fontFamily="pretendard"
+              >
+                비교 내역
+              </Typography>
+            </button>
+          </div>
 
           <div className="flex-1 pb-[80px] md:pb-0 overflow-y-auto">
             {activeTab === 'details' && <AssetDetails />}

@@ -19,13 +19,7 @@ const SplashPage = () => {
   return (
     <div className={cn('relative min-h-screen w-full overflow-hidden bg-white')}>
       {/* PC 전체 화면 배경 - 회전된 배경 이미지 */}
-      <div
-        className={cn(
-          'absolute inset-0',
-          'flex items-center justify-center',
-          'overflow-hidden'
-        )}
-      >
+      <div className={cn('absolute inset-0', 'flex items-center justify-center', 'overflow-hidden')}>
         <div
           className={cn(
             'relative',
@@ -55,14 +49,7 @@ const SplashPage = () => {
         {/* 중앙 콘텐츠 영역 */}
         <div className={cn('flex flex-col items-center justify-center', 'transform-none')}>
           {/* 회전된 카드 이미지 - Figma 디자인 기준: left-[901px] top-[343.7px] w-[118.26px] h-[65.615px] */}
-          <div
-            className={cn(
-              'flex items-center justify-center mb-10',
-              'w-[118.26px] h-[65.615px]',
-              'md:mb-0'
-            )}
-          >
-          </div>
+          <div className={cn('flex items-center justify-center mb-10', 'w-[118.26px] h-[65.615px]', 'md:mb-0')}></div>
 
           {/* 중앙 로고 - Figma 디자인 기준: left-[908.13px] top-[425.31px] w-[100px] h-[23px] */}
           <div

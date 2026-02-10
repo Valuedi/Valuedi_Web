@@ -56,36 +56,36 @@ export const CurrentGoalPage = () => {
 
           <main className="flex-1 pb-24 md:pb-0">
             <div className="flex flex-col gap-5 p-5 md:p-8 lg:p-10">
-            {/* 목표 추가 버튼 */}
-            <div
-              onClick={() => navigate('/goal/create')}
-              className="flex items-center gap-4 p-3 transition-colors bg-white shadow-sm cursor-pointer rounded-xl active:bg-gray-50"
-            >
-              <div className="flex items-center justify-center w-8 h-8 text-gray-400 border border-gray-200 rounded-full">
-                <span className="text-xl font-light">+</span>
+              {/* 목표 추가 버튼 */}
+              <div
+                onClick={() => navigate('/goal/create')}
+                className="flex items-center gap-4 p-3 transition-colors bg-white shadow-sm cursor-pointer rounded-xl active:bg-gray-50"
+              >
+                <div className="flex items-center justify-center w-8 h-8 text-gray-400 border border-gray-200 rounded-full">
+                  <span className="text-xl font-light">+</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-400">또 다른 목표가 있나요?</span>
+                  <span className="text-sm font-semibold text-gray-900">목표 추가하기</span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-400">또 다른 목표가 있나요?</span>
-                <span className="text-sm font-semibold text-gray-900">목표 추가하기</span>
-              </div>
-            </div>
 
-            {/* 정렬 필터 UI */}
-            <div className="flex items-center gap-2 px-1 text-[13px] font-medium">
-              <button
-                onClick={() => setSortBy('latest')}
-                className={`transition-colors ${sortBy === 'latest' ? 'text-gray-900' : 'text-gray-400'}`}
-              >
-                최신순
-              </button>
-              <span className="text-gray-200">·</span>
-              <button
-                onClick={() => setSortBy('achieve')}
-                className={`transition-colors ${sortBy === 'achieve' ? 'text-gray-900' : 'text-gray-400'}`}
-              >
-                달성순
-              </button>
-            </div>
+              {/* 정렬 필터 UI */}
+              <div className="flex items-center gap-2 px-1 text-[13px] font-medium">
+                <button
+                  onClick={() => setSortBy('latest')}
+                  className={`transition-colors ${sortBy === 'latest' ? 'text-gray-900' : 'text-gray-400'}`}
+                >
+                  최신순
+                </button>
+                <span className="text-gray-200">·</span>
+                <button
+                  onClick={() => setSortBy('achieve')}
+                  className={`transition-colors ${sortBy === 'achieve' ? 'text-gray-900' : 'text-gray-400'}`}
+                >
+                  달성순
+                </button>
+              </div>
 
               {/* Goal 리스트 */}
               <div className="flex flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
