@@ -105,7 +105,11 @@ const GoalCreateStep = () => {
                   const isGrayBg = item.isGrayBg ?? false;
 
                   return (
-                    <div key={`account-${idx}`} onClick={!readOnly ? openAccountSheet : undefined} className={!readOnly ? "cursor-pointer" : ""}>
+                    <div
+                      key={`account-${idx}`}
+                      onClick={!readOnly ? openAccountSheet : undefined}
+                      className={!readOnly ? 'cursor-pointer' : ''}
+                    >
                       <AuthInput
                         label={item.label}
                         name="linkedAccount"
@@ -115,7 +119,7 @@ const GoalCreateStep = () => {
                         readOnly={readOnly}
                         isGrayBg={isGrayBg}
                         width="full"
-                        className={!readOnly ? "cursor-pointer" : ""}
+                        className={!readOnly ? 'cursor-pointer' : ''}
                       />
                     </div>
                   );

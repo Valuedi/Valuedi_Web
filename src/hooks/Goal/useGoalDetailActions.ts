@@ -25,8 +25,8 @@ export function useGoalDetailActions() {
   const deleteGoalMutation = useDeleteGoal();
   const updateGoalMutation = useUpdateGoal();
 
-  const isCurrentActive = location.pathname === paths.goal.amountAchieved(id || '');
-  const isPastActive = location.pathname === paths.goal.savingsSimulation(id || '');
+  const isCurrentActive = id ? location.pathname === paths.goal.amountAchieved(id) : false;
+  const isPastActive = id ? location.pathname === paths.goal.savingsSimulation(id) : false;
 
   const detail = goalDetail?.result ?? null;
   const goal =
