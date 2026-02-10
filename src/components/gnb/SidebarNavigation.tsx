@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
 import { Typography } from '@/components/typography';
+import { useGetProfile } from '@/hooks/MyPage/useGetProfile';
 import HomeIconActive from '@/assets/icons/home/HomeActive.svg';
 import HomeIconInactive from '@/assets/icons/home/HomeInactive.svg';
 import AssetIconActive from '@/assets/icons/home/AssetActive.svg';
@@ -25,6 +26,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   onItemClick,
 }) => {
   const navigate = useNavigate();
+  const { userName, mbtiResult } = useGetProfile();
 
   const navItems: { id: NavItem; label: string; iconActive: string; iconInactive: string }[] = [
     { id: 'home', label: '홈', iconActive: HomeIconActive, iconInactive: HomeIconInactive },
@@ -56,6 +58,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     }
   };
 
+  const handleProfileClick = () => {
+    navigate('/mypage');
+  };
+
   return (
     <nav
       className={cn(
@@ -67,7 +73,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         className
       )}
     >
-      <div className="flex flex-col py-4">
+      <div className="flex flex-col py-4 flex-1">
         {navItems.map((item) => {
           const isActive = activeItem === item.id;
           const iconSrc = isActive ? item.iconActive : item.iconInactive;
@@ -97,6 +103,41 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
             </button>
           );
         })}
+      </div>
+
+      {/* 프로필 섹션 */}
+      <div className="border-t border-neutral-10 p-4">
+        <button
+          type="button"
+          onClick={handleProfileClick}
+          className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-neutral-10 transition-colors"
+        >
+          <div className="w-[40px] h-[40px] flex items-center justify-center flex-shrink-0 bg-neutral-10 rounded-lg">
+            {mbtiResult?.icon ? (
+              <mbtiResult.icon className="w-full h-full" />
+            ) : (
+              <div className="w-6 h-6 bg-neutral-20 rounded" />
+            )}
+          </div>
+          <div className="flex flex-col items-start flex-1 min-w-0">
+            <Typography
+              style="text-body-2-14-semi-bold"
+              className="text-neutral-90 truncate w-full"
+              fontFamily="pretendard"
+            >
+              {userName}님
+            </Typography>
+            {mbtiResult?.title && (
+              <Typography
+                style="text-caption-1-12-regular"
+                className="text-neutral-70 truncate w-full"
+                fontFamily="pretendard"
+              >
+                {mbtiResult.title}
+              </Typography>
+            )}
+          </div>
+        </button>
       </div>
     </nav>
   );
