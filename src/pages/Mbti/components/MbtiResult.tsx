@@ -17,7 +17,7 @@ export const MbtiResult = () => {
   };
 
   const handleHome = () => {
-    navigate('/');
+    navigate('/home');
   };
 
   return (

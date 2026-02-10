@@ -53,8 +53,8 @@ const CardConnectedPage = () => {
   };
 
   const handleNext = () => {
-    // 메인 페이지로 이동
-    navigate('/home');
+    //추가 카드 연결 페이지로 이동
+    navigate('/card/additional');
   };
 
   return (

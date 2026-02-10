@@ -7,11 +7,11 @@ interface OnboardingStepProps {
   step: number;
   title: string;
   description: string;
+  visual?: React.ReactNode;
   onNext?: () => void;
-  onSkip?: () => void;
 }
 
-export const OnboardingStep = ({ step, title, description, onNext, onSkip }: OnboardingStepProps) => {
+export const OnboardingStep = ({ step, title, description, visual, onNext }: OnboardingStepProps) => {
   const navigate = useNavigate();
   const totalSteps = 4;
   const isLastStep = step === totalSteps;
@@ -28,34 +28,8 @@ export const OnboardingStep = ({ step, title, description, onNext, onSkip }: Onb
     }
   };
 
-  const handleSkip = () => {
-    if (onSkip) {
-      onSkip();
-    } else {
-      navigate('/login');
-    }
-  };
-
   return (
     <div className={cn('bg-white relative min-h-screen w-full flex flex-col')}>
-      {/* 상단 건너뛰기 */}
-      <div
-        className={cn('w-full h-[50px] bg-neutral-10 flex items-center justify-end px-4 sm:px-5 flex-shrink-0 z-10')}
-      >
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSkip();
-          }}
-          className={cn('underline py-2 px-1')}
-        >
-          <Typography style="text-body-3-13-regular" color="neutral-60" className={cn('underline')}>
-            건너뛰기
-          </Typography>
-        </button>
-      </div>
-
       {/* 메인 컨텐츠 영역 */}
       <div
         className={cn(
@@ -87,11 +61,7 @@ export const OnboardingStep = ({ step, title, description, onNext, onSkip }: Onb
         </div>
 
         {/* 이미지 영역 */}
-        <div
-          className={cn(
-            'w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[182px] md:h-[182px] bg-neutral-30 rounded-lg flex-shrink-0'
-          )}
-        />
+        <div className="w-full flex justify-center items-center h-[300px]">{visual}</div>
 
         {/* 진행 표시기 */}
         <div className={cn('flex gap-2 sm:gap-[8px] items-center mt-auto mb-4')}>

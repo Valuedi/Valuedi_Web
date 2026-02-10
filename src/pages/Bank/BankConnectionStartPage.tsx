@@ -6,6 +6,8 @@ import { Typography } from '@/components/typography';
 import { BaseButton } from '@/components/buttons/BaseButton';
 import BankInfoModal from '@/components/bank/BankInfoModal';
 import { useUserName } from '@/hooks/useUserName';
+import BankInfiniteGrid from '@/components/bank/BankInfiniteGrid';
+import { BANKS } from '@/features/bank/constants/banks';
 
 const BankConnectionStartPage = () => {
   const navigate = useNavigate();
@@ -42,8 +44,7 @@ const BankConnectionStartPage = () => {
         </div>
       </div>
 
-      {/* Placeholder for bank illustration */}
-      <div className="w-[182px] h-[182px] bg-neutral-40 rounded-full mx-auto mt-[125px] mb-auto" />
+      <BankInfiniteGrid availableBanks={BANKS} />
 
       {/* Button */}
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px]">

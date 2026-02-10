@@ -3,9 +3,35 @@ import { MobileLayout } from '@/components/layout/MobileLayout';
 import CardGNB from '@/components/card/CardGNB';
 import { Typography } from '@/components/typography';
 import { BaseButton } from '@/components/buttons/BaseButton';
+import BankInfiniteGrid from '@/components/bank/BankInfiniteGrid';
+import { CARDS } from '@/features/card/constants/cards';
+import { useQuery } from '@tanstack/react-query';
+import { getConnectionsApi } from '@/features/connection';
+import { getBankIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
 
 const CardAdditionalConnectionPage = () => {
   const navigate = useNavigate();
+
+  const { data: connectionsData } = useQuery({
+    queryKey: ['connections'],
+    queryFn: () => getConnectionsApi(),
+  });
+
+  // 2. 이미 연결된 카드사 ID 필터링
+  const connectedCardIds =
+    connectionsData?.result
+      ?.filter((conn) => {
+        const businessType = conn.businessType || conn.type;
+        return businessType === 'CD';
+      })
+      .map((conn) => {
+        const organizationCode = conn.organizationCode || conn.organization;
+        return organizationCode ? getBankIdFromOrganizationCode(organizationCode) : null;
+      })
+      .filter((id): id is string => id !== null) || [];
+
+  // 연결되지 않은 카드사만 필터링
+  const availableCards = CARDS.filter((card) => !connectedCardIds.includes(card.id));
 
   const handleBack = () => {
     navigate(-1);
@@ -17,8 +43,8 @@ const CardAdditionalConnectionPage = () => {
   };
 
   const handleSkip = () => {
-    // 메인 페이지로 이동
-    navigate('/home');
+    // mbti 검사 페이지로 이동
+    navigate('/mbti');
   };
 
   return (
@@ -41,7 +67,7 @@ const CardAdditionalConnectionPage = () => {
       </div>
 
       {/* Placeholder for illustration */}
-      <div className="w-[182px] h-[182px] bg-neutral-40 rounded-full mx-auto mt-[125px] mb-auto" />
+      <BankInfiniteGrid availableBanks={availableCards} />
 
       {/* Button */}
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px]">

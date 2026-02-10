@@ -26,7 +26,7 @@ const BaseLoginContainer: React.FC<BaseLoginContainerProps> = ({ className, onLo
     onSuccess: (response) => {
       if (response.result) {
         login(response.result.memberId, response.result.accessToken);
-        navigate('/home');
+        navigate('/bank/start');
       }
     },
     onError: (error: ApiError) => {
