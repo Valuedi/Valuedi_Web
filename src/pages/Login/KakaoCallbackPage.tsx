@@ -5,6 +5,8 @@ import { kakaoCallbackApi, ApiError } from '@/features/auth';
 import { useAuthStore } from '@/features/auth';
 import { MobileLayout } from '@/components/layout/MobileLayout';
 import { Typography } from '@/components/typography';
+import { getConnectionsApi } from '@/features/connection/connection.api';
+import { getFinanceMbtiResultApi } from '@/features/mbti/mbti.api';
 
 const KakaoCallbackPage = () => {
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const KakaoCallbackPage = () => {
       // GET /auth/oauth/kakao/callback?code=...&state=...&originalState=... 호출
       return kakaoCallbackApi(code, state, originalState);
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.result) {
         // 성공 시 state 제거
         sessionStorage.removeItem('kakao_oauth_state');
@@ -40,8 +42,34 @@ const KakaoCallbackPage = () => {
         // refreshToken은 백엔드가 쿠키에 저장하므로 별도 처리 불필요
         // (필요시 localStorage에 저장할 수도 있음)
 
-        // 은행 연결 페이지로 이동
-        navigate('/bank/start', { replace: true });
+        // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+        try {
+          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
+
+          // 은행 연동 여부 확인
+          const hasBankConnection =
+            connectionsRes.status === 'fulfilled' &&
+            connectionsRes.value?.result?.some((conn) => (conn.businessType || conn.type) === 'BK');
+
+          // 금융 MBTI 존재 여부 확인
+          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 조건에 따라 리디렉션
+          if (hasBankConnection && hasMbti) {
+            // 은행 연동 + 금융 MBTI 존재 → 홈으로
+            navigate('/home', { replace: true });
+          } else if (hasBankConnection && !hasMbti) {
+            // 은행만 연동 → 금융 MBTI 페이지로
+            navigate('/mbti', { replace: true });
+          } else {
+            // 둘 다 없음 → 은행 연동 시작 페이지로
+            navigate('/bank/start', { replace: true });
+          }
+        } catch (error) {
+          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
+          console.error('연동 상태 확인 실패:', error);
+          navigate('/bank/start', { replace: true });
+        }
       }
     },
     onError: (error: ApiError | Error) => {

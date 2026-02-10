@@ -145,17 +145,24 @@ async function apiFetch<T = unknown>(
 
     // 응답이 성공이 아니면 에러로 처리
     if (!response.ok || !data.isSuccess) {
-      // 디버깅: 에러 응답 로그 (result에 카카오 API 에러 정보가 있을 수 있음)
-      const errorResult = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
-      console.error('API 에러 응답:', {
-        status: response.status,
-        code: data.code,
-        message: data.message,
-        result: errorResult,
-        url: url,
-      });
+      // 정상적인 상황으로 처리해야 하는 에러 코드 목록 (에러로 로깅하지 않음)
+      const silentErrorCodes = ['MBTI404_2']; // MBTI 결과가 없는 것은 정상적인 상황
+      const isSilentError = silentErrorCodes.includes(data.code);
+
+      // 디버깅: 에러 응답 로그 (정상적인 에러는 제외)
+      if (!isSilentError) {
+        const errorResult = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
+        console.error('API 에러 응답:', {
+          status: response.status,
+          code: data.code,
+          message: data.message,
+          result: errorResult,
+          url: url,
+        });
+      }
 
       // 카카오 API 에러(KOE320 등)가 포함된 경우 메시지에 추가
+      const errorResult = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
       let errorMessage = data.message;
       if (errorResult && errorResult.includes('KOE320')) {
         errorMessage += '\n\n카카오 API 에러가 발생했습니다. 백엔드 개발자에게 문의해주세요.';
