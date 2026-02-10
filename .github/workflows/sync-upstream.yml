@@ -1,0 +1,49 @@
+name: Sync main branch to personal fork
+
+on:
+  # 원본 레포(main)에 커밋/머지될 때마다 자동 실행
+  push:
+    branches:
+      - main
+
+  # 필요할 때 수동으로도 실행 가능
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-to-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout organization repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Push main to personal fork
+        env:
+          # 👉 여기 시크릿은 조직 레포의 Settings > Secrets and variables > Actions 에서
+          #    개인 계정 PAT( repo 권한 )으로 만들어야 합니다. 예: PERSONAL_FORK_TOKEN
+          PERSONAL_FORK_TOKEN: ${{ secrets.PERSONAL_FORK_TOKEN }}
+        run: |
+          if [ -z "$PERSONAL_FORK_TOKEN" ]; then
+            echo "❌ PERSONAL_FORK_TOKEN 시크릿이 설정되어 있지 않습니다."
+            exit 1
+          fi
+
+          FORK_REPO_OWNER="dohy-eon"
+          FORK_REPO_NAME="Valuedi_Web"
+
+          git remote add fork "https://x-access-token:${PERSONAL_FORK_TOKEN}@github.com/${FORK_REPO_OWNER}/${FORK_REPO_NAME}.git"
+
+          # 최신 main 기준으로 포크의 main을 덮어쓰기 (히스토리 유지하면서 fast-forward 또는 force-with-lease 가능)
+          git push fork main:main
+
+
