@@ -130,7 +130,9 @@ export const RecommendPage = () => {
           <div className="mt-[20px] md:mt-[32px] flex flex-col gap-[48px] md:gap-[32px] pl-[20px] md:pl-[32px] lg:pl-[40px] pr-[20px] md:pr-[32px] lg:pr-[40px] pb-[80px] md:pb-[24px]">
             <div
               className={cn(
-                'flex gap-[12px] overflow-x-auto md:grid md:grid-cols-2 md:overflow-x-visible md:gap-[16px]'
+                'flex gap-[12px] overflow-x-auto',
+                'md:grid md:grid-cols-2 md:overflow-x-visible md:gap-[20px]',
+                'lg:gap-[24px]'
               )}
             >
               <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
