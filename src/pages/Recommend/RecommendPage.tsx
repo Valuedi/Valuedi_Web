@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/layout/MobileLayout';
 import { BottomNavigation } from '@/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
 import { Typography } from '@/components/typography';
 import { cn } from '@/utils/cn';
 import { RecommendListItem } from './components/RecommendListItem';
@@ -115,17 +116,24 @@ export const RecommendPage = () => {
 
   return (
     <MobileLayout className="bg-white">
-      <div className="sticky top-0 z-10 w-full">
-        <HomeGNB title="추천" />
-      </div>
+      {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
+      <div className="flex flex-row min-h-screen md:h-screen">
+        {/* 데스크탑 사이드바 */}
+        <SidebarNavigation activeItem="recommend" onItemClick={handleNavClick} />
 
-      <div className="mt-[20px] flex flex-col gap-[48px] pl-[20px] pb-[80px]">
-        <div className={cn('flex gap-[12px] overflow-x-auto')}>
-          <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
-          <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
-        </div>
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 flex flex-col min-h-screen">
+          <div className="sticky top-0 z-10 w-full">
+            <HomeGNB title="추천" />
+          </div>
 
-        <div className={cn('flex flex-col gap-[12px] w-[320px]')}>
+          <div className="mt-[20px] md:mt-[32px] flex flex-col gap-[48px] md:gap-[32px] pl-[20px] md:pl-[32px] lg:pl-[40px] pr-[20px] md:pr-[32px] lg:pr-[40px] pb-[80px] md:pb-[24px]">
+            <div className={cn('flex gap-[12px] overflow-x-auto md:grid md:grid-cols-2 md:overflow-x-visible md:gap-[16px]')}>
+              <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
+              <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
+            </div>
+
+            <div className={cn('flex flex-col gap-[12px] w-full md:max-w-none')}>
           <div className={cn('flex gap-[4px]')}>
             {categoryList.map((category) => (
               <CategoryButton
@@ -196,7 +204,7 @@ export const RecommendPage = () => {
             )}
             {!isLoading && !isError && filteredList.length > 0 && (
               <>
-                <div className={cn('flex flex-col gap-[4px]')}>
+                <div className={cn('flex flex-col gap-[4px] md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-[12px]')}>
                   {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product) => (
                     <RecommendListItem
                       key={product.finPrdtCd}
@@ -224,11 +232,14 @@ export const RecommendPage = () => {
               </button>
             )}
           </div>
-        </div>
-      </div>
+            </div>
+          </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[360px]">
-        <BottomNavigation activeItem="recommend" onItemClick={handleNavClick} />
+          {/* Bottom Navigation - 모바일 전용 */}
+          <div className="fixed bottom-0 left-0 w-full md:hidden">
+            <BottomNavigation activeItem="recommend" onItemClick={handleNavClick} />
+          </div>
+        </div>
       </div>
     </MobileLayout>
   );

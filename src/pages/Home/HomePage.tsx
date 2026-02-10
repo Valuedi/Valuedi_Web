@@ -26,10 +26,10 @@ const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8
 // 목표/계좌 아이콘 컴포넌트
 const GoalAccountIcon = ({ bgColor }: { bgColor: string }) => (
   <div
-    className={cn('w-[32px] h-[32px] rounded-[8px] flex items-center justify-center')}
+    className={cn('w-[32px] h-[32px] md:w-[40px] md:h-[40px] rounded-[8px] flex items-center justify-center')}
     style={{ backgroundColor: bgColor, opacity: 0.65 }}
   >
-    <img src={kbIcon} alt="은행 아이콘" className="w-[22px] h-[22px] object-contain" />
+    <img src={kbIcon} alt="은행 아이콘" className="w-[22px] h-[22px] md:w-[28px] md:h-[28px] object-contain" />
   </div>
 );
 
@@ -201,8 +201,8 @@ export const HomePage = () => {
             className="w-full bg-white border border-neutral-10 rounded-[8px] p-[12px] md:p-[16px] shadow-[0px_0px_16px_0px_rgba(25,25,20,0.04)] text-left hover:shadow-[0px_4px_20px_0px_rgba(25,25,20,0.08)] transition-shadow"
           >
             <div className="flex gap-[8px] items-center">
-              <div className="size-8 flex items-center justify-center">
-                <img src={AddGoalIcon} alt="목표 추가" className="w-8 h-8" />
+              <div className="size-8 md:size-10 flex items-center justify-center">
+                <img src={AddGoalIcon} alt="목표 추가" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <div className="flex-1 flex flex-col">
                 <Typography style="text-caption-2-11-regular" className="text-neutral-50" fontFamily="pretendard">
@@ -323,7 +323,7 @@ export const HomePage = () => {
                           </Typography>
                         </div>
                       </div>
-                      <div className="w-[18px] h-[18px] flex items-center justify-center">
+                      <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
                         <MoreViewButton />
                       </div>
                     </div>
@@ -385,9 +385,9 @@ export const HomePage = () => {
                 </div>
                 <div className="flex flex-col gap-[12px]">
                   {/* 오늘 지출 */}
-                  <div className="flex items-center gap-[8px]">
-                    <div className="w-[32px] h-[32px] flex items-center justify-center">
-                      <img src={SpendTodayIcon} alt="오늘 지출" className="w-8 h-8" />
+                  <div className="flex items-center gap-[8px] md:gap-[12px]">
+                    <div className="w-[32px] h-[32px] md:w-[40px] md:h-[40px] flex items-center justify-center">
+                      <img src={SpendTodayIcon} alt="오늘 지출" className="w-8 h-8 md:w-10 md:h-10" />
                     </div>
                     <div className="flex flex-col gap-[2px]">
                       <Typography style="text-body-2-14-regular" className="text-neutral-70" fontFamily="pretendard">
@@ -399,9 +399,9 @@ export const HomePage = () => {
                     </div>
                   </div>
                   {/* 어제 지출 */}
-                  <div className="flex items-center gap-[8px]">
-                    <div className="w-[32px] h-[32px] flex items-center justify-center">
-                      <img src={SpendYesterdayIcon} alt="어제 지출" className="w-8 h-8" />
+                  <div className="flex items-center gap-[8px] md:gap-[12px]">
+                    <div className="w-[32px] h-[32px] md:w-[40px] md:h-[40px] flex items-center justify-center">
+                      <img src={SpendYesterdayIcon} alt="어제 지출" className="w-8 h-8 md:w-10 md:h-10" />
                     </div>
                     <div className="flex flex-col gap-[2px]">
                       <Typography style="text-body-2-14-regular" className="text-neutral-70" fontFamily="pretendard">

@@ -61,15 +61,15 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
         <div
           className={
             hasGoalStyle && bgColor
-              ? 'flex items-center justify-center w-9 h-9 rounded-lg shrink-0'
-              : 'flex items-center justify-center w-9 h-9 bg-neutral-10 rounded-lg shrink-0'
+              ? 'flex items-center justify-center w-9 h-9 md:w-11 md:h-11 rounded-lg shrink-0'
+              : 'flex items-center justify-center w-9 h-9 md:w-11 md:h-11 bg-neutral-10 rounded-lg shrink-0'
           }
           style={hasGoalStyle && bgColor ? { backgroundColor: bgColor } : undefined}
         >
           {iconSrc ? (
-            <img src={iconSrc} alt="" className="w-6 h-6 brightness-0 invert" />
+            <img src={iconSrc} alt="" className="w-6 h-6 md:w-7 md:h-7 brightness-0 invert" />
           ) : (
-            <img src={goal.bankIcon ?? ExBank} alt="" className="w-6 h-6" />
+            <img src={goal.bankIcon ?? ExBank} alt="" className="w-6 h-6 md:w-7 md:h-7" />
           )}
         </div>
 
