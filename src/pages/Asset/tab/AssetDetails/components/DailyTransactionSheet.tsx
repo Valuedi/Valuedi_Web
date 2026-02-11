@@ -54,8 +54,8 @@ export const DailyTransactionSheet = ({ data, onClose, currentMonth }: DailyTran
         </div>
       </div>
 
-      <div className={cn('flex pb-[20px] gap-[10px]')}>
-        <LoginButton text="확인하기" onClick={onClose} />
+      <div className={cn('flex pb-[20px] justify-center')}>
+        <LoginButton text="확인하기" onClick={onClose} className={cn('w-full')} />
       </div>
     </div>
   );
