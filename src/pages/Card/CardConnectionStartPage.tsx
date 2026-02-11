@@ -9,11 +9,13 @@ import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { CARDS } from '@/features/card/constants/cards';
 import { cn } from '@/shared/utils/cn';
 import { assetApi } from '@/features/asset';
+import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 
 const CardConnectionStartPage = () => {
   const navigate = useNavigate();
   const userName = useUserName();
   const [isFirstLogin, setIsFirstLogin] = useState(true);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   useEffect(() => {
     // 사용자가 이미 연동한 카드가 있는지 확인
@@ -40,7 +42,12 @@ const CardConnectionStartPage = () => {
     navigate('/mbti');
   };
 
-  const handleStart = () => {
+  const handleStartClick = () => {
+    setIsInfoModalOpen(true);
+  };
+
+  const handleInfoConfirm = () => {
+    setIsInfoModalOpen(false);
     // 바로 카드 선택 페이지로 이동
     navigate('/card/select');
   };
@@ -74,8 +81,14 @@ const CardConnectionStartPage = () => {
           </button>
         )}
 
-        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStart} />
+        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStartClick} />
       </div>
+
+      <BankInfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+        onConfirm={handleInfoConfirm}
+      />
     </MobileLayout>
   );
 };
