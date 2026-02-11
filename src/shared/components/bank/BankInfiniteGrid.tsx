@@ -20,7 +20,7 @@ const BankInfiniteGrid = ({ availableBanks }: BankInfiniteGridProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-[12px] px-[20px] py-[20px] mt-[20px] pb-[120px]">
+    <div className="flex flex-col gap-[12px] px-[20px] py-[20px] mt-[20px] pb-[120px] items-center">
       <style>
         {`
           @keyframes scroll-left {
@@ -42,7 +42,7 @@ const BankInfiniteGrid = ({ availableBanks }: BankInfiniteGridProps) => {
         const animationDelay = rowIndex * 4;
 
         return (
-          <div key={rowIndex} className="flex gap-[12px] items-center overflow-hidden w-full relative">
+          <div key={rowIndex} className="flex gap-[12px] items-center overflow-hidden w-full relative justify-center">
             <div
               className="flex gap-[12px] items-center infinite-scroll-row"
               style={{

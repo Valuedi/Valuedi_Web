@@ -78,10 +78,6 @@ export interface WithdrawRequest {
   reason: WithdrawReasonCode;
 }
 
-export interface KakaoLoginUrlResponse {
-  // URL 문자열 반환
-}
-
 // ========== API 함수들 ==========
 
 /**
@@ -151,18 +147,13 @@ export const getKakaoLoginUrlApi = async (): Promise<ApiResponse<KakaoLoginUrlRe
 
 /**
  * 카카오 로그인 콜백
- * GET /auth/oauth/kakao/callback?code=...&state=...&originalState=...
+ * GET /auth/oauth/kakao/callback?code=...&state=...
  */
-export const kakaoCallbackApi = async (
-  code: string,
-  state: string,
-  originalState: string
-): Promise<ApiResponse<LoginResponse>> => {
+export const kakaoCallbackApi = async (code: string, state: string): Promise<ApiResponse<LoginResponse>> => {
   // URL 파라미터 구성
   const params = new URLSearchParams({
     code: code,
     state: state,
-    originalState: originalState,
   });
 
   const url = `/auth/oauth/kakao/callback?${params.toString()}`;
@@ -172,8 +163,6 @@ export const kakaoCallbackApi = async (
     code: code.substring(0, 30) + '...',
     codeLength: code.length,
     state,
-    originalState,
-    stateMatch: state === originalState,
     url: url.substring(0, 100) + '...',
   });
 

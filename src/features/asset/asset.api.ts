@@ -458,6 +458,7 @@ export async function getAccountsApi(): Promise<GetAccountsApiResponse> {
           accountName: acc.accountName,
           balanceAmount: acc.balanceAmount,
           connectedGoalId: acc.connectedGoalId,
+          bankName: bank.organizationName,
           goalInfo: goal ? { goalId: goal.goalId, title: goal.title } : null,
         });
       });

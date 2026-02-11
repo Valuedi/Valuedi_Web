@@ -16,7 +16,6 @@ const KakaoCallbackPage = () => {
 
   const code = searchParams.get('code');
   const state = searchParams.get('state'); // 카카오에서 전달한 state
-  const originalState = sessionStorage.getItem('kakao_oauth_state'); // 저장해둔 원본 state
 
   const kakaoCallbackMutation = useMutation({
     mutationFn: () => {
@@ -24,20 +23,14 @@ const KakaoCallbackPage = () => {
       if (!code || !state) {
         throw new Error('카카오 로그인 정보가 없습니다.');
       }
-      if (!originalState) {
-        throw new Error('저장된 state 정보가 없습니다. 다시 로그인해주세요.');
-      }
 
-      // GET /auth/oauth/kakao/callback?code=...&state=...&originalState=... 호출
-      return kakaoCallbackApi(code, state, originalState);
+      // GET /auth/oauth/kakao/callback?code=...&state=... 호출
+      return kakaoCallbackApi(code, state);
     },
     onSuccess: async (response) => {
       if (response.result) {
-        // 성공 시 state 제거
-        sessionStorage.removeItem('kakao_oauth_state');
-
-        // accessToken + refreshToken(선택적)을 모두 스토어/스토리지에 반영
-        login(response.result.memberId, response.result.accessToken, response.result.refreshToken);
+        // accessToken을 스토어/스토리지에 반영 (Refresh Token은 HttpOnly 쿠키로 관리)
+        login(response.result.memberId, response.result.accessToken);
 
         // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
         try {
@@ -107,13 +100,6 @@ const KakaoCallbackPage = () => {
 
     // 카카오에서 전달한 code와 state 파라미터 확인
     if (code && state) {
-      // 저장된 originalState 확인
-      if (!originalState) {
-        alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        navigate('/login', { replace: true });
-        return;
-      }
-
       // 중복 호출 방지 플래그 설정
       hasProcessedRef.current = true;
 

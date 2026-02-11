@@ -99,7 +99,7 @@ const groupTransactionsByDate = (items: LedgerTransactionItem[]): TransactionGro
   return Array.from(groups.values()).sort((a, b) => b.day - a.day);
 };
 
-export const useGetAccountDetail = () => {
+export const useGetAccountDetail = (yearMonth?: string) => {
   const { id } = useParams<{ id?: string }>();
   const accountId = id ? Number(id) : null;
 
@@ -136,9 +136,9 @@ export const useGetAccountDetail = () => {
   // 현재 월 기준 거래 내역(/api/transactions) 조회
   useEffect(() => {
     const now = new Date();
-    const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const targetYearMonth = yearMonth || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    getTransactionsApi({ yearMonth, size: 200, sort: 'LATEST' })
+    getTransactionsApi({ yearMonth: targetYearMonth, size: 200, sort: 'LATEST' })
       .then((res) => {
         const raw = res?.result as { content?: LedgerTransactionItem[] } | LedgerTransactionItem[] | null | undefined;
 
@@ -152,7 +152,7 @@ export const useGetAccountDetail = () => {
         setTransactionHistory([]);
         setTotalCount(0);
       });
-  }, []);
+  }, [yearMonth]);
 
   return {
     accountInfo,
