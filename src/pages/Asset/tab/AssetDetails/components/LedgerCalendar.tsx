@@ -10,9 +10,16 @@ import { useLedgerStore } from '@/shared/hooks/Asset/usetLedgerStore';
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 export const LedgerCalendar = () => {
-  const { transactionHistory } = useGetAccountDetail();
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const currentMonth = useLedgerStore((state) => state.currentMonth);
+
+  const yearMonth = useMemo(() => {
+    const year = new Date().getFullYear();
+    return `${year}-${String(currentMonth).padStart(2, '0')}`;
+  }, [currentMonth]);
+
+  const { transactionHistory } = useGetAccountDetail(yearMonth);
+
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
 
   // 데이터를 미리 날짜별로 정리정돈 해주는 코드
   const calendarData = useMemo(() => {
