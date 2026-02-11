@@ -110,7 +110,6 @@ export const HomePage = () => {
           setTotalAccountCount(accountsRes.result.totalCount || 0);
         }
 
-<<<<<<< HEAD
         // 나의 목표 섹션: 진행 중 목표 목록 (/api/goals/primary)
         if (primaryGoalsRes?.result?.goals) {
           const primaryGoals = primaryGoalsRes.result.goals;
@@ -134,57 +133,6 @@ export const HomePage = () => {
         }
         if (cardIssuersRes?.result) {
           setConnectedCardIssuerCount(cardIssuersRes.result.length);
-=======
-          // 계좌 목록에서 goalInfo가 있는 것들을 목표로 추출
-          const goalAccounts = accountList.filter((acc) => acc.goalInfo !== null);
-          const uniqueGoals = new Map<number, { goalId: number; title: string }>();
-
-          goalAccounts.forEach((acc) => {
-            if (acc.goalInfo) {
-              uniqueGoals.set(acc.goalInfo.goalId, {
-                goalId: acc.goalInfo.goalId,
-                title: acc.goalInfo.title,
-              });
-            }
-          });
-
-          // 각 목표의 상세 정보 조회
-          const goalDetailsPromises = Array.from(uniqueGoals.values())
-            .slice(0, 3)
-            .map(async (goal, index) => {
-              try {
-                const detailRes = await getGoalDetailApi(goal.goalId);
-                if (detailRes.result) {
-                  return {
-                    id: String(goal.goalId),
-                    name: detailRes.result.title,
-                    amount: detailRes.result.savedAmount,
-                    iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
-                    colorCode: detailRes.result.colorCode,
-                    iconId: detailRes.result.iconId,
-                  };
-                }
-              } catch (error) {
-                // 목표 상세 조회 실패 시 기본 정보만 사용
-                return {
-                  id: String(goal.goalId),
-                  name: goal.title,
-                  amount: 0,
-                  colorCode: undefined,
-                  iconId: undefined,
-                  iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
-                };
-              }
-              return null;
-            });
-
-          const goalDetails = (await Promise.all(goalDetailsPromises)).filter(
-            (goal): goal is NonNullable<typeof goal> => goal !== null
-          );
-
-          setGoals(goalDetails);
-          setTotalGoalCount(uniqueGoals.size);
->>>>>>> e1f9fd7 (#113 [qa1/seoro] QA 1차 수정)
         }
 
         // 거래 요약 처리
@@ -349,19 +297,11 @@ export const HomePage = () => {
                                 </div>
                               </div>
                               <div className="w-[18px] h-[18px] flex items-center justify-center">
-                                <MoreViewButton />
+                                <MoreViewButton onClick={() => navigate(paths.goal.amountAchieved(goal.id))} />
                               </div>
                             </div>
-<<<<<<< HEAD
-                            <div className="w-[18px] h-[18px] flex items-center justify-center">
-                              <MoreViewButton onClick={() => navigate(paths.goal.amountAchieved(goal.id))} />
-                            </div>
-                          </div>
-                        ))}
-=======
                           );
                         })}
->>>>>>> e1f9fd7 (#113 [qa1/seoro] QA 1차 수정)
                       </div>
                       {totalGoalCount > 3 && (
                         <button
@@ -438,19 +378,11 @@ export const HomePage = () => {
                                 </div>
                               </div>
                               <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
-                                <MoreViewButton />
+                                <MoreViewButton onClick={() => navigate(`/asset/account/${account.accountId}`)} />
                               </div>
                             </div>
-<<<<<<< HEAD
-                            <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
-                              <MoreViewButton onClick={() => navigate(`/asset/account/${account.accountId}`)} />
-                            </div>
-                          </div>
-                        ))}
-=======
                           );
                         })}
->>>>>>> e1f9fd7 (#113 [qa1/seoro] QA 1차 수정)
                       </div>
                       {totalAccountCount > 3 && (
                         <button
