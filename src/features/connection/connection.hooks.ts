@@ -9,18 +9,12 @@ import {
   deleteConnectionApi,
   refreshSyncApi,
   getSyncStatusApi,
+  connectionKeys,
   type Connection,
   type CreateConnectionRequest,
   type SyncStatusResponse,
 } from './connection.api';
-import { ApiResponse, ApiError } from '@/utils/api';
-
-// Query Keys
-export const connectionKeys = {
-  all: ['connections'] as const,
-  list: () => [...connectionKeys.all, 'list'] as const,
-  syncStatus: () => [...connectionKeys.all, 'sync', 'status'] as const,
-};
+import { ApiResponse, ApiError } from '@/shared/api';
 
 /**
  * 모든 연동 목록 조회

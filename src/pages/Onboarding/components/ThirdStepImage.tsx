@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 
 import nhIcon from '@/assets/icons/bank/nh.svg?react';
 import ibkIcon from '@/assets/icons/bank/ibk.svg?react';

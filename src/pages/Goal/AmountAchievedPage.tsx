@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Hamburger from '@/assets/icons/Hamburger.svg';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
-import TotalSection from '@/components/goal/TotalSection';
-import GoalBottomSheet from '@/components/goal/GoalBottonSheet';
-import type { TransactionItem } from '@/utils/goal/ledgerHelpers';
+import TotalSection from '@/shared/components/goal/TotalSection';
+import GoalBottomSheet from '@/shared/components/goal/GoalBottonSheet';
+import type { TransactionItem } from '@/shared/utils/goal/ledgerHelpers';
 import { paths } from '@/router/paths';
 
 // 로컬 목데이터용 타입 (실제 API TransactionItem과는 별개)

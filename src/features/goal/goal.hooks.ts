@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { goalApi } from './goal.api';
+import { goalApi, goalKeys } from './goal.api';
 import type {
   GetGoalsParams,
   CreateGoalRequest,
@@ -8,15 +8,6 @@ import type {
   UpdateGoalRequest,
   GetGoalLedgersParams,
 } from './goal.types';
-export const goalKeys = {
-  all: ['goals'] as const,
-  lists: () => [...goalKeys.all, 'list'] as const,
-  list: (params?: GetGoalsParams) => [...goalKeys.lists(), params] as const,
-  details: () => [...goalKeys.all, 'detail'] as const,
-  detail: (id: number) => [...goalKeys.details(), id] as const,
-  ledgers: (goalId: number, params?: GetGoalLedgersParams) => [...goalKeys.all, 'ledgers', goalId, params] as const,
-  unlinkedAccounts: () => [...goalKeys.all, 'unlinked-accounts'] as const,
-};
 // 목표 목록 조회
 export function useGoals(params?: GetGoalsParams) {
   return useQuery({

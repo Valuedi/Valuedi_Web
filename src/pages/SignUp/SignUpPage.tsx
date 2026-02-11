@@ -1,5 +1,5 @@
-import SignUpContainer from '@/components/login/SignUpContainer';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import SignUpContainer from '@/shared/components/login/SignUpContainer';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 
 const SignupPage = () => {
   return (

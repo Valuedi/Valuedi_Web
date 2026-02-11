@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { CompareBar } from './CompareBar';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 import { CompareBarSkeleton } from './CompareBarSkeleton';
 import { getPeerCompareApi } from '@/features/asset/asset.api';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 // 💡 3. Props 인터페이스 추가
 interface PeerCompareSectionProps {

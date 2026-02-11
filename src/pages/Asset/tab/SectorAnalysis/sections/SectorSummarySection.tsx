@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { SectorChart } from '../components/SectorChart';
 import { SectorChartSkeleton } from '../components/SectorChartSkeleton';
 import { SectorData } from '../utils/sectorUtils';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 interface SectorSummarySectionProps {
   selectedDate: Date;

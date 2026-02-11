@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { TROPHY_ICONS } from '@/features/mypage/constants/trophyIcons';
 import DaySpendIcon from '@/assets/icons/trophy/day_spend.svg?react';
 import { getTrophyIconByType } from '@/features/mypage/utils/trophyIconMapper';

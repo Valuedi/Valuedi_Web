@@ -1,10 +1,10 @@
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { useGetMbtiTestResult } from '@/hooks/Mbti/useGetMbtiTestResult';
-import { MbtiCard } from '@/components/mbti';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
+import { MbtiCard } from '@/shared/components/mbti';
 import { MbtiDetailChart } from './MbtiDetailChart';
-import { calculateMbtiScores } from '@/utils/calculateMbtiScore';
-import { formatMbtiDescription } from '@/utils/formatMbtiText';
+import { calculateMbtiScores } from '@/shared/utils/calculateMbtiScore';
+import { formatMbtiDescription } from '@/shared/utils/formatMbtiText';
 import { MBTI_LOCAL_EXTENSIONS } from '@/features/mbti/constants/mbtiType';
 
 export const MbtiDetail = () => {

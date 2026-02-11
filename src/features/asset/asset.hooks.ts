@@ -1,19 +1,7 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { assetApi } from './asset.api';
+import { assetApi, assetKeys } from './asset.api';
 import type { BankAccountItem } from './asset.types';
-
-// Query Keys
-export const assetKeys = {
-  all: ['assets'] as const,
-  banks: () => [...assetKeys.all, 'banks'] as const,
-  bankAccounts: (bankCode: string) => [...assetKeys.all, 'banks', bankCode] as const,
-  summary: () => [...assetKeys.all, 'summary'] as const,
-  accounts: () => [...assetKeys.all, 'accounts'] as const,
-  cards: () => [...assetKeys.all, 'cards'] as const,
-  cardIssuers: () => [...assetKeys.all, 'cardIssuers'] as const,
-  cardIssuerCards: (issuerCode: string) => [...assetKeys.all, 'cardIssuers', issuerCode, 'cards'] as const,
-};
 
 /**
  * 연동된 은행 목록 조회

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import AuthInput from '@/components/login/AuthInput';
-import { useUserName } from '@/hooks/useUserName';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import AuthInput from '@/shared/components/login/AuthInput';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const CardIdInputPage = () => {
   const navigate = useNavigate();

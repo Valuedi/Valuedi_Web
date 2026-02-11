@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { kakaoCallbackApi, ApiError } from '@/features/auth';
 import { useAuthStore } from '@/features/auth';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
 import { getConnectionsApi } from '@/features/connection/connection.api';
 import { getFinanceMbtiResultApi } from '@/features/mbti/mbti.api';
 

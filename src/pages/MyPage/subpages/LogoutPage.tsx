@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components';
-import { LoginButton } from '@/components/buttons';
-import { cn } from '@/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components';
+import { LoginButton } from '@/shared/components/buttons';
+import { cn } from '@/shared/utils/cn';
 import { logoutApi } from '@/features/auth';
 import { useAuthStore } from '@/features/auth';
 

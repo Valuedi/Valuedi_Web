@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import GoalIconPickerBottomSheet from '@/components/goal/detail/GoalIconPickerBottomSheet';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import GoalIconPickerBottomSheet from '@/shared/components/goal/detail/GoalIconPickerBottomSheet';
 import { useCreateGoal } from '@/features/goal/goal.hooks';
 import { paths } from '@/router/paths';
-import { basenameNoExt, formatDate } from '@/utils/goal/goalHelpers';
+import { basenameNoExt, formatDate } from '@/shared/utils/goal/goalHelpers';
 import BackPageIcon from '@/assets/icons/BackPage.svg';
 import type { CreateGoalRequest } from '@/features/goal/goal.types';
 import { GOAL_COLOR_NAME_TO_HEX, GOAL_ICON_NAME_TO_ID } from '@/features/goal';
-import type { SelectedAccount } from '@/hooks/Goal/useGoalForm';
+import type { SelectedAccount } from '@/shared/hooks/Goal/useGoalForm';
 
 interface GoalFormData {
   goalName: string;

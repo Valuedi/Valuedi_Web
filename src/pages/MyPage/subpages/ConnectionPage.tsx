@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
 import { BANKS } from '@/features/bank/constants/banks';
 import { CARDS } from '@/features/card/constants/cards';
 import { getConnectionsApi } from '@/features/connection/connection.api';
@@ -12,8 +12,8 @@ import {
   getBankIdFromOrganizationCode,
   getCardIdFromOrganizationCode,
 } from '@/features/connection/constants/organizationCodes';
-import { cn } from '@/utils/cn';
-import { Toast } from '@/components/common/Toast';
+import { cn } from '@/shared/utils/cn';
+import { Toast } from '@/shared/components/common/Toast';
 
 export const ConnectionPage = () => {
   const navigate = useNavigate();

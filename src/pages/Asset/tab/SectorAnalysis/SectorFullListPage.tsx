@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '@/utils/cn';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { cn } from '@/shared/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { SectorListItem } from './components/SectorListItem';
 import { CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
+import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 import type { SectorData } from './components/SectorListItem';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 export const SectorFullListPage = () => {
   const navigate = useNavigate();

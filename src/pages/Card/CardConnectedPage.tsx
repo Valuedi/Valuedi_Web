@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import ConnectedCardItem from '@/components/card/ConnectedCardItem';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import ConnectedCardItem from '@/shared/components/card/ConnectedCardItem';
 import { getConnectionsApi, Connection } from '@/features/connection/connection.api';
-import { ApiResponse } from '@/utils/api';
+import { ApiResponse } from '@/shared/api';
 import { CARDS } from '@/features/card/constants/cards';
 import { getCardIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
 

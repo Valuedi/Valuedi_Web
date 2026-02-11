@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BankGNB from '@/components/bank/BankGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import ConnectedBankItem from '@/components/bank/ConnectedBankItem';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BankGNB from '@/shared/components/bank/BankGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import ConnectedBankItem from '@/shared/components/bank/ConnectedBankItem';
 import { getConnectionsApi, Connection } from '@/features/connection/connection.api';
-import { ApiResponse } from '@/utils/api';
+import { ApiResponse } from '@/shared/api';
 import { BANKS } from '@/features/bank/constants/banks';
 import { getBankIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
 

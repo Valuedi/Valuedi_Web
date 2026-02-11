@@ -1,10 +1,10 @@
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 import BackPageIcon from '@/assets/icons/BackPage.svg';
-import { useGoalCompletePage } from '@/hooks/Goal/useGoalCompletePage';
-import { GoalSummaryCard } from '@/components/goal/GoalSummaryCard';
-import { formatToYYMMDD, maskAccountNumber } from '@/utils/goal/goalHelpers';
+import { useGoalCompletePage } from '@/shared/hooks/Goal/useGoalCompletePage';
+import { GoalSummaryCard } from '@/shared/components/goal/GoalSummaryCard';
+import { formatToYYMMDD, maskAccountNumber } from '@/shared/utils/goal/goalHelpers';
 
 const GoalCompletePage = () => {
   const { state, navigate, handleBack, handleGoHome, handleGoToGoal } = useGoalCompletePage();

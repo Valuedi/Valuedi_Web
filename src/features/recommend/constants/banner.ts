@@ -14,7 +14,7 @@ import postbankIcon from '@/assets/icons/bank/postbank.svg';
 import hanaIcon from '@/assets/icons/bank/hana.svg';
 import kbankIcon from '@/assets/icons/bank/kbank.svg';
 
-import { ColorToken } from '@/styles/design-system';
+import { ColorToken } from '@/shared/styles/design-system';
 
 export interface Banner {
   id: string;

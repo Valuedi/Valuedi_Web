@@ -3,7 +3,8 @@
  * Swagger: https://api.valuedi.site/swagger-ui/index.html → Ledger (거래내역)
  */
 
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 import type {
   ConnectedBanksResponse,
   BankAccountsResponse,
@@ -18,6 +19,18 @@ import type {
 export type { Account };
 
 const API_BASE_URL = 'https://api.valuedi.site';
+
+// ========== Query Key Factory ==========
+
+export const assetKeys = createQueryKeys('assets', {
+  banks: () => ['banks'] as const,
+  bankAccounts: (bankCode: string) => ['banks', bankCode] as const,
+  summary: () => ['summary'] as const,
+  accounts: () => ['accounts'] as const,
+  cards: () => ['cards'] as const,
+  cardIssuers: () => ['cardIssuers'] as const,
+  cardIssuerCards: (issuerCode: string) => ['cardIssuers', issuerCode, 'cards'] as const,
+});
 
 // ========== 거래(가계부) 관련 타입 및 API ==========
 

@@ -2,7 +2,8 @@
  * 추천 상품 관련 API 함수들
  */
 
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 
 // ========== 타입 정의 ==========
 
@@ -63,6 +64,15 @@ export interface SavingsDetailProduct {
 export interface SavingsDetailResponse {
   product: SavingsDetailProduct;
 }
+
+// ========== Query Key Factory ==========
+
+export const recommendKeys = createQueryKeys('recommendations', {
+  savings: () => ['savings'] as const,
+  savingsList: (rsrvType?: 'S' | 'F') => ['savings', 'list', rsrvType] as const,
+  savingsDetail: (finPrdtCd: string) => ['savings', 'detail', finPrdtCd] as const,
+  top3: () => ['savings', 'top3'] as const,
+});
 
 // ========== API 함수들 ==========
 

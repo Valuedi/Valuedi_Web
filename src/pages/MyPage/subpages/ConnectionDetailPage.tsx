@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { cn } from '@/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { cn } from '@/shared/utils/cn';
 import { getConnectionsApi, deleteConnectionApi, ApiError } from '@/features/connection/connection.api';
 import { BANKS } from '@/features/bank/constants/banks';
 import { CARDS } from '@/features/card/constants/cards';
@@ -11,7 +11,7 @@ import {
   getBankIdFromOrganizationCode,
   getCardIdFromOrganizationCode,
 } from '@/features/connection/constants/organizationCodes';
-import { Toast } from '@/components/common/Toast';
+import { Toast } from '@/shared/components/common/Toast';
 
 // 분리한 컴포넌트들 불러오기
 import { ConnectionHeader } from '@/pages/MyPage/components/ConnectionHeader';

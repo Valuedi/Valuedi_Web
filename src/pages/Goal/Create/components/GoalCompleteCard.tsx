@@ -1,10 +1,10 @@
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import MoneyIcon from '@/assets/icons/goal/MoneyIcon.svg';
 import CalendarIcon from '@/assets/icons/goal/CalendarIcon.svg';
 import { toHexColor } from '@/features/goal';
-import { GOAL_ICON_SRC, DEFAULT_GOAL_ICON } from '@/components/goal/goalIconAssets';
+import { GOAL_ICON_SRC, DEFAULT_GOAL_ICON } from '@/shared/components/goal/goalIconAssets';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { formatToYYMMDD, maskAccountNumber } from '@/utils/goal/goalHelpers';
+import { formatToYYMMDD, maskAccountNumber } from '@/shared/utils/goal/goalHelpers';
 import type { GoalCompleteState } from '../types';
 
 interface GoalCompleteCardProps {

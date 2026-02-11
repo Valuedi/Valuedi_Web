@@ -1,9 +1,9 @@
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { useGetProfile } from '@/hooks/MyPage/useGetProfile';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';
 import { MbtiDetailChart } from '@/pages/Mbti/components/MbtiDetailChart';
-import { calculateMbtiScores } from '@/utils/calculateMbtiScore';
-import { formatMbtiDescription } from '@/utils/formatMbtiText';
+import { calculateMbtiScores } from '@/shared/utils/calculateMbtiScore';
+import { formatMbtiDescription } from '@/shared/utils/formatMbtiText';
 
 const MyMbti = () => {
   const { mbtiResult, isLoading } = useGetProfile();

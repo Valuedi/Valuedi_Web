@@ -1,14 +1,14 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { BottomNavigation } from '@/components/gnb/BottomNavigation';
-import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/shared/components/gnb/SidebarNavigation';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
 import { RecommendListItem } from './components/RecommendListItem';
-import { HomeGNB } from '@/components/gnb/HomeGNB';
+import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
 import { RecommendBannerCard } from './components/RecommendBannerCard';
-import { CategoryButton } from '@/components/buttons';
+import { CategoryButton } from '@/shared/components/buttons';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
 import { useSavingsRecommendations, useCreateSavingsRecommendations } from '@/features/recommend/recommend.hooks';
 

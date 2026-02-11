@@ -2,7 +2,8 @@
  * 금융 연동 관련 API 함수들
  */
 
-import { apiGet, apiPost, apiDelete, ApiResponse, ApiError } from '@/utils/api';
+import { apiGet, apiPost, apiDelete, ApiResponse, ApiError } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 
 // ApiError를 re-export하여 features/connection에서 사용할 수 있도록 함
 export { ApiError };
@@ -45,6 +46,13 @@ export interface SyncStatusResponse {
   errorMessage: string | null;
   updatedAt: string;
 }
+
+// ========== Query Key Factory ==========
+
+export const connectionKeys = createQueryKeys('connections', {
+  list: () => ['list'] as const,
+  syncStatus: () => ['sync', 'status'] as const,
+});
 
 // ========== API 함수들 ==========
 

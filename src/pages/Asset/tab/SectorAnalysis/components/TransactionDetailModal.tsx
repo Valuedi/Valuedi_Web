@@ -1,8 +1,8 @@
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 import PenIcon from '@/assets/icons/asset/Pen.svg';
-import BottomSheet from '@/components/common/BottomSheet'; // 💡 공통 바텀시트 임포트
+import BottomSheet from '@/shared/components/common/BottomSheet'; // 💡 공통 바텀시트 임포트
 import { TransactionWithDetails, TransactionDetail } from '../utils/sectorUtils';
 
 interface TransactionDetailModalProps {

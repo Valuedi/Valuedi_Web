@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { MoreViewButton } from '@/components/buttons';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { MoreViewButton } from '@/shared/components/buttons';
 
 interface MbtiDetailChartProps {
   title: string;

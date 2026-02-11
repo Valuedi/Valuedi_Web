@@ -2,8 +2,18 @@
  * 트로피 관련 API
  */
 
-import { apiGet, ApiResponse } from '@/utils/api';
+import { apiGet, ApiResponse } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 import type { Trophy, MyTrophy, GetMyTrophiesParams } from './trophy.types';
+
+// ========== Query Key Factory ==========
+
+export const trophyKeys = createQueryKeys('trophies', {
+  all: () => ['all'] as const,
+  my: (params: GetMyTrophiesParams) => ['my', params.periodType, params.periodKey] as const,
+});
+
+// ========== API 함수들 ==========
 
 /**
  * 전체 트로피 목록 조회

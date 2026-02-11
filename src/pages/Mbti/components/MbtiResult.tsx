@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import MbtiCard from '@/components/mbti/MbtiCard';
-import { LoginButton } from '@/components/buttons';
-import { useMbtiActions } from '@/hooks/Mbti/useMbtiStore';
-import { useGetMbtiTestResult } from '@/hooks/Mbti/useGetMbtiTestResult';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import MbtiCard from '@/shared/components/mbti/MbtiCard';
+import { LoginButton } from '@/shared/components/buttons';
+import { useMbtiActions } from '@/shared/hooks/Mbti/useMbtiStore';
+import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
 
 export const MbtiResult = () => {
   const navigate = useNavigate();

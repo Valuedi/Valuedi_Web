@@ -1,6 +1,6 @@
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { getColorToken } from '@/styles/design-system';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { getColorToken } from '@/shared/styles/design-system';
 import { BANNER } from '@/features/recommend/constants/banner';
 
 interface RecommendBannerCardProps {

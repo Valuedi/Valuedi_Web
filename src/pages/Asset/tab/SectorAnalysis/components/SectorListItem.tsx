@@ -1,6 +1,6 @@
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { CATEGORY_STYLES } from '@/features/asset/constants/category';
 // 💡 유틸리티 파일에서 모든 핵심 타입을 임포트합니다.
 import { TransactionWithDetails } from '../utils/sectorUtils';

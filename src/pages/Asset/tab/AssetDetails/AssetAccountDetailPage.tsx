@@ -1,14 +1,14 @@
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import kbIcon from '@/assets/icons/bank/kb.svg';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { useNavigate } from 'react-router-dom';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { AssetItemList } from './components/AssetItemList';
 import { AssetDailyHeader } from './components/AssetDailyHeader';
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
-import { ColorToken, getColorToken } from '@/styles/design-system';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
+import { ColorToken, getColorToken } from '@/shared/styles/design-system';
 
 const BankIcon = ({ bgColor }: { bgColor: ColorToken }) => (
   <div

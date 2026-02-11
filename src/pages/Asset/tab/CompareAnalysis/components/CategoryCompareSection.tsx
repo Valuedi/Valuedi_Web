@@ -1,15 +1,15 @@
 import { useState, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { PEER_AVERAGE_DATA } from '../constants/mockData';
 import { CompareBar } from './CompareBar';
-import { cn } from '@/utils/cn';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { cn } from '@/shared/utils/cn';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 import { CompareBarSkeleton } from './CompareBarSkeleton';
 import { getTransactionsByCategoryApi } from '@/features/asset/asset.api';
 import { normalizeCategoryCode } from '@/features/asset/constants/category';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const DISPLAY_NAMES: Record<string, string> = {
   traffic: '교통',

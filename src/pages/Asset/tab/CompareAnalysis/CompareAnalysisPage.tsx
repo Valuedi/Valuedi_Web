@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'; // 💡 추가
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { PeerCompareSection } from './components/PeerCompareSection';
 import { CategoryCompareSection } from './components/CategoryCompareSection';
 import { HistoryCompareSection } from './components/HistoryCompareSection';

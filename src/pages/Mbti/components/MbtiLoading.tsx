@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { useMbtiActions, useMbtiStore } from '@/hooks/Mbti/useMbtiStore';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { useMbtiActions, useMbtiStore } from '@/shared/hooks/Mbti/useMbtiStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { submitMbtiTest } from '@/features/mbti/mbti.api';
 import APGVIcon from '@/assets/icons/mbti/intro/APGV.svg?react';

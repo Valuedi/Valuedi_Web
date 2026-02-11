@@ -2,7 +2,7 @@
  * 거래 관련 API 함수들
  */
 
-import { apiGet, ApiResponse } from '@/utils/api';
+import { apiGet, ApiResponse } from '@/shared/api';
 
 // ========== 타입 정의 ==========
 

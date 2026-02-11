@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { setAccessToken, removeAccessToken } from '@/utils/api';
+import { setAccessToken, removeAccessToken } from '@/shared/api';
 
 interface User {
   id: number;

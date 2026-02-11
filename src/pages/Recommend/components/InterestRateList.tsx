@@ -1,5 +1,5 @@
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
 
 export interface InterestRateItem {
   description: string;

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { CompareBar } from './CompareBar';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 import { CompareBarSkeleton } from './CompareBarSkeleton';
 import { getTrendApi, type TrendItem } from '@/features/asset/asset.api';
 
