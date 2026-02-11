@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HomeGNB } from '@/components/gnb/HomeGNB';
-import { BottomNavigation } from '@/components/gnb/BottomNavigation';
-import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
+import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
+import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/shared/components/gnb/SidebarNavigation';
 import DropDown from '@/assets/icons/goal/Dropdown.svg';
-import GoalCard from '@/components/goal/GoalCard';
+import GoalCard from '@/shared/components/goal/GoalCard';
 import { useActiveGoals } from '@/features/goal';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { paths } from '@/router/paths';
 
 export const CurrentGoalPage = () => {

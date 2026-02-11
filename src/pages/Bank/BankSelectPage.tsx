@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BankGNB from '@/components/bank/BankGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import BankCard from '@/components/bank/BankCard';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BankGNB from '@/shared/components/bank/BankGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import BankCard from '@/shared/components/bank/BankCard';
 import { BANKS } from '@/features/bank/constants/banks';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const BankSelectPage = () => {
   const navigate = useNavigate();

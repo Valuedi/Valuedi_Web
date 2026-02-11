@@ -1,6 +1,6 @@
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import type { TrendItem } from '@/features/asset/asset.api';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface SectorTrendChartProps {
   data: TrendItem[];

@@ -2,7 +2,7 @@
  * 인증 관련 API 함수들
  */
 
-import { apiGet, apiPost, apiDelete, ApiResponse, ApiError } from '@/utils/api';
+import { apiGet, apiPost, apiDelete, ApiResponse, ApiError } from '@/shared/api';
 
 // ApiError를 re-export하여 features/auth에서 사용할 수 있도록 함
 export { ApiError };

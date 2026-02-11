@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 
 // 아이콘 임포트
 import WIcon from '@/assets/icons/onboarding/W.svg?react';

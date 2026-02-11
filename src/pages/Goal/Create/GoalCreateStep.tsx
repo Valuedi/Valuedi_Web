@@ -1,10 +1,10 @@
 import type { ChangeEvent } from 'react';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import AuthInput from '@/components/login/AuthInput';
-import AccountLinkBottomSheet from '@/components/goal/list/AccountLinkBottomSheet';
-import GoalCreateStepHeader from '../../../components/goal/create/GoalCreateStepHeader';
-import GoalCreateStepFooter from '../../../components/goal/create/GoalCreateStepFooter';
-import { useGoalForm, type GoalStep, type GoalFormField } from '../../../hooks/Goal/useGoalCreateForm';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import AuthInput from '@/shared/components/login/AuthInput';
+import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
+import GoalCreateStepHeader from '@/shared/components/goal/create/GoalCreateStepHeader';
+import GoalCreateStepFooter from '@/shared/components/goal/create/GoalCreateStepFooter';
+import { useGoalForm, type GoalStep, type GoalFormField } from '@/shared/hooks/Goal/useGoalCreateForm';
 
 type StepField =
   | {

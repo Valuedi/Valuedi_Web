@@ -1,6 +1,6 @@
-import ConnectionDetailListItem from '@/components/mypage/ConnectionDetailListItem';
+import ConnectionDetailListItem from '@/shared/components/mypage/ConnectionDetailListItem';
 import { assetApi } from '@/features/asset';
-import { formatCardNumber } from '@/utils/formatCardNumber';
+import { formatCardNumber } from '@/shared/utils/formatCardNumber';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 

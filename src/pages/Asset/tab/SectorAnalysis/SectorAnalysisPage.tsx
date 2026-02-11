@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { SectorSummarySection } from './sections/SectorSummarySection';
 import { SectorListSection } from './sections/SectorListSection';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
+import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 
 export const SectorAnalysis = () => {
   const location = useLocation();

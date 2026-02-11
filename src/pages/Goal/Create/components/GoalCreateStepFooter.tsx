@@ -1,4 +1,4 @@
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 
 interface GoalCreateStepFooterProps {
   isVisible: boolean;

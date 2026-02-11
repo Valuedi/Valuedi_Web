@@ -2,7 +2,7 @@
  * 트로피 관련 API
  */
 
-import { apiGet, ApiResponse } from '@/utils/api';
+import { apiGet, ApiResponse } from '@/shared/api';
 import type { Trophy, MyTrophy, GetMyTrophiesParams } from './trophy.types';
 
 /**

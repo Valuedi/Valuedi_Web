@@ -1,11 +1,11 @@
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import SavingList from '@/components/goal/detail/SavingList';
-import GoalMoreActionsBottomSheet from '@/components/goal/detail/GoalMoreActionsBottomSheet';
-import GoalDeleteConfirmModal from '@/components/goal/detail/GoalDeleteConfirmModal';
-import GoalDetailPageHeader from '@/components/goal/detail/GoalDetailPageHeader';
-import GoalProgressGauge from '@/components/goal/detail/GoalProgressGauge';
-import GoalSummaryCard from '@/components/goal/detail/GoalSummaryCard';
-import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/hooks/Goal/useGoalDetailActions';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import SavingList from '@/shared/components/goal/detail/SavingList';
+import GoalMoreActionsBottomSheet from '@/shared/components/goal/detail/GoalMoreActionsBottomSheet';
+import GoalDeleteConfirmModal from '@/shared/components/goal/detail/GoalDeleteConfirmModal';
+import GoalDetailPageHeader from '@/shared/components/goal/detail/GoalDetailPageHeader';
+import GoalProgressGauge from '@/shared/components/goal/detail/GoalProgressGauge';
+import GoalSummaryCard from '@/shared/components/goal/detail/GoalSummaryCard';
+import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/shared/hooks/Goal/useGoalDetailActions';
 
 const SavingSimulationPage = () => {
   const {

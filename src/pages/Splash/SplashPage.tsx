@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 import splashBg from '@/assets/images/splash/splash_bg.svg';
 import splashLogo from '@/assets/images/splash/splash_logo.svg';
 import splashRotated from '@/assets/images/splash/splash_rotated.svg';

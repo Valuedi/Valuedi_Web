@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import BankInfoModal from '@/components/bank/BankInfoModal';
-import { useUserName } from '@/hooks/useUserName';
-import BankInfiniteGrid from '@/components/bank/BankInfiniteGrid';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import BankInfoModal from '@/shared/components/bank/BankInfoModal';
+import { useUserName } from '@/shared/hooks/useUserName';
+import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { CARDS } from '@/features/card/constants/cards';
 
 const CardConnectionStartPage = () => {

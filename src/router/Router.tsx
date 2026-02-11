@@ -43,7 +43,7 @@ import { SectorFullListPage } from '@/pages/Asset/tab/SectorAnalysis/SectorFullL
 import { AssetDetails } from '@/pages/Asset/tab/AssetDetails/AssetDetailsPage';
 import { SectorAnalysis } from '@/pages/Asset/tab/SectorAnalysis/SectorAnalysisPage';
 import { CompareAnalysis } from '@/pages/Asset/tab/CompareAnalysis/CompareAnalysisPage';
-import { MenuGNB } from '@/components/mypage/MenuGNB';
+import { MenuGNB } from '@/shared/components/mypage/MenuGNB';
 import { SettingsPage } from '@/pages/MyPage/subpages/SettingsPage';
 import { ConnectionPage } from '@/pages/MyPage/subpages/ConnectionPage';
 import RecommendDetailPage from '@/pages/Recommend/RecommendDetailPage';

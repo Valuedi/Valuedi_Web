@@ -1,4 +1,4 @@
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
 import { AssetDailyHeader } from './AssetDailyHeader';
 import { AssetItemList } from './AssetItemList';
 

@@ -1,14 +1,14 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { BANNER } from '@/features/recommend/constants/banner';
-import { getColorToken } from '@/styles/design-system';
+import { getColorToken } from '@/shared/styles/design-system';
 import { InterestCalculator } from './components/InterestCalculator';
 import { InterestRateList, InterestRateItem } from './components/InterestRateList';
 import { ProductInfoList, ProductInfoItem } from './components/ProductInfoList';
-import { LoginButton } from '@/components/buttons';
+import { LoginButton } from '@/shared/components/buttons';
 import { useSavingsDetail } from '@/features/recommend/recommend.hooks';
 import { useMemo } from 'react';
 

@@ -1,14 +1,14 @@
 import type { ChangeEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import AuthInput from '@/components/login/AuthInput';
-import AccountLinkBottomSheet from '@/components/goal/list/AccountLinkBottomSheet';
-import GoalCreateStepFooter from '@/components/goal/create/GoalCreateStepFooter';
+import AuthInput from '@/shared/components/login/AuthInput';
+import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
+import GoalCreateStepFooter from '@/shared/components/goal/create/GoalCreateStepFooter';
 import { paths } from '@/router/paths';
-import { useGoalForm, type SelectedAccount } from '@/hooks/Goal/useGoalForm';
+import { useGoalForm, type SelectedAccount } from '@/shared/hooks/Goal/useGoalForm';
 import { useUpdateGoal, useGoalDetail } from '@/features/goal';
 import type { GoalDetail } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { formatDate, toInputDate } from '@/utils/goal/goalHelpers';
+import { formatDate, toInputDate } from '@/shared/utils/goal/goalHelpers';
 import GoalEditPageLayout from './components/GoalEditPageLayout';
 
 type GoalEditLocationState = {

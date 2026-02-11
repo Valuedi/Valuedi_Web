@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { HomeGNB } from '@/components/gnb/HomeGNB';
-import { BottomNavigation } from '@/components/gnb/BottomNavigation';
-import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
+import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/shared/components/gnb/SidebarNavigation';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import AddGoalIcon from '@/assets/icons/home/AddGoal.svg';
 import kbIcon from '@/assets/icons/bank/kb.svg';
 import SpendTodayIcon from '@/assets/icons/home/SpendToday.svg';
@@ -18,8 +18,8 @@ import { getTransactionSummaryApi } from '@/features/transaction/transaction.api
 import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
 import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
 import { getGoalDetailApi } from '@/features/goal/goal.api';
-import { ApiError } from '@/utils/api';
-import { useGetMbtiTestResult } from '@/hooks/Mbti/useGetMbtiTestResult';
+import { ApiError } from '@/shared/api';
+import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
 
 // 목표 색상 배열
 const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];

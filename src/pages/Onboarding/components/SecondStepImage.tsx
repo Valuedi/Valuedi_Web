@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 
 // 아이콘 임포트
 import FoodIcon from '@/assets/icons/onboarding/Food.svg?react';

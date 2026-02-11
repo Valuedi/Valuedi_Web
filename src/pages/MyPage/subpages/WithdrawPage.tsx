@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components';
-import { LoginButton } from '@/components/buttons';
-import CheckBoxButton from '@/components/mypage/WithdrawCheckBoxButton';
-import { cn } from '@/utils/cn';
-import { removeAccessToken } from '@/utils/api';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components';
+import { LoginButton } from '@/shared/components/buttons';
+import CheckBoxButton from '@/shared/components/mypage/WithdrawCheckBoxButton';
+import { cn } from '@/shared/utils/cn';
+import { removeAccessToken } from '@/shared/api';
 import { withdrawMemberApi, WithdrawReasonCode } from '@/features/auth/auth.api';
 
 const WITHDRAW_REASONS = [

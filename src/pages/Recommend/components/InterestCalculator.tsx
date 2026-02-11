@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
-import { CategoryButton } from '@/components/buttons';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { CategoryButton } from '@/shared/components/buttons';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { CustomSlider } from './CustomSlider';
 import { NumberInputBottomSheet } from './NumberInputSheet';
-import { calculateInterest } from '@/utils/calculateInterest';
+import { calculateInterest } from '@/shared/utils/calculateInterest';
 
 const AMOUNT_LIMITS = {
   MIN: 50000,

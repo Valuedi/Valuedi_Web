@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
 
 export interface ProductInfoItem {

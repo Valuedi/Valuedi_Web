@@ -1,4 +1,4 @@
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
 
 // Swagger 기준 약관 항목
 // {

@@ -13,7 +13,7 @@ import {
   type CreateConnectionRequest,
   type SyncStatusResponse,
 } from './connection.api';
-import { ApiResponse, ApiError } from '@/utils/api';
+import { ApiResponse, ApiError } from '@/shared/api';
 
 // Query Keys
 export const connectionKeys = {

@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
 import { TransactionGroup } from '@/features/asset/constants/account';
 import { DailyTransactionSheet } from './DailyTransactionSheet';
-import { useLedgerStore } from '@/hooks/Asset/usetLedgerStore';
+import { useLedgerStore } from '@/shared/hooks/Asset/usetLedgerStore';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 

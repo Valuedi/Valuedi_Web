@@ -1,7 +1,7 @@
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { BANKS } from '@/features/bank/constants/banks';
 import { CARDS } from '@/features/card/constants/cards';
-import { formatConnectionDate } from '@/utils/formatConnectionDate';
+import { formatConnectionDate } from '@/shared/utils/formatConnectionDate';
 
 interface ConnectionHeaderProps {
   bankName: string;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { AssetList } from './components/AssetList';
 import { AssetLedger } from './components/AssetLedger';
-import { SegmentedButton } from '@/components/buttons/SegmentedButton';
+import { SegmentedButton } from '@/shared/components/buttons/SegmentedButton';
 import { useLocation } from 'react-router-dom';
 
 type ViewType = 'list' | 'ledger';

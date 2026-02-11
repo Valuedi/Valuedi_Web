@@ -1,4 +1,4 @@
-import { API_BASE_URL, getAuthHeaders } from '@/utils/api';
+import { API_BASE_URL, getAuthHeaders } from '@/shared/api';
 import type { AccountsResponse } from './account.types';
 
 interface ApiError extends Error {

@@ -1,5 +1,5 @@
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 
 const LAYOUT_CLASS = 'max-w-none shadow-none sm:max-w-[360px] sm:shadow-lg p-0 overflow-hidden bg-white';
 const WRAPPER_CLASS = 'flex flex-col w-full min-h-screen bg-white';

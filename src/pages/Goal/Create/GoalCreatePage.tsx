@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 import BackPageIcon from '@/assets/icons/BackPage.svg';
-import { GoalSummaryCard } from '@/components/goal/GoalSummaryCard';
+import { GoalSummaryCard } from '@/shared/components/goal/GoalSummaryCard';
 import { GOAL_COLOR_NAME_TO_CODE } from '@/features/goal';
 
 const GoalCreatePage = () => {

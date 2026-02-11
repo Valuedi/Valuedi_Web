@@ -1,10 +1,10 @@
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { HomeGNB } from '@/components/gnb/HomeGNB';
-import { BottomNavigation } from '@/components/gnb/BottomNavigation';
-import { SidebarNavigation } from '@/components/gnb/SidebarNavigation';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
+import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
+import { SidebarNavigation } from '@/shared/components/gnb/SidebarNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 
 import { AssetDetails } from './tab/AssetDetails/AssetDetailsPage';
 import { SectorAnalysis } from './tab/SectorAnalysis/SectorAnalysisPage';

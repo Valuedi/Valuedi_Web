@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BankGNB from '@/components/bank/BankGNB';
-import { Typography } from '@/components/typography';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BankGNB from '@/shared/components/bank/BankGNB';
+import { Typography } from '@/shared/components/typography';
 import { createConnectionApi, ApiError } from '@/features/connection/connection.api';
 import { getBankOrganizationCode } from '@/features/connection/constants/organizationCodes';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const BankConnectingPage = () => {
   const navigate = useNavigate();

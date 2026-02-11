@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import CheckBoxButton from '@/components/buttons/CheckBoxButton';
-import { LoginButton } from '@/components/buttons';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import CheckBoxButton from '@/shared/components/buttons/CheckBoxButton';
+import { LoginButton } from '@/shared/components/buttons';
 import { useAuthStore } from '@/features/auth';
 import { agreeTermsApi, getMemberTermsApi, getTermsApi, MemberTermAgreement, TermItem } from '@/features/terms';
 

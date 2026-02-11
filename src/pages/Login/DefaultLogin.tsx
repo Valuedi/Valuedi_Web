@@ -1,4 +1,4 @@
-import SocialLoginContainer from '@/components/login/SocialLoginContainer';
+import SocialLoginContainer from '@/shared/components/login/SocialLoginContainer';
 
 const DefaultLogin = () => {
   return (

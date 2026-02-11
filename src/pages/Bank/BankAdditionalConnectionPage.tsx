@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BankGNB from '@/components/bank/BankGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BankGNB from '@/shared/components/bank/BankGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 import { BANKS } from '@/features/bank/constants/banks';
 import { getConnectionsApi } from '@/features/connection/connection.api';
 import { getBankIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
-import BankInfiniteGrid from '@/components/bank/BankInfiniteGrid';
+import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 
 const BankAdditionalConnectionPage = () => {
   const navigate = useNavigate();

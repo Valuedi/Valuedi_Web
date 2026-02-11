@@ -1,7 +1,7 @@
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 import { useNavigate } from 'react-router-dom';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 
 interface OnboardingStepProps {
   step: number;

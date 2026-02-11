@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingStep } from './components/OnboardingStep';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { FirstStepImage } from './components/FristStepImage';
 import { SecondStepImage } from './components/SecondStepImage';
 import { ThirdStepImage } from './components/ThirdStepImage';

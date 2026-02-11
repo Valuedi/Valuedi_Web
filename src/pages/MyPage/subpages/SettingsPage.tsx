@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
-import { Toast } from '@/components/common/Toast';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
+import { Toast } from '@/shared/components/common/Toast';
 import { useEffect, useState } from 'react';
 
 export const SettingsPage = () => {

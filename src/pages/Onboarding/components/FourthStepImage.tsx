@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 
 import kbIcon from '@/assets/icons/bank/kb.svg?react';
 import nhIcon from '@/assets/icons/bank/nh.svg?react';

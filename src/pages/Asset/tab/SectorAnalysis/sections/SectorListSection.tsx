@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { SectorListItem, SectorData } from '../components/SectorListItem';
 import { CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 /** 카테고리 key → 한글 라벨 (key 대소문자 무관, API 한글명 fallback) */
 function getCategoryLabel(item: SectorData): string {

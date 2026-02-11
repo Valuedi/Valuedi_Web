@@ -3,7 +3,7 @@
  * Swagger: https://api.valuedi.site/swagger-ui/index.html → Ledger (거래내역)
  */
 
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
 import type {
   ConnectedBanksResponse,
   BankAccountsResponse,

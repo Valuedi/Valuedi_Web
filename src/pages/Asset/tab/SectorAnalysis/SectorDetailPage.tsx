@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { AssetDailyHeader } from '../AssetDetails/components/AssetDailyHeader';
 import { AssetItemList } from '../AssetDetails/components/AssetItemList';
 import { CATEGORY_STYLES, CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
+import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 import { TransactionDetailModal } from './components/TransactionDetailModal';
 import { TransactionWithDetails, SectorTransactionGroup, transformToDateGroups, SectorData } from './utils/sectorUtils';
 

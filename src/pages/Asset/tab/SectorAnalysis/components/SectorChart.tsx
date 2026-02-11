@@ -1,6 +1,6 @@
 import { SectorData } from '../utils/sectorUtils';
 import { CATEGORY_STYLES } from '@/features/asset/constants/category';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface SectorChartProps {
   data: SectorData[];

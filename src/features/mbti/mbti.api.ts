@@ -2,7 +2,7 @@
  * 금융 MBTI 관련 API 함수들
  */
 
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
 
 // ========== 타입 정의 ==========
 

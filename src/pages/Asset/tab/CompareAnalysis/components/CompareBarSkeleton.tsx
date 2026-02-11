@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 export const CompareBarSkeleton = () => {
   return (

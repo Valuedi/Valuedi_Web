@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import GoalDetailPageHeader from '@/components/goal/detail/GoalDetailPageHeader';
-import GoalBottomSheet from '@/components/goal/GoalBottonSheet';
-import GoalMoreActionsBottomSheet from '@/components/goal/detail/GoalMoreActionsBottomSheet';
-import GoalDeleteConfirmModal from '@/components/goal/detail/GoalDeleteConfirmModal';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import GoalProgressGauge from '@/components/goal/detail/GoalProgressGauge';
-import GoalSummaryCard from '@/components/goal/detail/GoalSummaryCard';
-import AmountAchievedLedgerList from '@/components/goal/detail/AmountAchievedLedgerList';
+import GoalDetailPageHeader from '@/shared/components/goal/detail/GoalDetailPageHeader';
+import GoalBottomSheet from '@/shared/components/goal/GoalBottonSheet';
+import GoalMoreActionsBottomSheet from '@/shared/components/goal/detail/GoalMoreActionsBottomSheet';
+import GoalDeleteConfirmModal from '@/shared/components/goal/detail/GoalDeleteConfirmModal';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import GoalProgressGauge from '@/shared/components/goal/detail/GoalProgressGauge';
+import GoalSummaryCard from '@/shared/components/goal/detail/GoalSummaryCard';
+import AmountAchievedLedgerList from '@/shared/components/goal/detail/AmountAchievedLedgerList';
 import { useGoalDetail, useGoalLedgers } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { ledgerToTransactionItem, type TransactionItem } from '@/utils/goal/ledgerHelpers';
-import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/hooks/Goal/useGoalDetailActions';
+import { ledgerToTransactionItem, type TransactionItem } from '@/shared/utils/goal/ledgerHelpers';
+import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/shared/hooks/Goal/useGoalDetailActions';
 
 const AmountAchievedPage = () => {
   const { id } = useParams();

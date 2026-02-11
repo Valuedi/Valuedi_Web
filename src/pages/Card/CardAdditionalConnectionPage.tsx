@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import BankInfiniteGrid from '@/components/bank/BankInfiniteGrid';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { CARDS } from '@/features/card/constants/cards';
 import { useQuery } from '@tanstack/react-query';
 import { getConnectionsApi } from '@/features/connection';
