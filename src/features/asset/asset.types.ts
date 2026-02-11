@@ -29,6 +29,7 @@ export interface Account {
   accountName: string;
   balanceAmount: number;
   connectedGoalId: number | null;
+  bankName?: string;
   goalInfo: { goalId: number; title: string } | null;
 }
 

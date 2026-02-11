@@ -5,7 +5,6 @@ import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
 import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
 import { SidebarNavigation } from '@/shared/components/gnb/SidebarNavigation';
 import { Typography } from '@/shared/components/typography';
-import { cn } from '@/shared/utils/cn';
 import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
 import AddGoalIcon from '@/assets/icons/home/AddGoal.svg';
@@ -20,23 +19,34 @@ import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
 import { getGoalDetailApi } from '@/features/goal/goal.api';
 import { ApiError } from '@/shared/api';
 import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
+import { BGBANKS } from '@/features/bank/constants/bgbanks';
+import { toHexColor } from '@/features/goal';
+import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 
 // 목표 색상 배열
 const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];
 
-// 목표/계좌 아이콘 컴포넌트
-const GoalAccountIcon = ({ bgColor }: { bgColor: string }) => (
-  <div
-    className={cn('w-[32px] h-[32px] md:w-[40px] md:h-[40px] rounded-[8px] flex items-center justify-center')}
-    style={{ backgroundColor: bgColor, opacity: 0.65 }}
-  >
-    <img src={kbIcon} alt="은행 아이콘" className="w-[22px] h-[22px] md:w-[28px] md:h-[28px] object-contain" />
-  </div>
-);
+const ConnectedAccountIcon = ({ icon }: { icon: string }) => {
+  return (
+    <div className="w-[32px] h-[32px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-[8px]">
+      <img src={icon} alt="bank icon" className="w-full h-full object-cover" />
+    </div>
+  );
+};
+
+const getBankInfo = (accountName: string) => {
+  const bank = BGBANKS.find((b) => accountName.includes(b.name.replace('은행', '')) || accountName.includes(b.name));
+  return {
+    icon: bank ? bank.icon : kbIcon,
+    bankKey: bank ? bank.id : 'kb',
+  };
+};
 
 export const HomePage = () => {
   const navigate = useNavigate();
-  const [goals, setGoals] = useState<Array<{ id: string; name: string; amount: number; iconBg: string }>>([]);
+  const [goals, setGoals] = useState<
+    Array<{ id: string; name: string; amount: number; iconBg: string; colorCode?: string; iconId?: number }>
+  >([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactionSummary, setTransactionSummary] = useState<{
     totalExpense: number;
@@ -109,6 +119,8 @@ export const HomePage = () => {
                     name: detailRes.result.title,
                     amount: detailRes.result.savedAmount,
                     iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
+                    colorCode: detailRes.result.colorCode,
+                    iconId: detailRes.result.iconId,
                   };
                 }
               } catch (error) {
@@ -117,6 +129,8 @@ export const HomePage = () => {
                   id: String(goal.goalId),
                   name: goal.title,
                   amount: 0,
+                  colorCode: undefined,
+                  iconId: undefined,
                   iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
                 };
               }
@@ -124,8 +138,9 @@ export const HomePage = () => {
             });
 
           const goalDetails = (await Promise.all(goalDetailsPromises)).filter(
-            (goal): goal is { id: string; name: string; amount: number; iconBg: string } => goal !== null
+            (goal): goal is NonNullable<typeof goal> => goal !== null
           );
+
           setGoals(goalDetails);
           setTotalGoalCount(uniqueGoals.size);
         }
@@ -262,32 +277,41 @@ export const HomePage = () => {
                   ) : (
                     <>
                       <div className="flex flex-col gap-[8px] mb-[16px]">
-                        {goals.map((goal) => (
-                          <div key={goal.id} className="flex items-center justify-between py-[8px]">
-                            <div className="flex gap-[8px] items-center">
-                              <GoalAccountIcon bgColor={goal.iconBg} />
-                              <div className="flex flex-col gap-[2px]">
-                                <Typography
-                                  style="text-body-2-14-semi-bold"
-                                  className="text-neutral-90"
-                                  fontFamily="pretendard"
+                        {goals.map((goal) => {
+                          const bgColor = goal.colorCode ? toHexColor(goal.colorCode) : goal.iconBg;
+                          const iconSrc = goal.iconId !== undefined ? GOAL_ICON_SRC[goal.iconId] : null;
+                          return (
+                            <div key={goal.id} className="flex items-center justify-between py-[8px]">
+                              <div className="flex gap-[8px] items-center">
+                                <div
+                                  className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px]"
+                                  style={{ backgroundColor: bgColor }}
                                 >
-                                  {goal.name}
-                                </Typography>
-                                <Typography
-                                  style="text-caption-1-12-regular"
-                                  className="text-neutral-70"
-                                  fontFamily="pretendard"
-                                >
-                                  {formatCurrency(goal.amount)}
-                                </Typography>
+                                  {iconSrc && <img src={iconSrc} alt="" className="w-[20px] h-[20px] object-contain" />}
+                                </div>
+                                <div className="flex flex-col gap-[2px]">
+                                  <Typography
+                                    style="text-body-2-14-semi-bold"
+                                    className="text-neutral-90"
+                                    fontFamily="pretendard"
+                                  >
+                                    {goal.name}
+                                  </Typography>
+                                  <Typography
+                                    style="text-caption-1-12-regular"
+                                    className="text-neutral-70"
+                                    fontFamily="pretendard"
+                                  >
+                                    {formatCurrency(goal.amount)}
+                                  </Typography>
+                                </div>
+                              </div>
+                              <div className="w-[18px] h-[18px] flex items-center justify-center">
+                                <MoreViewButton />
                               </div>
                             </div>
-                            <div className="w-[18px] h-[18px] flex items-center justify-center">
-                              <MoreViewButton />
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       {totalGoalCount > 3 && (
                         <button
@@ -331,32 +355,35 @@ export const HomePage = () => {
                   ) : (
                     <>
                       <div className="flex flex-col gap-[8px] mb-[16px]">
-                        {accounts.map((account, index) => (
-                          <div key={account.accountId} className="flex items-center justify-between py-[8px]">
-                            <div className="flex gap-[8px] items-center">
-                              <GoalAccountIcon bgColor={GOAL_COLORS[index % GOAL_COLORS.length]} />
-                              <div className="flex flex-col gap-[2px]">
-                                <Typography
-                                  style="text-body-2-14-semi-bold"
-                                  className="text-neutral-90"
-                                  fontFamily="pretendard"
-                                >
-                                  {formatCurrency(account.balanceAmount)}
-                                </Typography>
-                                <Typography
-                                  style="text-caption-1-12-regular"
-                                  className="text-neutral-70"
-                                  fontFamily="pretendard"
-                                >
-                                  {account.accountName}
-                                </Typography>
+                        {accounts.map((account) => {
+                          const { icon } = getBankInfo(account.bankName || '');
+                          return (
+                            <div key={account.accountId} className="flex items-center justify-between py-[8px]">
+                              <div className="flex gap-[8px] items-center">
+                                <ConnectedAccountIcon icon={icon} />
+                                <div className="flex flex-col gap-[2px]">
+                                  <Typography
+                                    style="text-body-2-14-semi-bold"
+                                    className="text-neutral-90"
+                                    fontFamily="pretendard"
+                                  >
+                                    {formatCurrency(account.balanceAmount)}
+                                  </Typography>
+                                  <Typography
+                                    style="text-caption-1-12-regular"
+                                    className="text-neutral-70"
+                                    fontFamily="pretendard"
+                                  >
+                                    {account.accountName}
+                                  </Typography>
+                                </div>
+                              </div>
+                              <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
+                                <MoreViewButton />
                               </div>
                             </div>
-                            <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
-                              <MoreViewButton />
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       {totalAccountCount > 3 && (
                         <button
