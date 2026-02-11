@@ -36,10 +36,8 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
   const targetAmount = goalData.targetAmount;
 
   // 모인 금액: extraSavingAmount가 있으면 그 값만 사용, 없으면 API의 savedAmount 사용
-  const totalSavedForGauge =
-    extraSavingAmount != null ? extraSavingAmount : goalData.savedAmount;
-  const rawRate =
-    targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
+  const totalSavedForGauge = extraSavingAmount != null ? extraSavingAmount : goalData.savedAmount;
+  const rawRate = targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
   // 0~100으로 클램프, 소수점은 반올림 처리
   const clampedRate = Math.min(Math.max(Math.round(rawRate), 0), 100);
 

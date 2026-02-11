@@ -28,9 +28,9 @@ const BottomSheet = ({ isOpen, onClose, title, children }: BottomSheetProps) => 
             className="fixed bottom-0 left-0 right-0 z-[101] rounded-t-3xl bg-white px-8 pb-10 pt-12 shadow-2xl"
           >
             <div className="absolute left-1/2 top-4 h-1.5 w-12 -translate-x-1/2 rounded-full bg-gray-200" />
-            
+
             {title && <h2 className="mb-8 text-2xl font-bold text-gray-900">{title}</h2>}
-            
+
             {children}
           </motion.div>
         </>

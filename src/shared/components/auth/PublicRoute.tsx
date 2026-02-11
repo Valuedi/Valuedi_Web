@@ -16,4 +16,3 @@ export const PublicRoute = () => {
   // 비로그인 상태라면 하위 라우트를 그대로 렌더링
   return <Outlet />;
 };
-
