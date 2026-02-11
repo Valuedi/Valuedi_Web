@@ -1,9 +1,9 @@
 /**
  * 토큰 서비스 유틸리티
  *
+ * 토큰 관련 저수준 로직을 캡슐화합니다.
  * - localStorage 접근 로직
- * - 인증 관련 플래그 관리
- * - 쿠키 옵션 정의
+ * - 쿠키 옵션 등 토큰 관련 설정
  *
  * 이 모듈은 토큰의 물리적 저장소 접근만 담당하며,
  * 비즈니스 로직은 상위 레이어(auth.store, apiClient)에서 처리합니다.
@@ -112,4 +112,3 @@ export const clearAllAuthData = (): void => {
 export const COOKIE_OPTIONS = {
   credentials: 'include' as RequestCredentials,
 } as const;
-
