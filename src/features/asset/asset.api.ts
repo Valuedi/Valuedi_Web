@@ -36,8 +36,9 @@ export const assetKeys = createQueryKeys('assets', {
 
 /** rematchCategories 요청 (Swagger 스펙에 맞게 조정) */
 export interface RematchCategoriesRequest {
-  yearMonth?: string; // YYYY-MM
-  [key: string]: unknown;
+  yearMonth: string; // YYYY-MM
+  fromDate: string; // YYYY-MM-DD
+  toDate: string; // YYYY-MM-DD
 }
 
 /** rematchCategories 응답 */
@@ -49,13 +50,13 @@ export interface RematchCategoriesResult {
 
 /**
  * 거래 내역 카테고리 재매칭 (키워드 등으로 재분류)
- * POST /api/transactions/rematch-categories
+ * POST /api/transactions/rematch
  * Swagger: Ledger (거래내역) → rematchCategories
  */
 export const rematchCategoriesApi = async (
-  params?: RematchCategoriesRequest
+  params: RematchCategoriesRequest
 ): Promise<ApiResponse<RematchCategoriesResult | null>> => {
-  return apiPost<RematchCategoriesResult | null>('/api/transactions/rematch-categories', params ?? {});
+  return apiPost<RematchCategoriesResult | null>('/api/transactions/rematch', params);
 };
 
 // ========== GET /api/transactions/by-category (getCategoryStats) ==========

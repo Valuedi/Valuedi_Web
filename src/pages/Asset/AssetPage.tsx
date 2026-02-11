@@ -33,7 +33,7 @@ export const AssetPage = () => {
         <SidebarNavigation activeItem="asset" onItemClick={handleNavClick} />
 
         {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 flex flex-col min-h-screen">
+        <div className="flex-1 flex flex-col min-h-screen w-full max-w-[480px] mx-auto overflow-x-hidden">
           <div className="sticky top-0 z-10 w-full">
             <HomeGNB />
           </div>

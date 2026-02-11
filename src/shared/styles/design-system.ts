@@ -111,7 +111,7 @@ export type TypographyStyle =
   | 'text-title-3-24-bold'
   | 'text-title-3-24-medium'
   | 'text-title-3-24-regular'
-  | 'text-headline-1-22-bold'
+  | 'text-headline-1-22-semi-bold'
   | 'text-headline-1-22-medium'
   | 'text-headline-1-22-regular'
   | 'text-headline-2-20-semi-bold'

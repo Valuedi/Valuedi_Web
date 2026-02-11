@@ -55,7 +55,7 @@ export const HistoryCompareSection = ({ isLoading = false }: HistoryCompareSecti
   const maxAmount = Math.max(totalNov, totalDec, totalJan, 150000);
 
   return (
-    <section className="px-5 py-8 bg-white pb-24">
+    <section className="px-5 py-6 bg-white pb-4">
       <Typography variant="headline-3" weight="bold" color="neutral-90" className="mb-1">
         소비내역 비교
       </Typography>
@@ -71,7 +71,7 @@ export const HistoryCompareSection = ({ isLoading = false }: HistoryCompareSecti
       )}
 
       {/* 최근 3개월치 바 차트 스켈레톤/실제 데이터 */}
-      <div className="flex justify-between items-end gap-2 h-44 px-2">
+      <div className="flex justify-between items-end gap-2 min-h-[120px] w-full max-w-[340px] mx-auto px-1">
         {isLoading || isTrendLoading ? (
           <>
             <CompareBarSkeleton />

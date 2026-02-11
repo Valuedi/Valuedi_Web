@@ -160,7 +160,7 @@ export const RecommendDetailPage = () => {
               {product.korCoNm}
             </Typography>
 
-            <Typography style="text-headline-1-22-bold" className={cn('text-neutral-90')}>
+            <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
               {product.finPrdtNm}
             </Typography>
           </div>

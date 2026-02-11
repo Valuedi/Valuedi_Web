@@ -50,7 +50,7 @@ export const AssetAccountDetailPage = () => {
             <Typography style="text-caption-1-12-regular" className={cn('text-neutral-70')}>
               {accountInfo.accountNumber}
             </Typography>
-            <Typography style="text-headline-1-22-bold" className={cn('text-neutral-90')}>
+            <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
               {formatCurrency(accountInfo.balance)}
             </Typography>
           </div>

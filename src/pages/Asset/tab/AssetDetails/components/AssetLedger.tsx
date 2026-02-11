@@ -97,7 +97,7 @@ export const AssetLedger = () => {
             {isLoading ? (
               <Skeleton className="w-32 h-8 rounded" />
             ) : (
-              <Typography style="text-headline-1-22-bold" className={cn('text-neutral-100')}>
+              <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-100')}>
                 {formatCurrency(totalExpense)}
               </Typography>
             )}

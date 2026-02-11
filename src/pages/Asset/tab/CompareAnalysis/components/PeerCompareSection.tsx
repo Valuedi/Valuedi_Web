@@ -33,7 +33,7 @@ export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProp
   const isMore = myTotal > peerTotal;
 
   return (
-    <section className="px-5 py-8 bg-white border-b-[8px] border-neutral-5">
+    <section className="px-5 py-6 bg-white border-b-[8px] border-neutral-5">
       {/* 제목 부분 */}
       <Typography variant="headline-3" weight="semi-bold" color="neutral-90" className="mb-1">
         또래별 비교
@@ -50,7 +50,7 @@ export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProp
       )}
 
       {/* 바 차트 컨테이너 */}
-      <div className="flex justify-center items-end gap-14 px-10 h-44">
+      <div className="flex justify-center items-end gap-6 min-h-[140px] w-full max-w-[360px] mx-auto px-2">
         {/* 로딩 중일 땐 차트 대신 전용 스켈레톤 2개 배치 */}
         {loading ? (
           <>

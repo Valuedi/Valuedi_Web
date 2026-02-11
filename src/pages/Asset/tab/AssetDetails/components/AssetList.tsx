@@ -43,7 +43,7 @@ export const AssetList = () => {
           <Typography style="text-body-2-14-regular" className="text-neutral-70">
             총 자산
           </Typography>
-          <Typography style="text-headline-1-22-bold" className="text-neutral-90">
+          <Typography style="text-headline-1-22-semi-bold" className="text-neutral-90">
             {formatCurrency(totalAsset)}
           </Typography>
         </div>

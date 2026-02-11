@@ -44,7 +44,7 @@ export const OnboardingStep = ({ step, title, description, visual, onNext }: Onb
       >
         {/* 텍스트 영역 */}
         <div className={cn('flex flex-col gap-3 sm:gap-4 items-center w-full max-w-[320px] flex-shrink-0')}>
-          <Typography style="text-headline-1-22-bold" className={cn('text-center text-neutral-90 w-full')} as="div">
+          <Typography style="text-headline-1-22-semi-bold" className={cn('text-center text-neutral-90 w-full')} as="div">
             {title.split('\n').map((line, index) => (
               <p key={index} className={cn(index === 0 ? 'mb-0' : '')}>
                 {line}
