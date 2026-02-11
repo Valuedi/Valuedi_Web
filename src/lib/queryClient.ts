@@ -1,5 +1,6 @@
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
 import { ApiError } from '@/shared/api/apiClient';
+import { getErrorMessage, getErrorHandlingStrategy, ErrorHandlingStrategy } from '@/shared/utils/errorHandler';
 
 // 전역 에러/토스트 핸들러 (런타임에 주입)
 let globalToastHandler: ((message: string) => void) | null = null;
@@ -31,19 +32,23 @@ const queryCache = new QueryCache({
         return;
       }
 
-      // 네트워크 에러는 별도 처리
-      if (error.code === 'NETWORK_ERROR' && globalToastHandler) {
-        globalToastHandler('네트워크 연결을 확인해주세요.');
+      // 에러 처리 전략 결정
+      const strategy = getErrorHandlingStrategy(error.status, error.code);
+
+      // 무시할 에러는 처리하지 않음
+      if (strategy === ErrorHandlingStrategy.IGNORE) {
         return;
       }
 
-      // 기타 에러는 토스트로 표시
-      if (globalToastHandler && error.status >= 400) {
-        // 일부 에러는 사용자에게 표시하지 않음
-        const silentErrorCodes = ['MBTI404_2'];
-        if (!silentErrorCodes.includes(error.code)) {
-          globalToastHandler(error.message || '오류가 발생했습니다.');
-        }
+      // 커스텀 처리 (401은 이미 처리됨)
+      if (strategy === ErrorHandlingStrategy.CUSTOM) {
+        return;
+      }
+
+      // 토스트 메시지 표시
+      if (strategy === ErrorHandlingStrategy.TOAST && globalToastHandler) {
+        const errorMessage = getErrorMessage(error);
+        globalToastHandler(errorMessage);
       }
     } else if (globalToastHandler) {
       // 예상치 못한 에러
@@ -63,18 +68,23 @@ const mutationCache = new MutationCache({
         return;
       }
 
-      // 네트워크 에러는 별도 처리
-      if (error.code === 'NETWORK_ERROR' && globalToastHandler) {
-        globalToastHandler('네트워크 연결을 확인해주세요.');
+      // 에러 처리 전략 결정
+      const strategy = getErrorHandlingStrategy(error.status, error.code);
+
+      // 무시할 에러는 처리하지 않음
+      if (strategy === ErrorHandlingStrategy.IGNORE) {
         return;
       }
 
-      // 기타 에러는 토스트로 표시
-      if (globalToastHandler && error.status >= 400) {
-        const silentErrorCodes = ['MBTI404_2'];
-        if (!silentErrorCodes.includes(error.code)) {
-          globalToastHandler(error.message || '요청 처리 중 오류가 발생했습니다.');
-        }
+      // 커스텀 처리 (401은 이미 처리됨)
+      if (strategy === ErrorHandlingStrategy.CUSTOM) {
+        return;
+      }
+
+      // 토스트 메시지 표시
+      if (strategy === ErrorHandlingStrategy.TOAST && globalToastHandler) {
+        const errorMessage = getErrorMessage(error);
+        globalToastHandler(errorMessage);
       }
     } else if (globalToastHandler) {
       // 예상치 못한 에러

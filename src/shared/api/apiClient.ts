@@ -31,6 +31,7 @@ export class ApiError extends Error {
 }
 
 import { getAccessTokenFromStorage, setAccessTokenToStorage, clearAllAuthData } from './tokenService';
+import { isSilentError } from '@/shared/utils/errorHandler';
 
 /**
  * Auth Store 참조 타입
@@ -331,12 +332,11 @@ async function apiFetch<T = unknown>(
 
     // 응답이 성공이 아니면 에러로 처리
     if (!response.ok || !data.isSuccess) {
-      // 정상적인 상황으로 처리해야 하는 에러 코드 목록 (에러로 로깅하지 않음)
-      const silentErrorCodes = ['MBTI404_2']; // MBTI 결과가 없는 것은 정상적인 상황
-      const isSilentError = silentErrorCodes.includes(data.code);
+      // 정상적인 상황으로 처리해야 하는 에러 코드 확인
+      const shouldSilent = isSilentError(data.code);
 
       // 디버깅: 에러 응답 로그 (정상적인 에러는 제외)
-      if (!isSilentError) {
+      if (!shouldSilent) {
         const errorResult = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
         console.error('API 에러 응답:', {
           status: response.status,
