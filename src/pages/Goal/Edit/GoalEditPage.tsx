@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AuthInput from '@/shared/components/login/AuthInput';
 import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
@@ -108,6 +108,14 @@ function GoalEditForm({
     onBack: () => navigate(-1),
   });
 
+  // 엔터 키 핸들러: 유효성 검사 통과 시 제출
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === 'NumpadEnter') && canSubmit && !updateGoalMutation.isPending) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
     <>
       <main className="flex-1 flex flex-col px-[20px] pt-[28px] pb-[32px] overflow-y-auto">
@@ -130,6 +138,7 @@ function GoalEditForm({
             name="goalAmount"
             value={goalAmount}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('goalAmount', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="목표액은 얼마인가요?"
             focusBorderClassName="border-primary-normal"
             width="full"
@@ -141,6 +150,7 @@ function GoalEditForm({
             name="endDate"
             value={endDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('endDate', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
@@ -152,6 +162,7 @@ function GoalEditForm({
             name="startDate"
             value={startDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('startDate', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
@@ -163,6 +174,7 @@ function GoalEditForm({
             name="goalName"
             value={goalName}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('goalName', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="목표명을 작성 해주세요"
             focusBorderClassName="border-primary-normal"
             width="full"

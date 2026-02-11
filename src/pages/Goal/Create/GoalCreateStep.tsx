@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import AuthInput from '@/shared/components/login/AuthInput';
 import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
@@ -90,6 +90,24 @@ const GoalCreateStep = () => {
     goalAmount,
   };
 
+  // 엔터 키 핸들러: 유효성 검사 통과 시 다음 단계로 이동
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, field: GoalFormField) => {
+    if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+      e.preventDefault();
+      // 현재 단계의 첫 번째 입력 필드이고, 유효한 값이 있을 때만 다음 단계로
+      const currentStepFields = steps[currentStep];
+      const firstInputField = currentStepFields.find((item) => item.kind === 'input' && !item.readOnly);
+
+      if (firstInputField && firstInputField.kind === 'input' && firstInputField.field === field) {
+        // 유효성 검사: 값이 있고 에러가 없어야 함
+        const value = valuesByField[field];
+        if (value.trim().length > 0) {
+          handleNext();
+        }
+      }
+    }
+  };
+
   return (
     <>
       <MobileLayout className="p-0 overflow-hidden bg-white">
@@ -139,6 +157,9 @@ const GoalCreateStep = () => {
                       readOnly
                         ? () => {}
                         : (e: ChangeEvent<HTMLInputElement>) => updateField(item.field, e.target.value)
+                    }
+                    onKeyDown={
+                      readOnly ? undefined : (e: KeyboardEvent<HTMLInputElement>) => handleKeyDown(e, item.field)
                     }
                     placeholder={placeholder}
                     readOnly={readOnly}
