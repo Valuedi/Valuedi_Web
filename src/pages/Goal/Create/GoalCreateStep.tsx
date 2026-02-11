@@ -171,7 +171,11 @@ const GoalCreateStep = () => {
             </div>
           </main>
 
-          <GoalCreateStepFooter isVisible={shouldShowPrimaryButton} buttonText={primaryButtonText} onClick={handleNext} />
+          <GoalCreateStepFooter
+            isVisible={shouldShowPrimaryButton}
+            buttonText={primaryButtonText}
+            onClick={handleNext}
+          />
         </div>
       </MobileLayout>
 
