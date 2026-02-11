@@ -4,9 +4,12 @@ import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';
 import { MbtiDetailChart } from '@/pages/Mbti/components/MbtiDetailChart';
 import { calculateMbtiScores } from '@/shared/utils/calculateMbtiScore';
 import { formatMbtiDescription } from '@/shared/utils/formatMbtiText';
+import { MoreViewButton } from '@/shared/components/buttons';
+import { useState } from 'react';
 
 const MyMbti = () => {
   const { mbtiResult, isLoading } = useGetProfile();
+  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading || !mbtiResult) return null;
 
@@ -48,13 +51,23 @@ const MyMbti = () => {
 
       <div className={cn('flex flex-col gap-[48px] mt-[48px]')}>
         <div className={cn('flex flex-col gap-[12px]')}>
-          <Typography style="text-headline-3-18-semi-bold" className={cn('text-neutral-90')}>
+          <Typography style="text-headline-3-18-semi-bold" className="text-neutral-90">
             세부사항
           </Typography>
-          <div className={cn('w-full rounded-[12px] p-[12px] bg-neutral-10')}>
-            <Typography style="text-body-2-14-regular" className={cn('text-neutral-70 whitespace-pre-wrap')}>
+          <div className={cn('w-full rounded-[12px] p-[12px] bg-neutral-10 flex flex-col gap-[8px]')}>
+            <Typography
+              style="text-body-2-14-regular"
+              className={cn('text-neutral-70 whitespace-pre-wrap', !isOpen && 'line-clamp-3')}
+            >
               {formatMbtiDescription(mbtiResult.detail)}
             </Typography>
+
+            <div onClick={() => setIsOpen(!isOpen)} className={cn('flex gap-[4px] items-center w-fit cursor-pointer')}>
+              <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50')}>
+                {isOpen ? '간략히보기' : '자세히보기'}
+              </Typography>
+              <MoreViewButton className={cn(isOpen ? '-rotate-90' : 'rotate-90')} />
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-[24px]">
