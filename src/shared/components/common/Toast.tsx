@@ -27,7 +27,7 @@ export const Toast = ({ message, isOpen, onClose, autoClose = true, autoCloseDel
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-[34px] w-full px-5 z-[9999]">
+    <div className="fixed inset-x-0 bottom-[34px] flex justify-center px-5 z-[9999]">
       <div
         className={cn(
           'flex items-center shadow-lg',
