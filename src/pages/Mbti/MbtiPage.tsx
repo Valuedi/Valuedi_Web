@@ -1,6 +1,6 @@
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { useMbtiActions, useMbtiStore } from '@/hooks/Mbti/useMbtiStore';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { useMbtiActions, useMbtiStore } from '@/shared/hooks/Mbti/useMbtiStore';
 import { MbtiIntro } from './components/MbtiIntro';
 import { MbtiTest } from './components/MbtiTest';
 import { MbtiLoading } from './components/MbtiLoading';

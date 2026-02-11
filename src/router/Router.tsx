@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { HomePage } from '@/pages';
 import LoginPage from '@/pages/Login/LoginPage';
 import SignUpPage from '@/pages/SignUp/SignUpPage';
@@ -16,7 +16,7 @@ import GoalCreatePage from '@/pages/Goal/Create/GoalCreatePage';
 import GoalCreateStep from '@/pages/Goal/Create/GoalCreateStep';
 import GoalCompletePage from '@/pages/Goal/Create/GoalCompletePage';
 import SavingSimulationPage from '@/pages/Goal/Detail/SavingSimulationPage';
-
+import GoalAlmostDonePage from '@/pages/Goal/Edit/GoalAlmostDonePage';
 import {
   BankConnectionStartPage,
   BankSelectPage,
@@ -42,7 +42,7 @@ import { SectorFullListPage } from '@/pages/Asset/tab/SectorAnalysis/SectorFullL
 import { AssetDetails } from '@/pages/Asset/tab/AssetDetails/AssetDetailsPage';
 import { SectorAnalysis } from '@/pages/Asset/tab/SectorAnalysis/SectorAnalysisPage';
 import { CompareAnalysis } from '@/pages/Asset/tab/CompareAnalysis/CompareAnalysisPage';
-import { MenuGNB } from '@/components/mypage/MenuGNB';
+import { MenuGNB } from '@/shared/components/mypage/MenuGNB';
 import { SettingsPage } from '@/pages/MyPage/subpages/SettingsPage';
 import { ConnectionPage } from '@/pages/MyPage/subpages/ConnectionPage';
 import RecommendDetailPage from '@/pages/Recommend/RecommendDetailPage';
@@ -50,23 +50,8 @@ import MyPage from '@/pages/MyPage/MyPage';
 import { ConnectionDetailPage } from '@/pages/MyPage/subpages/ConnectionDetailPage';
 import { LogoutPage } from '@/pages/MyPage/subpages/LogoutPage';
 import { WithdrawPage } from '@/pages/MyPage/subpages/WithdrawPage';
-
-export const paths = {
-  goal: {
-    current: '/goal/current',
-    past: '/goal/past',
-    // (옵션) id 없이 접근하는 절약 시뮬레이션 페이지
-    savingSimulation: '/goal/saving-simulation',
-    amountAchieved: (id: string | number) => `/goal/detail/${id}/amount-achieved`,
-    savingsSimulation: (id: string | number) => `/goal/detail/${id}/savingsimulation`,
-    edit: (id: string | number) => `/goal/detail/${id}/edit`,
-    amountAchievedRoute: '/goal/detail/:id/amount-achieved',
-    savingsSimulationRoute: '/goal/detail/:id/savingsimulation',
-    create: '/goal/create',
-    createStep: '/goal/create/step',
-    createComplete: '/goal/create/complete',
-  },
-} as const;
+import TermsSettingsPage from '@/pages/MyPage/subpages/TermsSettingsPage';
+import { paths } from './paths';
 
 export const router = createBrowserRouter([
   {
@@ -77,17 +62,18 @@ export const router = createBrowserRouter([
       { path: 'home', element: <HomePage /> },
       {
         path: 'asset',
-        element: <AssetPage />, // 여기에 탭 버튼과 레이아웃이 있음
+        element: <AssetPage />,
         children: [
-          { index: true, element: <AssetDetails /> }, // /asset (기본탭)
-          { path: 'sector', element: <SectorAnalysis /> }, // /asset/sector (분야별)
-          { path: 'compare', element: <CompareAnalysis /> }, // /asset/compare (비교)
+          { index: true, element: <AssetDetails /> },
+          { path: 'sector', element: <SectorAnalysis /> },
+          { path: 'compare', element: <CompareAnalysis /> },
         ],
       },
       { path: 'asset', element: <AssetPage /> },
       { path: 'asset/account/:id', element: <AssetAccountDetailPage /> },
       { path: 'recommend', element: <RecommendPage /> },
       { path: 'recommend/detail/:id', element: <RecommendDetailPage /> },
+      { path: 'goal', element: <Navigate to="/goal/current" replace /> },
       { path: paths.goal.current, element: <CurrentGoalPage /> },
       { path: paths.goal.past, element: <PastGoalPage /> },
       { path: paths.goal.savingSimulation, element: <SavingSimulationPage /> },
@@ -95,6 +81,7 @@ export const router = createBrowserRouter([
       { path: paths.goal.savingsSimulationRoute, element: <SavingSimulationPage /> },
       { path: paths.goal.create, element: <GoalCreatePage /> },
       { path: paths.goal.createStep, element: <GoalCreateStep /> },
+      { path: paths.goal.almostDone, element: <GoalAlmostDonePage /> },
       { path: paths.goal.createComplete, element: <GoalCompletePage /> },
       { path: 'login', element: <DefaultLogin /> },
       { path: 'login/form', element: <LoginPage /> },
@@ -122,6 +109,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <MyPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'settings/terms', element: <TermsSettingsPage /> },
           { path: 'connection', element: <ConnectionPage /> },
           { path: 'mbti', element: <MbtiPage /> },
           {

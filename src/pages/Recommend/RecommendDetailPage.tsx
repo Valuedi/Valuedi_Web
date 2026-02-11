@@ -1,27 +1,134 @@
-import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { useNavigate, useParams } from 'react-router-dom';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { BANNER } from '@/features/recommend/constants/banner';
-import { getColorToken } from '@/styles/design-system';
+import { getColorToken } from '@/shared/styles/design-system';
 import { InterestCalculator } from './components/InterestCalculator';
-import { InterestRateList } from './components/InterestRateList';
-import { ProductInfoList } from './components/ProductInfoList';
-import { LoginButton } from '@/components/buttons';
-import { useGetRecommendDetail } from '@/hooks/Recommend/useGetRecommendDetail';
+import { InterestRateList, InterestRateItem } from './components/InterestRateList';
+import { ProductInfoList, ProductInfoItem } from './components/ProductInfoList';
+import { LoginButton } from '@/shared/components/buttons';
+import { useSavingsDetail } from '@/features/recommend/recommend.hooks';
+import { useMemo } from 'react';
 
 export const RecommendDetailPage = () => {
   const navigate = useNavigate();
+  const { id: finPrdtCd } = useParams<{ id: string }>();
 
-  const { productInfo, preferentialRates, productDetailInfo } = useGetRecommendDetail();
+  const { data: detailData, isLoading, isError } = useSavingsDetail(finPrdtCd);
 
-  const targetBank = BANNER.find((bank) => bank.id === productInfo.bankId);
+  const product = detailData?.product;
+
+  // 은행명으로 BANNER 찾기 (korCoNm과 name 매칭)
+  const targetBank = useMemo(() => {
+    if (!product) return null;
+    return BANNER.find((bank) => bank.name === product.korCoNm || product.korCoNm.includes(bank.name));
+  }, [product]);
+
   const backgroundColor = targetBank ? getColorToken(targetBank.color) : getColorToken('neutral-10');
+
+  // API 데이터를 컴포넌트에 맞는 형식으로 변환
+  const preferentialRates: InterestRateItem[] = useMemo(() => {
+    if (!product?.options) return [];
+    return product.options.map((option) => ({
+      description: `${option.rsrvTypeNm} | ${option.saveTrm}개월 | ${option.intrRateTypeNm}`,
+      rate: option.intrRate2, // 우대금리
+    }));
+  }, [product]);
+
+  const productDetailInfo: ProductInfoItem[] = useMemo(() => {
+    if (!product) return [];
+    return [
+      {
+        label: '가입방법',
+        value: product.joinWay,
+      },
+      {
+        label: '가입대상',
+        value: product.joinMember,
+      },
+      {
+        label: '최대한도',
+        value: product.maxLimit ? `${Number(product.maxLimit).toLocaleString()}원` : undefined,
+      },
+      {
+        label: '만기 후 이자율',
+        value: product.mtrtInt,
+      },
+      {
+        label: '우대조건',
+        value: product.spclCnd,
+      },
+      {
+        label: '가입제한',
+        value: product.joinDeny === '1' ? '제한있음' : '제한없음',
+      },
+      {
+        label: '유의사항',
+        value: product.etcNote,
+      },
+    ].filter((item) => item.value); // 값이 있는 것만 필터링
+  }, [product]);
+
+  // 최고 금리와 기본 금리 계산
+  const maxRate = useMemo(() => {
+    if (!product?.options || product.options.length === 0) return 0;
+    return Math.max(...product.options.map((opt) => opt.intrRate2));
+  }, [product]);
+
+  const basicRate = useMemo(() => {
+    if (!product?.options || product.options.length === 0) return 0;
+    // 가장 긴 기간의 기본 금리 사용 (일반적으로 가장 긴 기간이 기본)
+    const sortedOptions = [...product.options].sort((a, b) => Number(b.saveTrm) - Number(a.saveTrm));
+    return sortedOptions[0]?.intrRate || 0;
+  }, [product]);
 
   const handleBack = () => {
     navigate(-1);
   };
+
+  if (isLoading) {
+    return (
+      <MobileLayout className="bg-white">
+        <div className={cn('sticky top-0 z-10 w-full')}>
+          <BackPageGNB
+            className={cn('bg-neutral-0')}
+            text=""
+            titleColor="text-neutral-90"
+            title="추천"
+            onBack={handleBack}
+          />
+        </div>
+        <div className={cn('flex items-center justify-center py-[40px]')}>
+          <Typography style="text-body-2-14-regular" className="text-neutral-70">
+            상품 정보를 불러오는 중...
+          </Typography>
+        </div>
+      </MobileLayout>
+    );
+  }
+
+  if (isError || !product) {
+    return (
+      <MobileLayout className="bg-white">
+        <div className={cn('sticky top-0 z-10 w-full')}>
+          <BackPageGNB
+            className={cn('bg-neutral-0')}
+            text=""
+            titleColor="text-neutral-90"
+            title="추천"
+            onBack={handleBack}
+          />
+        </div>
+        <div className={cn('flex items-center justify-center py-[40px]')}>
+          <Typography style="text-body-2-14-regular" className="text-neutral-70">
+            상품 정보를 불러오는데 실패했습니다.
+          </Typography>
+        </div>
+      </MobileLayout>
+    );
+  }
 
   return (
     <MobileLayout className="bg-white">
@@ -50,11 +157,11 @@ export const RecommendDetailPage = () => {
 
           <div className={cn('flex flex-col gap-[4px]')}>
             <Typography style="text-caption-1-12-regular" className={cn('text-neutral-70')}>
-              {productInfo.bankName}
+              {product.korCoNm}
             </Typography>
 
             <Typography style="text-headline-1-22-bold" className={cn('text-neutral-90')}>
-              {productInfo.productName}
+              {product.finPrdtNm}
             </Typography>
           </div>
         </div>
@@ -70,7 +177,7 @@ export const RecommendDetailPage = () => {
               </Typography>
               <div className={cn('flex gap-[2px]')}>
                 <Typography style="text-body-2-14-semi-bold" className={cn('text-neutral-90')}>
-                  {productInfo.maxRate}
+                  {maxRate.toFixed(2)}
                 </Typography>
                 <Typography style="text-body-2-14-regular" className={cn('text-neutral-90')}>
                   %
@@ -78,30 +185,32 @@ export const RecommendDetailPage = () => {
               </div>
             </div>
 
-            <div className={cn('flex justify-between items-center')}>
-              <Typography style="text-body-2-14-regular" className={cn('text-neutral-70')}>
-                기본 금리 (60개월 기준)
-              </Typography>
-              <div className={cn('flex gap-[2px]')}>
-                <Typography style="text-body-2-14-semi-bold" className={cn('text-neutral-90')}>
-                  {productInfo.basicRate}
+            {basicRate > 0 && (
+              <div className={cn('flex justify-between items-center')}>
+                <Typography style="text-body-2-14-regular" className={cn('text-neutral-70')}>
+                  기본 금리
                 </Typography>
-                <Typography style="text-body-2-14-regular" className={cn('text-neutral-90')}>
-                  %
-                </Typography>
+                <div className={cn('flex gap-[2px]')}>
+                  <Typography style="text-body-2-14-semi-bold" className={cn('text-neutral-90')}>
+                    {basicRate.toFixed(2)}
+                  </Typography>
+                  <Typography style="text-body-2-14-regular" className={cn('text-neutral-90')}>
+                    %
+                  </Typography>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         <div className={cn('h-[8px] bg-neutral-10 mx-[-20px]')} />
 
-        <InterestCalculator />
+        <InterestCalculator basicRate={basicRate} maxRate={maxRate} />
 
-        <InterestRateList items={preferentialRates} />
+        {preferentialRates.length > 0 && <InterestRateList items={preferentialRates} />}
 
         <div className={cn('h-[8px] bg-neutral-10 mx-[-20px]')} />
 
-        <ProductInfoList items={productDetailInfo} initialCount={3} />
+        {productDetailInfo.length > 0 && <ProductInfoList items={productDetailInfo} initialCount={3} />}
 
         <div className={cn('flex flex-col gap-[8px] rounded-[8px]')}>
           <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50 whitespace-pre-wrap')}>

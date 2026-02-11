@@ -1,28 +1,23 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '@/utils/cn';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { cn } from '@/shared/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { SectorListItem } from './components/SectorListItem';
 import { CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
-import { transformToCategoryGroups, SectorData } from './utils/sectorUtils';
+import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
+import type { SectorData } from './components/SectorListItem';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 export const SectorFullListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 1. 데이터 기준 날짜 가져오기 (2026년 기준)
-  const selectedDate = location.state?.selectedDate || new Date();
+  const selectedDate = location.state?.selectedDate ? new Date(location.state.selectedDate) : new Date();
 
-  // 2. 해당 월의 데이터 로드 및 변환
-  const { totalExpense, transactions } = useGetAssetAnalysis(selectedDate);
-  const allSectors = transformToCategoryGroups(transactions, totalExpense);
+  const { allSectors, isLoading } = useGetAssetAnalysis(selectedDate);
 
-  // 3. 필터 로직 ("그외" 항목인 경우 7번째 아이템부터 표시)
   const isFilterOthers = location.state?.filter === 'others';
   const displayItems = isFilterOthers ? allSectors.slice(5) : allSectors;
-
-  // 4. 동적 타이틀 설정
   const title = isFilterOthers ? `그외 ${displayItems.length}개` : `분야별 전체내역`;
 
   return (
@@ -41,22 +36,34 @@ export const SectorFullListPage = () => {
 
         {/* 분야별 리스트 영역 */}
         <div className={cn('flex-1 flex flex-col px-[20px] gap-[12px] mt-[20px] no-scrollbar pb-10')}>
-          {displayItems.map((item: SectorData) => {
-            const categoryKey = item.key || 'default';
-
-            return (
-              <SectorListItem
-                key={categoryKey} // 💡 index 없이 key만으로 유니크하게 설정 ㅋ
-                data={item}
-                label={CATEGORY_LABELS[categoryKey] || CATEGORY_LABELS.default}
-                onClick={() => {
-                  navigate(`/asset/sector/${categoryKey}`, {
-                    state: { sectorData: item },
-                  });
-                }}
-              />
-            );
-          })}
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, idx) => (
+                <div key={idx} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="w-10 h-10 rounded-full" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="w-24 h-4 rounded" />
+                      <Skeleton className="w-12 h-3 rounded" />
+                    </div>
+                  </div>
+                  <Skeleton className="w-20 h-5 rounded" />
+                </div>
+              ))
+            : displayItems.map((item: SectorData) => {
+                const categoryKey = item.key || 'default';
+                return (
+                  <SectorListItem
+                    key={categoryKey}
+                    data={item}
+                    label={CATEGORY_LABELS[categoryKey] || item.category || CATEGORY_LABELS.default}
+                    onClick={() => {
+                      navigate(`/asset/sector/${categoryKey}`, {
+                        state: { sectorData: item, selectedDate: selectedDate.toISOString() },
+                      });
+                    }}
+                  />
+                );
+              })}
         </div>
       </div>
     </MobileLayout>

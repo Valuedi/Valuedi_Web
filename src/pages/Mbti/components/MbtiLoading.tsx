@@ -1,17 +1,39 @@
 import { useEffect } from 'react';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import MbtiIcon from '@/assets/icons/Mbti.svg?react';
-import { useMbtiActions } from '@/hooks/Mbti/useMbtiStore';
-
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { useMbtiActions, useMbtiStore } from '@/shared/hooks/Mbti/useMbtiStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { submitMbtiTest } from '@/features/mbti/mbti.api';
+import APGVIcon from '@/assets/icons/mbti/intro/APGV.svg?react';
 export const MbtiLoading = () => {
   const { setStep } = useMbtiActions();
+  const { answers } = useMbtiStore();
+  const queryClient = useQueryClient();
+
+  // 답변 제출 Mutation 정의
+  const { mutate } = useMutation({
+    mutationFn: submitMbtiTest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mbtiResult'] });
+      setTimeout(() => {
+        setStep('result');
+      }, 1500);
+    },
+    onError: (error) => {
+      console.error('제출 실패:', error);
+      alert('분석 결과 저장에 실패했습니다. 다시 시도해주세요.');
+      setStep('test');
+    },
+  });
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setStep('result');
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, [setStep]);
+    // 서버 규격에 맞게 데이터 가공
+    const formattedAnswers = Object.entries(answers).map(([id, value]) => ({
+      questionId: Number(id),
+      choiceValue: value,
+    }));
+    mutate(formattedAnswers);
+  }, [mutate, answers]);
 
   return (
     <div className={cn('flex flex-col h-full min-h-screen bg-neutral-0')}>
@@ -29,8 +51,8 @@ export const MbtiLoading = () => {
           </Typography>
         </div>
 
-        <div className={cn('flex items-center justify-center mt-[81px]')}>
-          <MbtiIcon />
+        <div className={cn('flex items-center justify-center mt-[113px] p-[12px]')}>
+          <APGVIcon />
         </div>
       </div>
     </div>

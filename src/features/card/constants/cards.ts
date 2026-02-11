@@ -15,18 +15,16 @@ export interface Card {
   name: string;
   icon: string;
 }
-
-// CODEF 카드사 목록 (14개)
 export const CARDS: Card[] = [
   { id: 'kb', name: 'KB카드', icon: kbIcon },
-  { id: 'hyundai', name: '현대카드', icon: hanaIcon }, // 임시 아이콘
-  { id: 'samsung', name: '삼성카드', icon: shinhanIcon }, // 임시 아이콘
+  { id: 'hyundai', name: '현대카드', icon: hanaIcon },
+  { id: 'samsung', name: '삼성카드', icon: shinhanIcon },
   { id: 'nh', name: 'NH카드', icon: nhIcon },
-  { id: 'bc', name: 'BC카드', icon: kbIcon }, // 임시 아이콘
+  { id: 'bc', name: 'BC카드', icon: kbIcon },
   { id: 'shinhan', name: '신한카드', icon: shinhanIcon },
   { id: 'citi', name: '씨티카드', icon: citiIcon },
   { id: 'woori', name: '우리카드', icon: wooriIcon },
-  { id: 'lotte', name: '롯데카드', icon: wooriIcon }, // 임시 아이콘
+  { id: 'lotte', name: '롯데카드', icon: wooriIcon },
   { id: 'hana', name: '하나카드', icon: hanaIcon },
   { id: 'dgb', name: '전북카드', icon: dgbIcon },
   { id: 'gwangju', name: '광주카드', icon: gwangjuIcon },

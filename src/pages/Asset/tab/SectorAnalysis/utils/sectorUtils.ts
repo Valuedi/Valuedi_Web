@@ -70,6 +70,39 @@ export const transformToCategoryGroups = (
 };
 
 /**
+ * 💡 4-1. 카테고리별 퍼센트 합이 정확히 100이 되도록 정규화
+ */
+export function normalizeSectorPercentages(sectors: SectorData[], totalExpense: number): SectorData[] {
+  if (sectors.length === 0 || totalExpense <= 0) return sectors;
+  const totalPct = sectors.reduce((sum, s) => sum + s.percentage, 0);
+  const scale = totalPct > 0 ? 100 / totalPct : 1;
+  return sectors.map((s) => ({
+    ...s,
+    percentage: s.percentage * scale,
+  }));
+}
+
+/**
+ * 💡 4-2. 퍼센트 배열을 정수로 반올림했을 때 합이 100이 되도록 (최대 나머지법)
+ */
+export function getIntegerPercentagesSum100(percentages: number[]): number[] {
+  if (percentages.length === 0) return [];
+  const total = percentages.reduce((a, b) => a + b, 0);
+  if (total <= 0) return percentages.map(() => 0);
+  const scale = 100 / total;
+  const scaled = percentages.map((p) => p * scale);
+  const floor = scaled.map((p) => Math.floor(p));
+  let sum = floor.reduce((a, b) => a + b, 0);
+  const remainder = scaled.map((p, i) => ({ i, r: p - floor[i] }));
+  remainder.sort((a, b) => b.r - a.r);
+  for (let i = 0; sum < 100 && i < remainder.length; i++) {
+    floor[remainder[i].i] += 1;
+    sum += 1;
+  }
+  return floor;
+}
+
+/**
  * 💡 5. 날짜별 그룹화 (상세 페이지용)
  */
 export const transformToDateGroups = (items: TransactionWithDetails[]): SectorTransactionGroup[] => {

@@ -1,37 +1,48 @@
-import { Typography } from '@/components';
-import ProgressBar from '@/components/bar/ProgressBar';
-import { cn } from '@/utils/cn';
-import { MBTI_QUESTIONS } from '@/features/mbti/constants/mbtiData';
-import { useMbtiActions, useMbtiStore } from '@/hooks/Mbti/useMbtiStore';
+import { Typography } from '@/shared/components';
+import ProgressBar from '@/shared/components/bar/ProgressBar';
+import { cn } from '@/shared/utils/cn';
+import { useMbtiActions, useMbtiStore } from '@/shared/hooks/Mbti/useMbtiStore';
+import { getMbtiQuestions } from '@/features/mbti/mbti.api';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 const OPTIONS = [
-  { label: '매우 그렇다.', score: 5 },
-  { label: '그렇다.', score: 4 },
-  { label: '보통이다.', score: 3 },
-  { label: '아니다.', score: 2 },
-  { label: '매우 아니다.', score: 1 },
+  { label: '매우 그렇다.', value: 1 },
+  { label: '그렇다.', value: 2 },
+  { label: '보통이다.', value: 3 },
+  { label: '아니다.', value: 4 },
+  { label: '매우 아니다.', value: 5 },
 ];
 
 export const MbtiTest = () => {
   const { testStep } = useMbtiStore();
   const { setAnswer, setTestStep, setStep } = useMbtiActions();
 
-  const question = MBTI_QUESTIONS[testStep];
+  const { data } = useQuery({
+    queryKey: ['mbtiQuestions'],
+    queryFn: getMbtiQuestions,
+  });
 
-  const handleAnswer = (score: number) => {
+  const questions = data?.result || [];
+  const question = questions[testStep];
+
+  const handleAnswer = (value: number) => {
     if (!question) return;
 
-    setAnswer(question.id, score);
+    setAnswer(question.id, value);
 
-    if (testStep < MBTI_QUESTIONS.length - 1) {
+    if (testStep < questions.length - 1) {
       setTestStep(testStep + 1);
-      window.scrollTo(0, 0);
     } else {
       setStep('loading');
     }
   };
 
-  const progressPercentage = ((testStep + 1) / MBTI_QUESTIONS.length) * 100;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [testStep]);
+
+  const progressPercentage = ((testStep + 1) / questions.length) * 100;
 
   return (
     <div className={cn('flex flex-col h-full min-h-screen bg-neutral-0')}>
@@ -42,7 +53,7 @@ export const MbtiTest = () => {
       <div className="flex flex-col flex-1 px-[20px] mt-[19px]">
         <div className={cn('flex flex-col gap-[12px]')}>
           <Typography style="text-headline-3-18-semi-bold" className={cn('text-neutral-90 whitespace-pre-line')}>
-            {question?.title}
+            {question?.content}
           </Typography>
           <Typography style="text-body-2-14-regular" className={cn('text-neutral-70')}>
             사용자의 소비행태를 분석해요
@@ -53,8 +64,10 @@ export const MbtiTest = () => {
           {OPTIONS.map((option, index) => (
             <button
               key={index}
-              onClick={() => handleAnswer(option.score)}
-              className={cn('w-full p-[12px] flex items-center gap-[8px] border border-neutral-10 rounded-[8px]')}
+              onClick={() => handleAnswer(option.value)}
+              className={cn(
+                'w-full p-[12px] flex items-center gap-[8px] border border-neutral-10 rounded-[8px] active:bg-neutral-10 active:border-neutral-20'
+              )}
             >
               <div
                 className={cn('flex items-center justify-center w-[24px] h-[24px] rounded-[12px]', 'bg-primary-normal')}

@@ -1,4 +1,4 @@
-import { ColorToken } from '@/styles/design-system';
+import { ColorToken } from '@/shared/styles/design-system';
 
 export interface AccountData {
   id: number;

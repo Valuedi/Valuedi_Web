@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
 import { BANKS } from '@/features/bank/constants/banks';
 import { CARDS } from '@/features/card/constants/cards';
 import { getConnectionsApi } from '@/features/connection/connection.api';
@@ -12,8 +12,8 @@ import {
   getBankIdFromOrganizationCode,
   getCardIdFromOrganizationCode,
 } from '@/features/connection/constants/organizationCodes';
-import { cn } from '@/utils/cn';
-import { Toast } from '@/components/common/Toast';
+import { cn } from '@/shared/utils/cn';
+import { Toast } from '@/shared/components/common/Toast';
 
 export const ConnectionPage = () => {
   const navigate = useNavigate();
@@ -93,7 +93,13 @@ export const ConnectionPage = () => {
   };
 
   const getBankInfo = (label: string) => {
-    const bank = BANKS.find((b) => label.includes(b.name.replace('은행', '').replace('카드', '')));
+    // 은행과 카드를 합친 전체 리스트에서 검색하도록 수정
+    const allProviders = [...BANKS, ...CARDS];
+
+    // label(예: NH카드)에서 '은행', '카드'를 제거한 키워드로 비교
+    const provider = allProviders.find((p) =>
+      label.replace('은행', '').replace('카드', '').includes(p.name.replace('은행', '').replace('카드', ''))
+    );
 
     // 2. 배경색 매핑 규칙 적용
     const colorMapping: Record<string, string> = {
@@ -101,15 +107,22 @@ export const ConnectionPage = () => {
       KB국민카드: 'kb',
       기업은행: 'ibk',
       IBK기업은행: 'ibk',
-      신한은행: 'kbank', // 신한 -> kbank 컬러칩
+      신한은행: 'shinhan',
+      신한카드: 'shinhan',
       농협은행: 'nh',
-      우리은행: 'kbank', // 우리 -> kbank 컬러칩
+      NH카드: 'nh',
+      우리은행: 'woori',
+      우리카드: 'woori',
       수협은행: 'suhyup',
-      하나카드: 'hana', // 하나 -> hana 컬러칩
+      수협카드: 'suhyup',
+      하나카드: 'hana',
+      하나은행: 'hana',
     };
-    const colorId = colorMapping[label] || bank?.id;
+
+    const colorId = colorMapping[label] || provider?.id;
+
     return {
-      icon: bank?.icon,
+      icon: provider?.icon,
       bgColor: colorId ? `var(--color-bank-${colorId})` : 'var(--color-neutral-5)',
     };
   };

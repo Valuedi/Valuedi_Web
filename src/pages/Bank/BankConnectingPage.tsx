@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BankGNB from '@/components/bank/BankGNB';
-import { Typography } from '@/components/typography';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BankGNB from '@/shared/components/bank/BankGNB';
+import { Typography } from '@/shared/components/typography';
 import { createConnectionApi, ApiError } from '@/features/connection/connection.api';
 import { getBankOrganizationCode } from '@/features/connection/constants/organizationCodes';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const BankConnectingPage = () => {
   const navigate = useNavigate();
@@ -53,16 +53,6 @@ const BankConnectingPage = () => {
     },
     onError: (error: ApiError | Error) => {
       console.error('은행 연결 실패:', error);
-
-      let errorMessage = '은행 연결에 실패했습니다.';
-      if (error instanceof ApiError) {
-        errorMessage = error.message || errorMessage;
-        if (error.code === 'CODEF400_1') {
-          errorMessage = '잘못된 비밀번호이거나 인증 정보가 올바르지 않습니다.';
-        }
-      }
-
-      alert(errorMessage);
       navigate(-1); // 이전 페이지로 돌아가기
     },
   });

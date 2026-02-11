@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import BankInfoModal from '@/components/bank/BankInfoModal';
-import { useUserName } from '@/hooks/useUserName';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import BankInfoModal from '@/shared/components/bank/BankInfoModal';
+import { useUserName } from '@/shared/hooks/useUserName';
+import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
+import { CARDS } from '@/features/card/constants/cards';
 
 const CardConnectionStartPage = () => {
   const navigate = useNavigate();
@@ -42,8 +44,8 @@ const CardConnectionStartPage = () => {
         </div>
       </div>
 
-      {/* Placeholder for card illustration */}
-      <div className="w-[182px] h-[182px] bg-neutral-40 rounded-full mx-auto mt-[125px] mb-auto" />
+      {/* Bank Infinite Grid */}
+      <BankInfiniteGrid availableBanks={CARDS} />
 
       {/* Button */}
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px]">

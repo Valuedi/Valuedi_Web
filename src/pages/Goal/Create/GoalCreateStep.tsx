@@ -1,10 +1,10 @@
-import type { ChangeEvent } from 'react';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import AuthInput from '@/components/login/AuthInput';
-import AccountLinkBottomSheet from '@/components/goal/list/AccountLinkBottomSheet';
-import GoalCreateStepHeader from '../../../components/goal/create/GoalCreateStepHeader';
-import GoalCreateStepFooter from '../../../components/goal/create/GoalCreateStepFooter';
-import { useGoalForm, type GoalStep, type GoalFormField } from '../../../hooks/Goal/useGoalCreateForm';
+import type { ChangeEvent, KeyboardEvent } from 'react';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import AuthInput from '@/shared/components/login/AuthInput';
+import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
+import GoalCreateStepHeader from '@/shared/components/goal/create/GoalCreateStepHeader';
+import GoalCreateStepFooter from '@/shared/components/goal/create/GoalCreateStepFooter';
+import { useGoalForm, type GoalStep, type GoalFormField } from '@/shared/hooks/Goal/useGoalCreateForm';
 
 type StepField =
   | {
@@ -53,11 +53,11 @@ const GoalCreateStep = () => {
       },
     ],
     2: [
-      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'startDate', label: '시작일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
     3: [
-      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YY-MM-DD' },
+      { kind: 'input', field: 'endDate', label: '종료일', placeholder: 'YYYY-MM-DD' },
       { kind: 'input', field: 'startDate', label: '시작일', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
@@ -68,7 +68,7 @@ const GoalCreateStep = () => {
       { kind: 'input', field: 'goalName', label: '목표 이름', readOnly: true, isGrayBg: true },
     ],
     5: [
-      { kind: 'account', label: '계좌 연동', placeholder: '계좌를 선택해주세요' },
+      { kind: 'account', label: '계좌 연동', placeholder: '계좌를 선택해주세요', readOnly: false, isGrayBg: false },
       { kind: 'input', field: 'goalAmount', label: '목표 금액', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'endDate', label: '종료일', readOnly: true, isGrayBg: true },
       { kind: 'input', field: 'startDate', label: '시작일', readOnly: true, isGrayBg: true },
@@ -90,6 +90,24 @@ const GoalCreateStep = () => {
     goalAmount,
   };
 
+  // 엔터 키 핸들러: 유효성 검사 통과 시 다음 단계로 이동
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, field: GoalFormField) => {
+    if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+      e.preventDefault();
+      // 현재 단계의 첫 번째 입력 필드이고, 유효한 값이 있을 때만 다음 단계로
+      const currentStepFields = steps[currentStep];
+      const firstInputField = currentStepFields.find((item) => item.kind === 'input' && !item.readOnly);
+
+      if (firstInputField && firstInputField.kind === 'input' && firstInputField.field === field) {
+        // 유효성 검사: 값이 있고 에러가 없어야 함
+        const value = valuesByField[field];
+        if (value.trim().length > 0) {
+          handleNext();
+        }
+      }
+    }
+  };
+
   return (
     <>
       <MobileLayout className="p-0 overflow-hidden bg-white">
@@ -101,11 +119,15 @@ const GoalCreateStep = () => {
               {steps[currentStep].map((item, idx) => {
                 if (item.kind === 'account') {
                   const value = accountDisplay;
-                  const readOnly = item.readOnly ?? true;
+                  const readOnly = item.readOnly ?? false;
                   const isGrayBg = item.isGrayBg ?? false;
 
                   return (
-                    <div key={`account-${idx}`} onClick={openAccountSheet} className="cursor-pointer">
+                    <div
+                      key={`account-${idx}`}
+                      onClick={!readOnly ? openAccountSheet : undefined}
+                      className={!readOnly ? 'cursor-pointer' : ''}
+                    >
                       <AuthInput
                         label={item.label}
                         name="linkedAccount"
@@ -115,7 +137,7 @@ const GoalCreateStep = () => {
                         readOnly={readOnly}
                         isGrayBg={isGrayBg}
                         width="full"
-                        className="cursor-pointer"
+                        className={!readOnly ? 'cursor-pointer' : ''}
                       />
                     </div>
                   );
@@ -135,6 +157,9 @@ const GoalCreateStep = () => {
                       readOnly
                         ? () => {}
                         : (e: ChangeEvent<HTMLInputElement>) => updateField(item.field, e.target.value)
+                    }
+                    onKeyDown={
+                      readOnly ? undefined : (e: KeyboardEvent<HTMLInputElement>) => handleKeyDown(e, item.field)
                     }
                     placeholder={placeholder}
                     readOnly={readOnly}

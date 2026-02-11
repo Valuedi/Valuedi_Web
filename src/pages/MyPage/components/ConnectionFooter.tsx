@@ -1,5 +1,5 @@
-import { Typography } from '@/components/typography';
-import BottomSheet from '@/components/common/BottomSheet';
+import { Typography } from '@/shared/components/typography';
+import BottomSheet from '@/shared/components/common/BottomSheet';
 import { useState } from 'react';
 
 interface ConnectionFooterProps {

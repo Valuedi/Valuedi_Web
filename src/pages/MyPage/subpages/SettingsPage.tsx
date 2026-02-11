@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
-import { Toast } from '@/components/common/Toast';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
+import { Toast } from '@/shared/components/common/Toast';
 import { useEffect, useState } from 'react';
 
 export const SettingsPage = () => {
@@ -53,6 +53,7 @@ export const SettingsPage = () => {
           <SettingsItem label="MBTI 검사하기" onClick={() => navigate('/mbti')} />
           <SettingsItem label="회원정보 변경" onClick={handleDevelopingClick} />
           <SettingsItem label="비밀번호 재설정" onClick={handleDevelopingClick} />
+          <SettingsItem label="약관 및 마케팅 동의 관리" onClick={() => navigate('/mypage/settings/terms')} />
         </SettingsSection>
 
         <SectionDivider />

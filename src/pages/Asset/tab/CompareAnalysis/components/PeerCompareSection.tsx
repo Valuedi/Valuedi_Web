@@ -1,10 +1,12 @@
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
-import { PEER_AVERAGE_DATA } from '../constants/mockData';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { CompareBar } from './CompareBar';
-import { Skeleton } from '@/components/skeleton/Skeleton'; // 💡 1. 스켈레톤 임포트
-import { CompareBarSkeleton } from './CompareBarSkeleton'; // 💡 2. 바 차트 전용 스켈레톤
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
+import { CompareBarSkeleton } from './CompareBarSkeleton';
+import { getPeerCompareApi } from '@/features/asset/asset.api';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 // 💡 3. Props 인터페이스 추가
 interface PeerCompareSectionProps {
@@ -12,9 +14,20 @@ interface PeerCompareSectionProps {
 }
 
 export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProps) => {
-  const now = new Date();
-  const { totalExpense: myTotal } = useGetAssetAnalysis(now);
-  const peerTotal = PEER_AVERAGE_DATA.total;
+  const userName = useUserName();
+  const now = useMemo(() => new Date(), []);
+  const yearMonth = useMemo(() => `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`, [now]);
+
+  const { data, isLoading: isPeerLoading } = useQuery({
+    queryKey: ['transactions', 'peer-compare', yearMonth],
+    queryFn: () => getPeerCompareApi(yearMonth),
+  });
+
+  const apiResult = data?.result;
+  const myTotal = apiResult?.myTotalExpense ?? 0;
+  const peerTotal = apiResult?.perAverageExpense ?? 0;
+
+  const loading = isLoading || isPeerLoading;
 
   const diffAmount = Math.abs(myTotal - peerTotal);
   const isMore = myTotal > peerTotal;
@@ -26,8 +39,8 @@ export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProp
         또래별 비교
       </Typography>
 
-      {/* 💡 4. 로딩 중일 땐 설명 문구 대신 스켈레톤! */}
-      {isLoading ? (
+      {/* 로딩 중일 땐 설명 문구 대신 스켈레톤 */}
+      {loading ? (
         <Skeleton className="w-56 h-4 mb-10 rounded" />
       ) : (
         <Typography variant="body-3" color="neutral-70" className="mb-10">
@@ -38,8 +51,8 @@ export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProp
 
       {/* 바 차트 컨테이너 */}
       <div className="flex justify-center items-end gap-14 px-10 h-44">
-        {/* 💡 5. 로딩 중일 땐 차트 대신 전용 스켈레톤 2개 배치! */}
-        {isLoading ? (
+        {/* 로딩 중일 땐 차트 대신 전용 스켈레톤 2개 배치 */}
+        {loading ? (
           <>
             <CompareBarSkeleton />
             <CompareBarSkeleton />
@@ -48,7 +61,7 @@ export const PeerCompareSection = ({ isLoading = false }: PeerCompareSectionProp
           <>
             <CompareBar label="또래 평균" amount={peerTotal} maxAmount={Math.max(myTotal, peerTotal) * 1.2} />
             <CompareBar
-              label="김휘주님"
+              label={`${userName}님`}
               amount={myTotal}
               isHighlight={true}
               maxAmount={Math.max(myTotal, peerTotal) * 1.2}

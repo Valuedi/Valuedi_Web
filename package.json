@@ -16,12 +16,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "postinstall": "playwright install chromium"
+    "postinstall": "playwright install chromium",
+    "setup:fork": "./scripts/setup-fork.sh",
+    "sync:upstream": "./scripts/sync-from-upstream.sh"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.12",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.26.2",
+    "framer-motion": "^12.33.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.12.0",

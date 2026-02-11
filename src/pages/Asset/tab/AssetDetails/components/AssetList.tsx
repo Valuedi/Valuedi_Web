@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import kbIcon from '@/assets/icons/bank/kb.svg';
 import BankPlusIcon from '@/assets/icons/asset/BankPlus.svg';
 import CardPlusIcon from '@/assets/icons/asset/CardPlus.svg';
-import { MoreViewButton } from '@/components/buttons';
+import { MoreViewButton } from '@/shared/components/buttons';
 import { useNavigate } from 'react-router-dom';
-import { ColorToken, getColorToken } from '@/styles/design-system';
+import { ColorToken, getColorToken } from '@/shared/styles/design-system';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
-import { useGetAssetList } from '@/hooks/Asset/useGetAssetList';
+import { useGetAssetList } from '@/shared/hooks/Asset/useGetAssetList';
 
 const BankIcon = ({ bgColor }: { bgColor: ColorToken }) => (
   <div

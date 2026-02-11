@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import ProfileIcon from '@/assets/icons/mbti/Profile.svg';
-import { MoreViewButton } from '@/components/buttons';
 import MyMbti from './components/MyMbti';
-import { SegmentedButton } from '@/components/buttons/SegmentedButton';
-import { useGetProfile } from '@/hooks/MyPage/useGetProfile';
+import { SegmentedButton } from '@/shared/components/buttons/SegmentedButton';
+import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';
 import MyTrophy from './components/MyTrophy';
 
 type TabType = 'mbti' | 'trophy';
@@ -54,22 +53,21 @@ export const MyPage = () => {
             </div>
             <div>
               <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50')}>
-                {mbtiResult.title}
+                {mbtiResult?.title}
               </Typography>
               <Typography style="text-body-2-14-semi-bold" className={cn('text-neutral-90')}>
                 {userName}님
               </Typography>
             </div>
           </div>
-          <div className="w-[18px] h-[18px]">
-            <MoreViewButton />
-          </div>
         </div>
+      </div>
 
+      <div className={cn('sticky z-10 w-full px-[20px] top-[50px] pb-[20px]')}>
         <SegmentedButton<TabType> value={activeTab} onChange={setActiveTab} options={tabOptions} />
       </div>
 
-      <div className={cn('flex-1 pb-[80px] px-[20px]')}>
+      <div className={cn('flex-1 px-[20px]')}>
         {activeTab === 'mbti' && <MyMbti />}
         {activeTab === 'trophy' && <MyTrophy />}
       </div>
