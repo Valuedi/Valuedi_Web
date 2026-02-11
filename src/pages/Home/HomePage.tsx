@@ -23,6 +23,7 @@ import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
 import { BGBANKS } from '@/features/bank/constants/bgbanks';
 import { toHexColor } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
+import { getConnectionsApi } from '@/features/connection/connection.api';
 
 // 목표 색상 배열
 const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];
@@ -70,6 +71,61 @@ export const HomePage = () => {
 
   // MBTI 결과 조회 (캐릭터 아이콘용)
   const { data: mbtiTestResult } = useGetMbtiTestResult();
+
+  // 새로고침 후 연동 상태 확인
+  useEffect(() => {
+    const shouldCheckConnection = sessionStorage.getItem('checkConnectionAfterLogin') === 'true';
+    if (shouldCheckConnection) {
+      sessionStorage.removeItem('checkConnectionAfterLogin');
+
+      // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      const checkConnectionAndRedirect = async () => {
+        try {
+          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
+
+          // 은행 연동 여부 확인
+          const hasBankConnection =
+            connectionsRes.status === 'fulfilled' &&
+            connectionsRes.value?.result &&
+            Array.isArray(connectionsRes.value.result) &&
+            connectionsRes.value.result.some((conn) => {
+              const businessType = conn.businessType || conn.type;
+              return businessType === 'BK';
+            });
+
+          // 금융 MBTI 존재 여부 확인
+          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 디버깅을 위한 로그
+          console.log('연동 상태 확인 결과:', {
+            hasBankConnection,
+            hasMbti,
+            connectionsData: connectionsRes?.status === 'fulfilled' ? connectionsRes.value?.result : null,
+            mbtiData: mbtiRes?.status === 'fulfilled' ? mbtiRes.value?.result : null,
+          });
+
+          // 조건에 따라 리디렉션
+          if (hasBankConnection && hasMbti) {
+            // 은행 연동 + 금융 MBTI 존재 → 홈에 그대로 유지
+            // 이미 홈 페이지이므로 리디렉션 불필요
+          } else if (hasBankConnection && !hasMbti) {
+            // 은행만 연동 → 금융 MBTI 페이지로
+            navigate('/mbti', { replace: true });
+          } else {
+            // 둘 다 없음 → 은행 연동 시작 페이지로
+            navigate('/bank/start', { replace: true });
+          }
+        } catch (error) {
+          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
+          console.error('연동 상태 확인 실패:', error);
+          navigate('/bank/start', { replace: true });
+        }
+      };
+
+      checkConnectionAndRedirect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

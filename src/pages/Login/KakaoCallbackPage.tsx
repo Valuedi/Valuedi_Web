@@ -32,34 +32,10 @@ const KakaoCallbackPage = () => {
         // accessToken을 스토어/스토리지에 반영 (Refresh Token은 HttpOnly 쿠키로 관리)
         login(response.result.memberId, response.result.accessToken);
 
-        // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
-        try {
-          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
-
-          // 은행 연동 여부 확인
-          const hasBankConnection =
-            connectionsRes.status === 'fulfilled' &&
-            connectionsRes.value?.result?.some((conn) => (conn.businessType || conn.type) === 'BK');
-
-          // 금융 MBTI 존재 여부 확인
-          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
-
-          // 조건에 따라 리디렉션
-          if (hasBankConnection && hasMbti) {
-            // 은행 연동 + 금융 MBTI 존재 → 홈으로
-            navigate('/home', { replace: true });
-          } else if (hasBankConnection && !hasMbti) {
-            // 은행만 연동 → 금융 MBTI 페이지로
-            navigate('/mbti', { replace: true });
-          } else {
-            // 둘 다 없음 → 은행 연동 시작 페이지로
-            navigate('/bank/start', { replace: true });
-          }
-        } catch (error) {
-          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
-          console.error('연동 상태 확인 실패:', error);
-          navigate('/bank/start', { replace: true });
-        }
+        // 로그인 성공 후 상태가 완전히 반영되도록 새로고침
+        // 새로고침 후 연동 상태 확인을 위해 플래그 저장
+        sessionStorage.setItem('checkConnectionAfterLogin', 'true');
+        window.location.reload();
       }
     },
     onError: (error: ApiError | Error) => {
@@ -93,6 +69,59 @@ const KakaoCallbackPage = () => {
   });
 
   useEffect(() => {
+    // 새로고침 후 연동 상태 확인
+    const shouldCheckConnection = sessionStorage.getItem('checkConnectionAfterLogin') === 'true';
+    if (shouldCheckConnection) {
+      sessionStorage.removeItem('checkConnectionAfterLogin');
+
+      // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      const checkConnectionAndRedirect = async () => {
+        try {
+          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
+
+          // 은행 연동 여부 확인
+          const hasBankConnection =
+            connectionsRes.status === 'fulfilled' &&
+            connectionsRes.value?.result &&
+            Array.isArray(connectionsRes.value.result) &&
+            connectionsRes.value.result.some((conn) => {
+              const businessType = conn.businessType || conn.type;
+              return businessType === 'BK';
+            });
+
+          // 금융 MBTI 존재 여부 확인
+          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 디버깅을 위한 로그
+          console.log('연동 상태 확인 결과:', {
+            hasBankConnection,
+            hasMbti,
+            connectionsData: connectionsRes?.status === 'fulfilled' ? connectionsRes.value?.result : null,
+            mbtiData: mbtiRes?.status === 'fulfilled' ? mbtiRes.value?.result : null,
+          });
+
+          // 조건에 따라 리디렉션
+          if (hasBankConnection && hasMbti) {
+            // 은행 연동 + 금융 MBTI 존재 → 홈으로
+            navigate('/home', { replace: true });
+          } else if (hasBankConnection && !hasMbti) {
+            // 은행만 연동 → 금융 MBTI 페이지로
+            navigate('/mbti', { replace: true });
+          } else {
+            // 둘 다 없음 → 은행 연동 시작 페이지로
+            navigate('/bank/start', { replace: true });
+          }
+        } catch (error) {
+          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
+          console.error('연동 상태 확인 실패:', error);
+          navigate('/bank/start', { replace: true });
+        }
+      };
+
+      checkConnectionAndRedirect();
+      return;
+    }
+
     // 중복 호출 방지
     if (hasProcessedRef.current) {
       return;

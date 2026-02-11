@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Typography } from '@/shared/components/typography';
 import AuthInput from '@/shared/components/login/AuthInput';
@@ -19,28 +19,41 @@ interface BaseLoginContainerProps {
 const BaseLoginContainer: React.FC<BaseLoginContainerProps> = ({ className, onLogin }) => {
   const auth = useAuthForm();
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
   const [loginError, setLoginError] = useState<string>('');
   const isFormValid = auth.id.length > 0 && auth.pw.length > 0 && !auth.idError && !auth.pwError;
 
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
-    onSuccess: async (response) => {
-      if (response.result) {
-        // accessToken을 스토어/스토리지에 반영 (Refresh Token은 HttpOnly 쿠키로 관리)
-        login(response.result.memberId, response.result.accessToken);
+  // 새로고침 후 연동 상태 확인
+  useEffect(() => {
+    const shouldCheckConnection = sessionStorage.getItem('checkConnectionAfterLogin') === 'true';
+    if (shouldCheckConnection && isAuthenticated) {
+      sessionStorage.removeItem('checkConnectionAfterLogin');
 
-        // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      const checkConnectionAndRedirect = async () => {
         try {
           const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
 
           // 은행 연동 여부 확인
           const hasBankConnection =
             connectionsRes.status === 'fulfilled' &&
-            connectionsRes.value?.result?.some((conn) => (conn.businessType || conn.type) === 'BK');
+            connectionsRes.value?.result &&
+            Array.isArray(connectionsRes.value.result) &&
+            connectionsRes.value.result.some((conn) => {
+              const businessType = conn.businessType || conn.type;
+              return businessType === 'BK';
+            });
 
           // 금융 MBTI 존재 여부 확인
           const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 디버깅을 위한 로그
+          console.log('연동 상태 확인 결과:', {
+            hasBankConnection,
+            hasMbti,
+            connectionsData: connectionsRes?.status === 'fulfilled' ? connectionsRes.value?.result : null,
+            mbtiData: mbtiRes?.status === 'fulfilled' ? mbtiRes.value?.result : null,
+          });
 
           // 조건에 따라 리디렉션
           if (hasBankConnection && hasMbti) {
@@ -58,6 +71,24 @@ const BaseLoginContainer: React.FC<BaseLoginContainerProps> = ({ className, onLo
           console.error('연동 상태 확인 실패:', error);
           navigate('/bank/start', { replace: true });
         }
+      };
+
+      checkConnectionAndRedirect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
+
+  const loginMutation = useMutation({
+    mutationFn: loginApi,
+    onSuccess: async (response) => {
+      if (response.result) {
+        // accessToken을 스토어/스토리지에 반영 (Refresh Token은 HttpOnly 쿠키로 관리)
+        login(response.result.memberId, response.result.accessToken);
+
+        // 로그인 성공 후 상태가 완전히 반영되도록 새로고침
+        // 새로고침 후 연동 상태 확인을 위해 플래그 저장
+        sessionStorage.setItem('checkConnectionAfterLogin', 'true');
+        window.location.reload();
       }
     },
     onError: (error: ApiError) => {
