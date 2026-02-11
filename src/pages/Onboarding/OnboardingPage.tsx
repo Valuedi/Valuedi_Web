@@ -40,9 +40,15 @@ const OnboardingPage = () => {
 
   const handleNext = () => {
     if (currentStep < onboardingSteps.length) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       navigate('/login');
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -55,6 +61,7 @@ const OnboardingPage = () => {
         title={currentStepData.title}
         description={currentStepData.description}
         onNext={handleNext}
+        onPrev={handlePrev}
         visual={currentStepData.visual}
       />
     </MobileLayout>

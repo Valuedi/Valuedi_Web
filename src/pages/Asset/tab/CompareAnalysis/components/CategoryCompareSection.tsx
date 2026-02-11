@@ -34,15 +34,9 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
 
   const now = useMemo(() => new Date(), []);
   const yearMonth = useMemo(() => `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`, [now]);
-  const lastDay = useMemo(
-    () => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(),
-    [now]
-  );
+  const lastDay = useMemo(() => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), [now]);
   const fromDate = useMemo(() => `${yearMonth}-01`, [yearMonth]);
-  const toDate = useMemo(
-    () => `${yearMonth}-${String(lastDay).padStart(2, '0')}`,
-    [yearMonth, lastDay]
-  );
+  const toDate = useMemo(() => `${yearMonth}-${String(lastDay).padStart(2, '0')}`, [yearMonth, lastDay]);
 
   // 월별로 카테고리 재매칭 한 번 실행 (결과는 UI에 직접 사용하지 않음)
   useQuery({

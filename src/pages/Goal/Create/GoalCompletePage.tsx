@@ -55,7 +55,12 @@ const GoalCompletePage = () => {
 
         <main className="flex-1 flex flex-col px-5 pt-6 pb-8 overflow-y-auto">
           <div className="flex flex-col gap-2 mb-8">
-            <Typography style="text-headline-1-22-semi-bold" fontFamily="pretendard" className="text-neutral-90" as="h1">
+            <Typography
+              style="text-headline-1-22-semi-bold"
+              fontFamily="pretendard"
+              className="text-neutral-90"
+              as="h1"
+            >
               목표를 완성했어요
             </Typography>
             <Typography style="text-body-1-16-regular" fontFamily="pretendard" className="text-neutral-90">
