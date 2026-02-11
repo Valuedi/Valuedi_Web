@@ -3,6 +3,7 @@
  */
 
 import { apiGet, apiPost, ApiResponse } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 
 // ========== 타입 정의 ==========
 
@@ -34,6 +35,14 @@ export interface MbtiTypeDetail {
   cautions: string[];
   recommendedActions: string[];
 }
+
+// ========== Query Key Factory ==========
+
+export const mbtiKeys = createQueryKeys('mbti', {
+  questions: () => ['questions'] as const,
+  result: () => ['result'] as const,
+  typeDetails: () => ['type-details'] as const,
+});
 
 // ========== API 함수들 ==========
 

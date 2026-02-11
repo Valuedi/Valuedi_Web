@@ -1,4 +1,5 @@
 import { apiGet, apiPost, apiPut, apiPatch, apiDelete, ApiError } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
 import type {
   GetGoalsParams,
   GoalsResponse,
@@ -16,6 +17,17 @@ import type {
 } from './goal.types';
 
 const GOALS_PATH_PREFIX = '/api/goals';
+
+// ========== Query Key Factory ==========
+
+export const goalKeys = createQueryKeys('goals', {
+  lists: () => ['list'] as const,
+  list: (params?: GetGoalsParams) => ['list', params] as const,
+  details: () => ['detail'] as const,
+  detail: (id: number) => ['detail', id] as const,
+  ledgers: (goalId: number, params?: GetGoalLedgersParams) => ['ledgers', goalId, params] as const,
+  unlinkedAccounts: () => ['unlinked-accounts'] as const,
+});
 
 export const goalApi = {
   async getGoals(params?: GetGoalsParams): Promise<GoalsResponse> {

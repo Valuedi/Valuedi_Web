@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
+import { getFinanceMbtiResultApi, getMbtiTypeDetails, mbtiKeys } from '@/features/mbti/mbti.api';
 import DefaultIcon from '@/assets/icons/Mbti.svg?react';
 import { MBTI_LOCAL_EXTENSIONS } from '@/features/mbti/constants/mbtiType';
 
 export const useGetMbtiTestResult = () => {
   return useQuery({
-    queryKey: ['mbtiResult'],
+    queryKey: mbtiKeys.result(),
     queryFn: async () => {
       try {
         const [myRes, typesRes] = await Promise.all([

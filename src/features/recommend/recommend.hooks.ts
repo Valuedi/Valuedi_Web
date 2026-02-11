@@ -4,16 +4,8 @@ import {
   createSavingsRecommendationsApi,
   getSavingsDetailApi,
   getTop3RecommendationsApi,
+  recommendKeys,
 } from './recommend.api';
-
-// Query Key 팩토리
-export const recommendKeys = {
-  all: ['recommendations'] as const,
-  savings: () => [...recommendKeys.all, 'savings'] as const,
-  savingsList: (rsrvType?: 'S' | 'F') => [...recommendKeys.savings(), 'list', rsrvType] as const,
-  savingsDetail: (finPrdtCd: string) => [...recommendKeys.savings(), 'detail', finPrdtCd] as const,
-  top3: () => [...recommendKeys.savings(), 'top3'] as const,
-};
 
 /**
  * 최신 추천 15개 조회

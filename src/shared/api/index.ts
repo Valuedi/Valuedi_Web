@@ -21,3 +21,7 @@ export {
 
 export type { ApiResponse } from './apiClient';
 export { ApiError } from './apiClient';
+
+// Query Key Factory 유틸리티
+export { createQueryKeys } from './queryKeys';
+export type { QueryKeyFactory } from './queryKeys';

@@ -3,7 +3,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { getTrophiesApi, getMyTrophiesApi } from './trophy.api';
+import { getTrophiesApi, getMyTrophiesApi, trophyKeys } from './trophy.api';
 import type { GetMyTrophiesParams, Trophy, MyTrophy } from './trophy.types';
 
 /**
@@ -12,7 +12,7 @@ import type { GetMyTrophiesParams, Trophy, MyTrophy } from './trophy.types';
  */
 export function useTrophies() {
   return useQuery({
-    queryKey: ['trophies'],
+    queryKey: trophyKeys.all(),
     queryFn: async () => {
       const response = await getTrophiesApi();
       if (!response.isSuccess || !response.result) {
@@ -31,7 +31,7 @@ export function useTrophies() {
  */
 export function useMyTrophies(params: GetMyTrophiesParams) {
   return useQuery({
-    queryKey: ['myTrophies', params.periodType, params.periodKey],
+    queryKey: trophyKeys.my(params),
     queryFn: async () => {
       const response = await getMyTrophiesApi(params);
       if (!response.isSuccess || !response.result) {
