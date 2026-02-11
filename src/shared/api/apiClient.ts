@@ -30,28 +30,70 @@ export class ApiError extends Error {
   }
 }
 
+import { getAccessTokenFromStorage, setAccessTokenToStorage, clearAllAuthData } from './tokenService';
+
 /**
- * 액세스 토큰을 로컬 스토리지에서 가져옵니다
+ * Auth Store 참조 타입
+ * 순환 참조를 피하기 위해 전역 변수로 관리합니다.
+ */
+type AuthStoreRef = {
+  getAccessToken: () => string | null;
+  setAccessToken: (token: string) => void;
+  clearAuth: () => void;
+} | null;
+
+// 전역 변수: auth.store 참조 (순환 참조 방지)
+let authStoreRef: AuthStoreRef = null;
+
+/**
+ * Auth Store 참조를 등록합니다.
+ * auth.store가 초기화될 때 호출되어야 합니다.
+ * @internal
+ */
+export const registerAuthStore = (store: AuthStoreRef): void => {
+  authStoreRef = store;
+};
+
+/**
+ * 액세스 토큰을 가져옵니다 (하위 호환성 유지)
+ * auth.store의 메모리 상태에서 토큰을 가져오도록 시도하고, 없으면 localStorage에서 가져옵니다.
  */
 export const getAccessToken = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('accessToken');
+  // auth.store에서 토큰을 가져오도록 시도
+  if (authStoreRef) {
+    const token = authStoreRef.getAccessToken();
+    if (token) return token;
+  }
+  // fallback: localStorage에서 직접 가져오기
+  return getAccessTokenFromStorage();
 };
 
 /**
- * 액세스 토큰을 로컬 스토리지에 저장합니다
+ * 액세스 토큰을 저장합니다 (하위 호환성 유지)
+ * auth.store의 메모리 상태와 localStorage에 모두 저장합니다.
  */
 export const setAccessToken = (token: string): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('accessToken', token);
+  // auth.store에 토큰을 저장하도록 시도
+  if (authStoreRef) {
+    authStoreRef.setAccessToken(token);
+    return;
+  }
+  // fallback: localStorage에 직접 저장
+  setAccessTokenToStorage(token);
 };
 
 /**
- * 액세스 토큰을 로컬 스토리지에서 제거합니다
+ * 액세스 토큰을 제거합니다 (하위 호환성 유지)
+ * auth.store의 메모리 상태와 localStorage에서 모두 제거합니다.
  */
 export const removeAccessToken = (): void => {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('accessToken');
+  // auth.store에서 토큰을 제거하도록 시도
+  if (authStoreRef) {
+    authStoreRef.clearAuth();
+    return;
+  }
+  // fallback: localStorage에서 직접 제거
+  clearAllAuthData();
 };
 
 /**
@@ -72,9 +114,110 @@ interface RequestOptions extends RequestInit {
   skipAuth?: boolean; // 인증이 필요 없는 요청인지 여부
 }
 
+/**
+ * 에러 핸들러 타입 정의
+ * 인터셉터는 에러를 감지하여 핸들러에 알리기만 하고,
+ * 실제 "로그인 페이지로 이동"이나 "토스트 메시지 표시"는 상위 레이어에서 처리합니다.
+ */
+export type ErrorHandler = (error: ApiError) => void;
+
+// 전역 에러 핸들러 (기본값: null)
+let globalErrorHandler: ErrorHandler | null = null;
+
+/**
+ * 전역 에러 핸들러 설정
+ * Router나 전역 에러 바운더리에서 호출하여 중앙 집중 에러 처리를 활성화합니다.
+ */
+export const setGlobalErrorHandler = (handler: ErrorHandler | null): void => {
+  globalErrorHandler = handler;
+};
+
+/**
+ * HTTP 상태 코드별 에러 처리 전략
+ */
+const handleErrorByStatus = (status: number, error: ApiError, endpoint: string): void => {
+  switch (status) {
+    case 401:
+      // 401은 이미 토큰 재발급 로직에서 처리되므로 여기서는 추가 처리만
+      // 전역 핸들러에 알림 (로그인 페이지 이동 등은 상위 레이어에서 처리)
+      if (globalErrorHandler) {
+        globalErrorHandler(error);
+      }
+      break;
+
+    case 403:
+      // 접근 권한 없음 - 권한 부족 알림
+      if (globalErrorHandler) {
+        globalErrorHandler(error);
+      }
+      console.warn('접근 권한이 없습니다:', endpoint);
+      break;
+
+    case 404:
+      // 리소스를 찾을 수 없음
+      console.warn('리소스를 찾을 수 없습니다:', endpoint);
+      break;
+
+    case 500:
+    case 502:
+    case 503:
+    case 504:
+      // 서버 에러
+      if (globalErrorHandler) {
+        globalErrorHandler(error);
+      }
+      console.error('서버 오류가 발생했습니다:', status, endpoint);
+      break;
+
+    default:
+      // 기타 에러
+      if (globalErrorHandler && status >= 400) {
+        globalErrorHandler(error);
+      }
+      break;
+  }
+};
+
 // 토큰 재발급 중 플래그 (무한 루프 방지)
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
+
+/**
+ * Request Queue 타입 정의
+ * 토큰 재발급 중에 발생한 요청들을 대기시키고 재실행하기 위한 큐
+ */
+interface QueuedRequest {
+  resolve: (value: ApiResponse<unknown>) => void;
+  reject: (error: unknown) => void;
+  endpoint: string;
+  options: RequestOptions;
+}
+
+// 토큰 재발급 중 대기 중인 요청들의 큐
+const failedQueue: QueuedRequest[] = [];
+
+/**
+ * 대기 중인 모든 요청을 처리합니다.
+ * 토큰 재발급 성공 시 새 토큰으로 재시도하고, 실패 시 모두 거절합니다.
+ */
+const processQueue = (error: Error | null, token: string | null = null) => {
+  const queue = [...failedQueue];
+  failedQueue.length = 0; // 큐 초기화
+
+  if (error || !token) {
+    // 토큰 재발급 실패: 모든 대기 중인 요청 거절
+    queue.forEach(({ reject }) => {
+      reject(error || new ApiError('AUTH_ERROR', '인증이 만료되었습니다. 다시 로그인해주세요.', 401));
+    });
+  } else {
+    // 토큰 재발급 성공: 모든 대기 중인 요청 재시도
+    queue.forEach(({ resolve, reject, endpoint, options }) => {
+      apiFetch(endpoint, options, 1) // retryCount를 1로 설정하여 재시도
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+};
 
 /**
  * 공통 fetch 래퍼 함수
@@ -136,15 +279,36 @@ async function apiFetch<T = unknown>(
 
     // 401 에러이고 인증이 필요한 요청인 경우 토큰 재발급 시도
     if (response.status === 401 && !skipAuth && retryCount === 0) {
+      // 이미 재발급 중이면 큐에 추가하고 대기
+      if (isRefreshing && refreshPromise) {
+        return new Promise<ApiResponse<T>>((resolve, reject) => {
+          failedQueue.push({
+            resolve: resolve as (value: ApiResponse<unknown>) => void,
+            reject,
+            endpoint,
+            options,
+          });
+        });
+      }
+
+      // 토큰 재발급 시도
       const newToken = await refreshToken();
       if (newToken) {
         // 토큰 재발급 성공 시 원래 요청 재시도
         return apiFetch<T>(endpoint, options, retryCount + 1);
       } else {
-        // 토큰 재발급 실패 - 로그아웃 처리
+        // 토큰 재발급 실패 - 큐에 있는 모든 요청 거절 및 로그아웃 처리
+        processQueue(new ApiError('AUTH_ERROR', '인증이 만료되었습니다. 다시 로그인해주세요.', 401));
         removeAccessToken();
         throw new ApiError('AUTH_ERROR', '인증이 만료되었습니다. 다시 로그인해주세요.', 401);
       }
+    }
+
+    // 403 에러 처리 (접근 권한 없음)
+    if (response.status === 403 && !skipAuth) {
+      const error = new ApiError('FORBIDDEN', '접근 권한이 없습니다.', 403);
+      handleErrorByStatus(403, error, endpoint);
+      throw error;
     }
 
     // 응답이 성공이 아니면 에러로 처리
@@ -172,16 +336,24 @@ async function apiFetch<T = unknown>(
         errorMessage += '\n\n카카오 API 에러가 발생했습니다. 백엔드 개발자에게 문의해주세요.';
       }
 
-      throw new ApiError(data.code, errorMessage, response.status);
+      const error = new ApiError(data.code, errorMessage, response.status);
+
+      // HTTP 상태 코드별 에러 처리 전략 적용
+      handleErrorByStatus(response.status, error, endpoint);
+
+      throw error;
     }
 
     return data;
   } catch (error) {
     if (error instanceof ApiError) {
+      // ApiError는 이미 처리되었으므로 그대로 전파
       throw error;
     }
-    // 네트워크 에러 등
-    throw new ApiError('NETWORK_ERROR', '네트워크 오류가 발생했습니다.', 0);
+    // 네트워크 에러 등 예상치 못한 에러
+    const networkError = new ApiError('NETWORK_ERROR', '네트워크 오류가 발생했습니다.', 0);
+    handleErrorByStatus(0, networkError, endpoint);
+    throw networkError;
   }
 }
 
@@ -254,6 +426,7 @@ export async function apiDelete<T = unknown>(endpoint: string, options: RequestO
  * 토큰 재발급 함수
  * 401 에러 발생 시 자동으로 호출됩니다
  * 동시에 여러 요청이 401을 받아도 한 번만 재발급 요청을 하도록 처리
+ * 재발급 중 발생한 요청들은 큐에 담아두고, 재발급 완료 후 일괄 처리합니다.
  */
 export async function refreshToken(): Promise<string | null> {
   // 이미 재발급 중이면 기존 Promise 반환
@@ -273,19 +446,42 @@ export async function refreshToken(): Promise<string | null> {
         credentials: 'include', // 쿠키 포함
       });
 
+      // Refresh API가 401/403을 반환하면 세션 완전 만료
+      if (response.status === 401 || response.status === 403) {
+        const error = new ApiError('AUTH_ERROR', '세션이 완전히 만료되었습니다. 다시 로그인해주세요.', response.status);
+        processQueue(error);
+        removeAccessToken();
+        return null;
+      }
+
       if (!response.ok) {
-        throw new Error('Token refresh failed');
+        const error = new ApiError('REFRESH_ERROR', '토큰 재발급에 실패했습니다.', response.status);
+        processQueue(error);
+        return null;
       }
 
       const data: ApiResponse<{ accessToken: string; memberId: number }> = await response.json();
 
       if (data.result?.accessToken) {
+        // auth.store를 통해 토큰 저장
         setAccessToken(data.result.accessToken);
+
+        // 대기 중인 모든 요청을 새 토큰으로 재시도
+        processQueue(null, data.result.accessToken);
+
         return data.result.accessToken;
       }
+
+      const error = new ApiError('REFRESH_ERROR', '토큰 재발급 응답이 올바르지 않습니다.', response.status);
+      processQueue(error);
       return null;
     } catch (error) {
-      // 리프레시 토큰도 만료된 경우
+      // 리프레시 토큰도 만료된 경우 또는 네트워크 에러
+      const apiError =
+        error instanceof ApiError
+          ? error
+          : new ApiError('NETWORK_ERROR', '토큰 재발급 중 네트워크 오류가 발생했습니다.', 0);
+      processQueue(apiError);
       removeAccessToken();
       return null;
     } finally {

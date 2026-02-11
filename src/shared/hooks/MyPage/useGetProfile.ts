@@ -1,11 +1,10 @@
 import { MY_TROPHIES, TROPHY_GUIDE } from '@/features/mypage/constants/trophy';
 import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
-import { useAuthStore } from '@/features/auth';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 export const useGetProfile = () => {
   const mbtiResult = useGetMbtiTestResult();
-  const { user } = useAuthStore();
-  const userName = user?.name || '회원';
+  const userName = useUserName();
   return {
     userName,
     mbtiResult: mbtiResult?.data,

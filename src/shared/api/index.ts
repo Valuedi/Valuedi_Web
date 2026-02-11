@@ -17,10 +17,23 @@ export {
   apiPatch,
   apiDelete,
   refreshToken,
+  setGlobalErrorHandler,
 } from './apiClient';
 
-export type { ApiResponse } from './apiClient';
+export type { ApiResponse, ErrorHandler } from './apiClient';
 export { ApiError } from './apiClient';
+
+// Token Service exports (저수준 토큰 관리 유틸리티)
+export {
+  getAccessTokenFromStorage,
+  setAccessTokenToStorage,
+  removeAccessTokenFromStorage,
+  setAuthFlag,
+  getAuthFlag,
+  removeAuthFlag,
+  clearAllAuthData,
+  COOKIE_OPTIONS,
+} from './tokenService';
 
 // Query Key Factory 유틸리티
 export { createQueryKeys } from './queryKeys';
