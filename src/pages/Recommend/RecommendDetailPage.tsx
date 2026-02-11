@@ -4,6 +4,7 @@ import { Typography } from '@/shared/components/typography';
 import { cn } from '@/shared/utils/cn';
 import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { BANNER } from '@/features/recommend/constants/banner';
+import { BGBANKS } from '@/features/bank/constants/bgbanks';
 import { getColorToken } from '@/shared/styles/design-system';
 import { InterestCalculator } from './components/InterestCalculator';
 import { InterestRateList, InterestRateItem } from './components/InterestRateList';
@@ -20,10 +21,22 @@ export const RecommendDetailPage = () => {
 
   const product = detailData?.product;
 
-  // 은행명으로 BANNER 찾기 (korCoNm과 name 매칭)
-  const targetBank = useMemo(() => {
-    if (!product) return null;
-    return BANNER.find((bank) => bank.name === product.korCoNm || product.korCoNm.includes(bank.name));
+  // 은행명으로 아이콘/색상 매핑
+  const { targetBank, iconSrc } = useMemo<{
+    targetBank: (typeof BANNER)[number] | null;
+    iconSrc: string | null;
+  }>(() => {
+    if (!product) {
+      return { targetBank: null, iconSrc: null };
+    }
+    // 1차: 추천 배너용 매핑 (색상 포함)
+    const bannerBank = BANNER.find((bank) => bank.name === product.korCoNm || product.korCoNm.includes(bank.name));
+    // 2차: 배경 은행 아이콘 매핑 (아이콘만)
+    const bgBank = BGBANKS.find((bank) => bank.name === product.korCoNm || product.korCoNm.includes(bank.name));
+
+    const icon = bannerBank?.icon ?? bgBank?.icon;
+
+    return { targetBank: bannerBank ?? null, iconSrc: icon ?? null };
   }, [product]);
 
   const backgroundColor = targetBank ? getColorToken(targetBank.color) : getColorToken('neutral-10');
@@ -148,11 +161,9 @@ export const RecommendDetailPage = () => {
             style={{ backgroundColor: backgroundColor }}
             className={cn('w-[32px] h-[32px] flex items-center justify-center rounded-[8px]')}
           >
-            {targetBank ? (
-              <img src={targetBank.icon} alt={targetBank.name} className={cn('w-[18px] h-[18px] object-cover')} />
-            ) : (
-              <div className="w-full h-full bg-neutral-10" />
-            )}
+            {iconSrc ? (
+              <img src={iconSrc} alt={product.korCoNm} className={cn('w-[18px] h-[18px] object-cover')} />
+            ) : null}
           </div>
 
           <div className={cn('flex flex-col gap-[4px]')}>
