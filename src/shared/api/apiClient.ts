@@ -30,13 +30,7 @@ export class ApiError extends Error {
   }
 }
 
-import {
-  getAccessTokenFromStorage,
-  setAccessTokenToStorage,
-  clearAllAuthData,
-  getRefreshTokenFromStorage,
-  setRefreshTokenToStorage,
-} from './tokenService';
+import { getAccessTokenFromStorage, setAccessTokenToStorage, clearAllAuthData } from './tokenService';
 import { isSilentError } from '@/shared/utils/errorHandler';
 
 /**
@@ -448,9 +442,11 @@ export async function apiDelete<T = unknown>(endpoint: string, options: RequestO
 
 /**
  * 토큰 재발급 함수
- * 401 에러 발생 시 자동으로 호출됩니다
- * 동시에 여러 요청이 401을 받아도 한 번만 재발급 요청을 하도록 처리
- * 재발급 중 발생한 요청들은 큐에 담아두고, 재발급 완료 후 일괄 처리합니다.
+ * 401 에러 발생 시 자동으로 호출됩니다.
+ * 서버가 HttpOnly 쿠키에 보관 중인 Refresh Token을 사용하여 세션을 연장합니다.
+ *
+ * - 동시에 여러 요청이 401을 받아도 한 번만 재발급 요청을 하도록 처리
+ * - 재발급 중 발생한 요청들은 큐에 담아두고, 재발급 완료 후 일괄 처리합니다.
  */
 export async function refreshToken(): Promise<string | null> {
   // 이미 재발급 중이면 기존 Promise 반환
@@ -461,63 +457,19 @@ export async function refreshToken(): Promise<string | null> {
   isRefreshing = true;
   refreshPromise = (async () => {
     try {
-      // 서버 명세에 따라 refreshToken을 쿼리 파라미터로 전달
-      const storedRefreshToken = getRefreshTokenFromStorage();
-
-      // 저장된 refreshToken이 없으면 더 이상 세션을 연장할 방법이 없으므로 바로 만료 처리
-      if (!storedRefreshToken) {
-        const error = new ApiError('AUTH_ERROR', '세션이 만료되었습니다. 다시 로그인해주세요.', 401);
-        processQueue(error);
-        removeAccessToken();
-
-        if (globalAuthErrorHandler) {
-          globalAuthErrorHandler(error);
-        }
-
-        return null;
-      }
-
-      const url = `${API_BASE_URL}/auth/token/refresh?refreshToken=${encodeURIComponent(storedRefreshToken)}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키 포함
-      });
-
-      // Refresh API가 401/403을 반환하면 세션 완전 만료
-      if (response.status === 401 || response.status === 403) {
-        const error = new ApiError('AUTH_ERROR', '세션이 만료되었습니다. 다시 로그인해주세요.', response.status);
-        processQueue(error);
-        removeAccessToken();
-
-        // 전역 인증 에러 핸들러 호출 (토스트 메시지 및 로그인 페이지 이동)
-        if (globalAuthErrorHandler) {
-          globalAuthErrorHandler(error);
-        }
-
-        return null;
-      }
-
-      if (!response.ok) {
-        const error = new ApiError('REFRESH_ERROR', '토큰 재발급에 실패했습니다.', response.status);
-        processQueue(error);
-        return null;
-      }
-      // 백엔드 명세상 LoginResponse 형태로 내려온다고 가정
-      // { accessToken, refreshToken, memberId }
-      const data: ApiResponse<{ accessToken: string; refreshToken?: string; memberId: number }> = await response.json();
+      // Refresh Token은 HttpOnly 쿠키로 관리되므로, 클라이언트에서는 쿼리 파라미터를 전달하지 않습니다.
+      // 공통 apiPost를 사용하되 skipAuth: true로 설정하여 401 시 재귀 호출을 방지합니다.
+      const data: ApiResponse<{ accessToken: string; refreshToken?: string; memberId: number }> = await apiPost(
+        '/auth/token/refresh',
+        undefined,
+        { skipAuth: true }
+      );
 
       if (data.result?.accessToken) {
         const newAccessToken = data.result.accessToken;
-        const newRefreshToken = data.result.refreshToken;
 
-        // 새 토큰들 저장 (액세스 + 리프레시)
+        // 새 Access Token 저장 (메모리 + localStorage)
         setAccessToken(newAccessToken);
-        if (newRefreshToken) {
-          setRefreshTokenToStorage(newRefreshToken);
-        }
 
         // 대기 중인 모든 요청을 새 토큰으로 재시도
         processQueue(null, newAccessToken);
@@ -525,20 +477,21 @@ export async function refreshToken(): Promise<string | null> {
         return newAccessToken;
       }
 
-      const error = new ApiError('REFRESH_ERROR', '토큰 재발급 응답이 올바르지 않습니다.', response.status);
+      const error = new ApiError('REFRESH_ERROR', '토큰 재발급 응답이 올바르지 않습니다.', 0);
       processQueue(error);
       return null;
     } catch (error) {
-      // 리프레시 토큰도 만료된 경우 또는 네트워크 에러
+      // 리프레시 토큰 만료 또는 네트워크 에러
       const apiError =
         error instanceof ApiError
           ? error
           : new ApiError('NETWORK_ERROR', '토큰 재발급 중 네트워크 오류가 발생했습니다.', 0);
+
       processQueue(apiError);
       removeAccessToken();
 
-      // 네트워크 에러가 아닌 경우 (인증 에러) 전역 핸들러 호출
-      if (apiError.code === 'AUTH_ERROR' && globalAuthErrorHandler) {
+      // 인증 에러인 경우 전역 핸들러 호출 (토스트 메시지 및 로그인 페이지 이동)
+      if (globalAuthErrorHandler) {
         globalAuthErrorHandler(apiError);
       }
 

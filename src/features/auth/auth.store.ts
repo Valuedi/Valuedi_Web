@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { 
+import {
   setAccessTokenToStorage,
   setAuthFlag,
   clearAllAuthData,
   getAccessTokenFromStorage,
-  setRefreshTokenToStorage,
 } from '@/shared/api/tokenService';
 import { registerAuthStore } from '@/shared/api/apiClient';
 
@@ -22,7 +21,7 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   // Actions
-  login: (memberId: number, accessToken: string, refreshToken?: string) => void;
+  login: (memberId: number, accessToken: string) => void;
   logout: () => void;
   setUser: (user: User | null) => void;
   setAuth: (accessToken: string, user: User) => void;
@@ -55,12 +54,8 @@ export const useAuthStore = create<AuthState>()(
          * 로그인 처리
          * Access Token을 메모리 상태와 localStorage에 모두 저장
          */
-        login: (memberId: number, accessToken: string, refreshToken?: string) => {
+        login: (memberId: number, accessToken: string) => {
           setAccessTokenToStorage(accessToken);
-          // 서버가 refreshToken을 함께 내려주는 경우, 토큰 재발급 시 쿼리 파라미터로 사용하기 위해 함께 저장
-          if (refreshToken) {
-            setRefreshTokenToStorage(refreshToken);
-          }
           setAuthFlag(true);
           set({
             accessToken,
