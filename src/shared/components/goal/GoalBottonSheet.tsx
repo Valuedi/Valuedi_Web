@@ -19,21 +19,13 @@ const GoalBottomSheet = ({ isOpen, item, onClose }: GoalBottomSheetProps) => {
           placeholder="메모를 남겨주세요 (최대 20자)"
           className="w-full text-base outline-none placeholder:text-gray-400"
         />
-        <img
-          src={WriteIcon}
-          alt="edit memo"
-          className="absolute w-5 h-5 right-4 top-4 opacity-40"
-        />
+        <img src={WriteIcon} alt="edit memo" className="absolute w-5 h-5 right-4 top-4 opacity-40" />
       </div>
 
       <div className="mb-12 space-y-6">
         <DetailRow label="거래시간" value={item.time} />
         <DetailRow label="거래구분" value={item.category} />
-        <DetailRow
-          label="거래금액"
-          value={item.amount.replace(/[-+]/g, '').trim()}
-          isBold
-        />
+        <DetailRow label="거래금액" value={item.amount.replace(/[-+]/g, '').trim()} isBold />
         <DetailRow label="거래 후 잔액" value={item.balanceAfter} isBold />
         <DetailRow label="입금계좌" value={item.account} />
       </div>

@@ -50,11 +50,7 @@ const BankConnectionStartPage = () => {
         <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStartClick} />
       </div>
 
-      <BankInfoModal
-        isOpen={isInfoModalOpen}
-        onClose={() => setIsInfoModalOpen(false)}
-        onConfirm={handleInfoConfirm}
-      />
+      <BankInfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} onConfirm={handleInfoConfirm} />
     </MobileLayout>
   );
 };

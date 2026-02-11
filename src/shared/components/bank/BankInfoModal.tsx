@@ -20,17 +20,8 @@ const BankInfoModal: React.FC<BankInfoModalProps> = ({ isOpen, onClose, onConfir
 
       {/* Centered Modal (Goal 모달과 동일한 레이아웃) */}
       <div className="fixed inset-0 z-50 flex items-center justify-center px-5">
-        <div
-          className={cn(
-            'w-full max-w-[320px] bg-white rounded-xl px-6 py-6 shadow-lg',
-            className
-          )}
-        >
-          <Typography
-            style="text-body-1-16-semi-bold"
-            fontFamily="pretendard"
-            className="text-neutral-90 text-center"
-          >
+        <div className={cn('w-full max-w-[320px] bg-white rounded-xl px-6 py-6 shadow-lg', className)}>
+          <Typography style="text-body-1-16-semi-bold" fontFamily="pretendard" className="text-neutral-90 text-center">
             정보안내
           </Typography>
           <Typography
