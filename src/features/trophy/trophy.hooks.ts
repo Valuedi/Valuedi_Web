@@ -12,7 +12,11 @@ import type { GetMyTrophiesParams, Trophy, MyTrophy } from './trophy.types';
  */
 export function useTrophies() {
   return useQuery({
+<<<<<<< HEAD
     queryKey: trophyKeys.all(),
+=======
+    queryKey: trophyKeys.all,
+>>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
     queryFn: async () => {
       const response = await getTrophiesApi();
       if (!response.isSuccess || !response.result) {

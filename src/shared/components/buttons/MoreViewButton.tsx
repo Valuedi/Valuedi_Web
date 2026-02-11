@@ -12,7 +12,7 @@ export const MoreViewButton: React.FC<MoreViewButtonProps> = ({ className, ...pr
       type="button"
       className={cn(
         'flex items-center justify-center',
-        'w-[18px] h-[18px] md:w-[20px] md:h-[20px]',
+        'w-[15px] h-[10px] md:w-[20px] md:h-[20px]',
         'cursor-pointer',
         className
       )}

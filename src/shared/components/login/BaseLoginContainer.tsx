@@ -27,7 +27,8 @@ const BaseLoginContainer: React.FC<BaseLoginContainerProps> = ({ className, onLo
     mutationFn: loginApi,
     onSuccess: async (response) => {
       if (response.result) {
-        login(response.result.memberId, response.result.accessToken);
+        // accessToken + refreshToken(선택적)을 모두 스토어/스토리지에 반영
+        login(response.result.memberId, response.result.accessToken, response.result.refreshToken);
 
         // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
         try {

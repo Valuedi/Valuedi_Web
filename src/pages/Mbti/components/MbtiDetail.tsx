@@ -6,9 +6,12 @@ import { MbtiDetailChart } from './MbtiDetailChart';
 import { calculateMbtiScores } from '@/shared/utils/calculateMbtiScore';
 import { formatMbtiDescription } from '@/shared/utils/formatMbtiText';
 import { MBTI_LOCAL_EXTENSIONS } from '@/features/mbti/constants/mbtiType';
+import { useState } from 'react';
+import { MoreViewButton } from '@/shared/components/buttons';
 
 export const MbtiDetail = () => {
   const { data: result, isLoading } = useGetMbtiTestResult();
+  const [isOpen, setIsOpen] = useState(false);
 
   if (isLoading) return <div className="p-20 text-center">결과 분석 중...</div>;
   if (!result || !result.title) return <div className="p-20 text-center">데이터를 찾을 수 없습니다.</div>;
@@ -33,10 +36,20 @@ export const MbtiDetail = () => {
         <Typography style="text-headline-3-18-semi-bold" className="text-neutral-90">
           세부사항
         </Typography>
-        <div className={cn('w-full rounded-[12px] p-[12px] bg-neutral-10')}>
-          <Typography style="text-body-2-14-regular" className="text-neutral-70 whitespace-pre-wrap">
+        <div className={cn('w-full rounded-[12px] p-[12px] bg-neutral-10 flex flex-col gap-[8px]')}>
+          <Typography
+            style="text-body-2-14-regular"
+            className={cn('text-neutral-70 whitespace-pre-wrap', !isOpen && 'line-clamp-3')}
+          >
             {formatMbtiDescription(result.detail)}
           </Typography>
+
+          <div onClick={() => setIsOpen(!isOpen)} className={cn('flex gap-[4px] items-center w-fit cursor-pointer')}>
+            <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50')}>
+              {isOpen ? '간략히보기' : '자세히보기'}
+            </Typography>
+            <MoreViewButton className={cn(isOpen ? '-rotate-90' : 'rotate-90')} />
+          </div>
         </div>
       </div>
 

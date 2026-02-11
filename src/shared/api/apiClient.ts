@@ -30,7 +30,17 @@ export class ApiError extends Error {
   }
 }
 
+<<<<<<< HEAD
 import { getAccessTokenFromStorage, setAccessTokenToStorage, clearAllAuthData } from './tokenService';
+=======
+import {
+  getAccessTokenFromStorage,
+  setAccessTokenToStorage,
+  clearAllAuthData,
+  getRefreshTokenFromStorage,
+  setRefreshTokenToStorage,
+} from './tokenService';
+>>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
 import { isSilentError } from '@/shared/utils/errorHandler';
 
 /**
@@ -455,7 +465,27 @@ export async function refreshToken(): Promise<string | null> {
   isRefreshing = true;
   refreshPromise = (async () => {
     try {
+<<<<<<< HEAD
       const url = `${API_BASE_URL}/auth/token/refresh`;
+=======
+      // 서버 명세에 따라 refreshToken을 쿼리 파라미터로 전달
+      const storedRefreshToken = getRefreshTokenFromStorage();
+
+      // 저장된 refreshToken이 없으면 더 이상 세션을 연장할 방법이 없으므로 바로 만료 처리
+      if (!storedRefreshToken) {
+        const error = new ApiError('AUTH_ERROR', '세션이 만료되었습니다. 다시 로그인해주세요.', 401);
+        processQueue(error);
+        removeAccessToken();
+
+        if (globalAuthErrorHandler) {
+          globalAuthErrorHandler(error);
+        }
+
+        return null;
+      }
+
+      const url = `${API_BASE_URL}/auth/token/refresh?refreshToken=${encodeURIComponent(storedRefreshToken)}`;
+>>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -483,6 +513,7 @@ export async function refreshToken(): Promise<string | null> {
         processQueue(error);
         return null;
       }
+<<<<<<< HEAD
 
       const data: ApiResponse<{ accessToken: string; memberId: number }> = await response.json();
 
@@ -494,6 +525,26 @@ export async function refreshToken(): Promise<string | null> {
         processQueue(null, data.result.accessToken);
 
         return data.result.accessToken;
+=======
+      // 백엔드 명세상 LoginResponse 형태로 내려온다고 가정
+      // { accessToken, refreshToken, memberId }
+      const data: ApiResponse<{ accessToken: string; refreshToken?: string; memberId: number }> = await response.json();
+
+      if (data.result?.accessToken) {
+        const newAccessToken = data.result.accessToken;
+        const newRefreshToken = data.result.refreshToken;
+
+        // 새 토큰들 저장 (액세스 + 리프레시)
+        setAccessToken(newAccessToken);
+        if (newRefreshToken) {
+          setRefreshTokenToStorage(newRefreshToken);
+        }
+
+        // 대기 중인 모든 요청을 새 토큰으로 재시도
+        processQueue(null, newAccessToken);
+
+        return newAccessToken;
+>>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
       }
 
       const error = new ApiError('REFRESH_ERROR', '토큰 재발급 응답이 올바르지 않습니다.', response.status);
