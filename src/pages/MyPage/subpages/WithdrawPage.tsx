@@ -80,17 +80,24 @@ export const WithdrawPage = () => {
           {WITHDRAW_REASONS.map((reason) => {
             const isSelected = selectedReason === reason;
             return (
-              <button
+              <div
                 key={reason}
-                type="button"
-                className="w-full flex items-center py-3 px-4 text-left bg-white active:bg-neutral-3"
+                role="button"
+                tabIndex={0}
+                className="w-full flex items-center py-3 px-4 text-left bg-white active:bg-neutral-3 cursor-pointer"
                 onClick={() => setSelectedReason(reason)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedReason(reason);
+                  }
+                }}
               >
                 <CheckBoxButton isChecked={isSelected} className="mr-3 shrink-0" />
                 <Typography variant="body-2" weight="medium" className="flex-1 text-neutral-90">
                   {reason}
                 </Typography>
-              </button>
+              </div>
             );
           })}
         </div>
