@@ -7,9 +7,10 @@ import { useCreateGoal } from '@/features/goal/goal.hooks';
 import { paths } from '@/router/paths';
 import { basenameNoExt, formatDate, parseAmountToNumber } from '@/shared/utils/goal/goalHelpers';
 import BackPageIcon from '@/assets/icons/BackPage.svg';
-import type { CreateGoalRequest } from '@/features/goal/goal.types';
+import type { CreateGoalRequest, CreateGoalResponse } from '@/features/goal/goal.types';
 import { GOAL_COLOR_NAME_TO_HEX, GOAL_ICON_NAME_TO_ID } from '@/features/goal';
 import type { SelectedAccount } from '@/shared/hooks/Goal/useGoalForm';
+import GoalInfoCard from './components/GoalInfoCard';
 
 interface GoalFormData {
   goalName: string;
@@ -23,6 +24,9 @@ const GoalAlmostDonePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
+  const [createdGoalData, setCreatedGoalData] = useState<CreateGoalResponse['result'] | null>(null);
+  const [selectedColorCode, setSelectedColorCode] = useState<string | null>(null);
+  const [selectedIconId, setSelectedIconId] = useState<number | null>(null);
   // 이전 단계에서 전달받은 데이터
   const goalFormData = location.state as GoalFormData;
   // 목표 생성 뮤테이션 훅
@@ -87,21 +91,28 @@ const GoalAlmostDonePage = () => {
     // 서버에 목표 생성 요청
     createGoal(newGoal, {
       onSuccess: (data) => {
+        // API 응답 데이터로 상태 업데이트
+        setCreatedGoalData(data.result);
+        setSelectedColorCode(colorCode);
+        setSelectedIconId(iconId);
         setIsIconPickerOpen(false);
-        navigate(paths.goal.createComplete, {
-          state: {
-            goalId: data.result.goalId,
-            goalName: data.result.title,
-            targetAmount: data.result.targetAmount,
-            startDate: data.result.startDate,
-            endDate: data.result.endDate,
-            remainingDays: data.result.remainingDays,
-            bankName: data.result.account?.bankName ?? '',
-            accountNumber: data.result.account?.accountNumber ?? '',
-            colorCode,
-            iconId,
-          },
-        });
+        // 약간의 지연 후 완료 페이지로 이동 (카드가 업데이트된 것을 볼 수 있도록)
+        setTimeout(() => {
+          navigate(paths.goal.createComplete, {
+            state: {
+              goalId: data.result.goalId,
+              goalName: data.result.title,
+              targetAmount: data.result.targetAmount,
+              startDate: data.result.startDate,
+              endDate: data.result.endDate,
+              remainingDays: data.result.remainingDays,
+              bankName: data.result.account?.bankName ?? '',
+              accountNumber: data.result.account?.accountNumber ?? '',
+              colorCode,
+              iconId,
+            },
+          });
+        }, 500);
       },
       onError: (err) => {
         console.error('Goal creation failed:', err);
@@ -123,18 +134,59 @@ const GoalAlmostDonePage = () => {
             <img src={BackPageIcon} alt="Back" className="w-6 h-6" />
           </button>
         </header>
-        {/* 메인 컨텐츠: 클릭 시 바텀시트 오픈 */}
-        <div
-          className="flex-1 flex flex-col items-start justify-start p-8 cursor-pointer"
-          onClick={() => !isPending && setIsIconPickerOpen(true)}
-        >
+        {/* 메인 컨텐츠 */}
+        <div className="flex-1 flex flex-col items-start justify-start px-5 py-4">
           <h1 className="text-lg font-bold text-gray-900 mb-2 text-left font-pretendard">거의 다 왔어요!</h1>
-          <p className="text-xs text-gray-600 mb-8 text-left font-pretendard">
+          <p className="text-xs text-gray-600 mb-6 text-left font-pretendard">
             마지막으로 목표의 대표 이미지를 선택해 주세요
           </p>
 
-          {isPending && <p className="text-blue-500 mb-4 font-pretendard">목표를 생성 중입니다...</p>}
-          {isError && <p className="text-red-500 mb-4 font-pretendard">목표 생성 실패: {error?.message}</p>}
+          {/* 목표 정보 카드 */}
+          {createdGoalData ? (
+            <div className="w-full mb-6">
+              <GoalInfoCard
+                title={createdGoalData.title}
+                colorCode={selectedColorCode ?? undefined}
+                iconId={selectedIconId ?? undefined}
+                targetAmount={createdGoalData.targetAmount}
+                startDate={createdGoalData.startDate}
+                endDate={createdGoalData.endDate}
+                remainingDays={createdGoalData.remainingDays}
+                bankName={createdGoalData.account?.bankName ?? ''}
+                accountNumber={createdGoalData.account?.accountNumber ?? ''}
+              />
+            </div>
+          ) : (
+            <div className="w-full mb-6">
+              <GoalInfoCard
+                title={goalFormData.goalName}
+                targetAmount={parseAmountToNumber(goalFormData.goalAmount)}
+                startDate={goalFormData.startDate}
+                endDate={goalFormData.endDate}
+                remainingDays={Math.max(
+                  0,
+                  Math.ceil(
+                    (new Date(formatDate(goalFormData.endDate)).getTime() - new Date().getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )
+                )}
+                bankName={goalFormData.selectedAccount?.bankName ?? ''}
+                accountNumber={goalFormData.selectedAccount?.accountNumber ?? ''}
+              />
+            </div>
+          )}
+
+          {/* 아이콘 선택 버튼 */}
+          <button
+            type="button"
+            onClick={() => !isPending && setIsIconPickerOpen(true)}
+            disabled={isPending}
+            className="w-full py-3 px-4 bg-primary-normal text-neutral-90 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed font-pretendard"
+          >
+            {isPending ? '목표를 생성 중입니다...' : '목표 아이콘 선택하기'}
+          </button>
+
+          {isError && <p className="text-red-500 mt-4 font-pretendard">목표 생성 실패: {error?.message}</p>}
         </div>
         {/* 아이콘 선택 바텀시트 */}
         <GoalIconPickerBottomSheet
