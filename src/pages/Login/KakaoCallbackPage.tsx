@@ -36,11 +36,8 @@ const KakaoCallbackPage = () => {
         // 성공 시 state 제거
         sessionStorage.removeItem('kakao_oauth_state');
 
-        // accessToken 저장 및 로그인 상태 유지
-        login(response.result.memberId, response.result.accessToken);
-
-        // refreshToken은 백엔드가 쿠키에 저장하므로 별도 처리 불필요
-        // (필요시 localStorage에 저장할 수도 있음)
+        // accessToken + refreshToken(선택적)을 모두 스토어/스토리지에 반영
+        login(response.result.memberId, response.result.accessToken, response.result.refreshToken);
 
         // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
         try {

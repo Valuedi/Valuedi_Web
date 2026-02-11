@@ -10,6 +10,10 @@
  */
 
 const ACCESS_TOKEN_KEY = 'accessToken';
+// 서버 명세에 따라 refreshToken을 쿼리 파라미터로 전달해야 하므로
+// HttpOnly 쿠키 외에 클라이언트에서도 참조 가능한 저장소가 필요합니다.
+// 보안상 가능하면 짧은 만료 시간과 HTTPS 환경에서만 사용해야 합니다.
+const REFRESH_TOKEN_KEY = 'refreshToken';
 const AUTH_FLAG_KEY = 'isAuthenticated'; // 로그인 여부 플래그
 
 /**
@@ -37,6 +41,33 @@ export const setAccessTokenToStorage = (token: string): void => {
 export const removeAccessTokenFromStorage = (): void => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(ACCESS_TOKEN_KEY);
+};
+
+/**
+ * Refresh Token을 localStorage에서 가져옵니다.
+ * SSR 환경에서는 null을 반환합니다.
+ */
+export const getRefreshTokenFromStorage = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+};
+
+/**
+ * Refresh Token을 localStorage에 저장합니다.
+ * 서버 명세상 refreshToken을 쿼리 파라미터로 보내야 하므로
+ * 클라이언트에서도 해당 값을 보관해야 합니다.
+ */
+export const setRefreshTokenToStorage = (token: string): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(REFRESH_TOKEN_KEY, token);
+};
+
+/**
+ * Refresh Token을 localStorage에서 제거합니다.
+ */
+export const removeRefreshTokenFromStorage = (): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
 };
 
 /**
@@ -69,6 +100,7 @@ export const removeAuthFlag = (): void => {
  */
 export const clearAllAuthData = (): void => {
   removeAccessTokenFromStorage();
+  removeRefreshTokenFromStorage();
   removeAuthFlag();
 };
 

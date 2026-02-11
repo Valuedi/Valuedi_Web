@@ -4,11 +4,11 @@ import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { Typography } from '@/shared/components';
 import { cn } from '@/shared/utils/cn';
 import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
-import ProfileIcon from '@/assets/icons/mbti/Profile.svg';
 import MyMbti from './components/MyMbti';
 import { SegmentedButton } from '@/shared/components/buttons/SegmentedButton';
 import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';
 import MyTrophy from './components/MyTrophy';
+import { MBTI_PROFILE_ICONS } from '@/features/mypage/constants/profile';
 
 type TabType = 'mbti' | 'trophy';
 
@@ -29,6 +29,8 @@ export const MyPage = () => {
     { label: '트로피', value: 'trophy' as const },
   ];
 
+  const ProfileIconComponent = mbtiResult?.resultType ? MBTI_PROFILE_ICONS[mbtiResult.resultType] : null;
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -47,9 +49,13 @@ export const MyPage = () => {
 
       <div className={cn('flex flex-col px-[20px] pb-[20px] gap-[20px]')}>
         <div className={cn('flex justify-between py-[8px] items-center mt-[20px]')}>
-          <div className={cn('flex gap-[4px]')}>
-            <div className={cn('flex')}>
-              <img src={ProfileIcon} />
+          <div className={cn('flex gap-[4px] items-center')}>
+            <div className={cn('flex w-[32px] h-[32px] items-center justify-center overflow-hidden rounded-full')}>
+              {ProfileIconComponent ? (
+                <ProfileIconComponent className="w-full h-full" />
+              ) : (
+                <div className="w-full h-full bg-neutral-10" />
+              )}
             </div>
             <div>
               <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50')}>
