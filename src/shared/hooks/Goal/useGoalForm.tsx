@@ -18,11 +18,21 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
   const { currentStep, setCurrentStep, goToNext, goToBack } = useGoalStep({ initialStep: 1 });
 
   // 입력 필드 관리
-  const { fields, hasInputStarted, updateField, resetInputStarted, isFieldValid, getCurrentStepValue, isFormValid } =
-    useGoalFormFields({
-      mode,
-      initialValues: options.initialValues,
-    });
+  const {
+    fields,
+    hasInputStarted,
+    updateField,
+    resetInputStarted,
+    isFieldValid,
+    isStepValid,
+    getCurrentStepValue,
+    isFormValid,
+    isDirty,
+    getRawGoalAmount,
+  } = useGoalFormFields({
+    mode,
+    initialValues: options.initialValues,
+  });
 
   // 모달 제어
   const {
@@ -119,6 +129,20 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
     return hasInputStarted && currentValue.length > 0;
   }, [currentStep, selectedAccount, selectedIcon, fields.goalAmount, hasInputStarted, getCurrentStepValue]);
 
+  // 버튼 disabled 상태 (Step별 Validation 적용)
+  const isPrimaryButtonDisabled = useMemo(() => {
+    if (currentStep === 5) return false;
+    if (currentStep === 6) return !(selectedAccount !== null && fields.goalAmount.length > 0);
+    if (currentStep === 7) return selectedIcon === null;
+
+    // 1~4단계: 해당 단계의 유효성 검사 결과에 따라 disabled
+    if (currentStep >= 1 && currentStep <= 4) {
+      return !isStepValid(currentStep);
+    }
+
+    return false;
+  }, [currentStep, selectedAccount, selectedIcon, fields.goalAmount, isStepValid]);
+
   // 제출 가능 여부 (edit 모드용)
   const canSubmit = useMemo(() => {
     if (!isEdit) return false;
@@ -133,7 +157,7 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
       goalName: fields.goalName,
       startDate: fields.startDate,
       endDate: fields.endDate,
-      goalAmount: fields.goalAmount,
+      goalAmount: fields.goalAmount, // 포맷팅된 값 전달 (서버에서 parseAmountToNumber 사용)
       selectedAccount,
     });
   }, [fields, selectedAccount, options]);
@@ -161,9 +185,14 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
     handleAccountSelect,
     handleIconSelect,
     shouldShowPrimaryButton,
+    isPrimaryButtonDisabled,
     primaryButtonText,
     canSubmit,
     submitButtonText,
     handleSubmit,
+    // Dirty 상태 및 유틸 함수 추가
+    isDirty,
+    getRawGoalAmount,
+    isStepValid,
   };
 }

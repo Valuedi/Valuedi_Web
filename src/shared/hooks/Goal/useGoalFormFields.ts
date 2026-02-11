@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { GoalStep, GoalFormField, GoalFormValues, GoalFormMode } from './goalForm.types';
 import { formatDateInput, formatAmountInput } from '@/shared/utils/goal/goalHelpers';
 
@@ -9,6 +9,15 @@ export interface UseGoalFormFieldsOptions {
 
 export function useGoalFormFields(options: UseGoalFormFieldsOptions = {}) {
   const isEdit = options.mode === 'edit';
+
+  // 초기값 저장 (dirty 상태 비교용)
+  const initialValuesRef = useRef<GoalFormValues>({
+    goalName: options.initialValues?.goalName ?? '',
+    startDate: options.initialValues?.startDate ?? '',
+    endDate: options.initialValues?.endDate ?? '',
+    goalAmount: options.initialValues?.goalAmount ?? '',
+  });
+
   const [fields, setFields] = useState<GoalFormValues>({
     goalName: options.initialValues?.goalName ?? '',
     startDate: options.initialValues?.startDate ?? '',
@@ -22,10 +31,16 @@ export function useGoalFormFields(options: UseGoalFormFieldsOptions = {}) {
   useEffect(() => {
     if (!isEdit || !options.initialValues) return;
     const iv = options.initialValues;
-    if (iv.goalName !== undefined) setFields((prev) => ({ ...prev, goalName: iv.goalName ?? '' }));
-    if (iv.startDate !== undefined) setFields((prev) => ({ ...prev, startDate: iv.startDate ?? '' }));
-    if (iv.endDate !== undefined) setFields((prev) => ({ ...prev, endDate: iv.endDate ?? '' }));
-    if (iv.goalAmount !== undefined) setFields((prev) => ({ ...prev, goalAmount: iv.goalAmount ?? '' }));
+    const newFields: GoalFormValues = {
+      goalName: iv.goalName ?? '',
+      startDate: iv.startDate ?? '',
+      endDate: iv.endDate ?? '',
+      goalAmount: iv.goalAmount ?? '',
+    };
+
+    // 초기값 업데이트
+    initialValuesRef.current = newFields;
+    setFields(newFields);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isEdit,
@@ -85,6 +100,13 @@ export function useGoalFormFields(options: UseGoalFormFieldsOptions = {}) {
     [fields]
   );
 
+  // 단계별 유효성 검사 (isStepValid) - 버튼 disabled에 사용
+  const isStepValid = useMemo(() => {
+    return (step: GoalStep): boolean => {
+      return isFieldValid(step);
+    };
+  }, [isFieldValid]);
+
   // 현재 단계의 필드값 반환
   const getCurrentStepValue = useCallback(
     (step: GoalStep): string => {
@@ -114,13 +136,35 @@ export function useGoalFormFields(options: UseGoalFormFieldsOptions = {}) {
     );
   }, [fields]);
 
+  // Dirty 상태: 초기값과 현재값이 다른지 확인
+  const isDirty = useMemo(() => {
+    const initial = initialValuesRef.current;
+    return (
+      fields.goalName !== initial.goalName ||
+      fields.startDate !== initial.startDate ||
+      fields.endDate !== initial.endDate ||
+      fields.goalAmount !== initial.goalAmount
+    );
+  }, [fields]);
+
+  // 금액의 raw 값 반환 (콤마 제거, 서버 전송용)
+  const getRawGoalAmount = useCallback((): number => {
+    if (!fields.goalAmount) return 0;
+    const numbers = fields.goalAmount.replace(/,/g, '');
+    const parsed = Number(numbers);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, [fields.goalAmount]);
+
   return {
     fields,
     hasInputStarted,
     updateField,
     resetInputStarted,
     isFieldValid,
+    isStepValid,
     getCurrentStepValue,
     isFormValid,
+    isDirty,
+    getRawGoalAmount,
   };
 }

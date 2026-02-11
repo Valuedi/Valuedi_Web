@@ -8,7 +8,7 @@ import { useGoalForm, type SelectedAccount } from '@/shared/hooks/Goal/useGoalFo
 import { useUpdateGoal, useGoalDetail } from '@/features/goal';
 import type { GoalDetail } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { formatDate, toInputDate } from '@/shared/utils/goal/goalHelpers';
+import { formatDate, toInputDate, parseAmountToNumber } from '@/shared/utils/goal/goalHelpers';
 import GoalEditPageLayout from './components/GoalEditPageLayout';
 
 type GoalEditLocationState = {
@@ -75,8 +75,8 @@ function GoalEditForm({
     initialValues,
     onSubmit: async (payload) => {
       const { goalName: title, startDate: start, endDate: end, goalAmount: amount } = payload;
-      const targetAmount = Number(String(amount).replace(/,/g, ''));
-      if (Number.isNaN(targetAmount)) {
+      const targetAmount = parseAmountToNumber(amount);
+      if (targetAmount === 0 && amount.trim().length > 0) {
         alert('목표 금액을 확인해주세요.');
         return;
       }
