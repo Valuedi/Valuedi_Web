@@ -19,10 +19,7 @@ const SocialLoginContainer: React.FC<SocialLoginContainerProps> = ({ className }
     mutationFn: getKakaoLoginUrlApi,
     onSuccess: (response) => {
       if (response.result) {
-        // 1. state를 sessionStorage에 저장 (콜백에서 originalState로 사용)
-        sessionStorage.setItem('kakao_oauth_state', response.result.state);
-
-        // 2. 카카오 로그인 URL로 리다이렉트
+        // 카카오 로그인 URL로 리다이렉트
         window.location.href = response.result.url;
       }
     },
