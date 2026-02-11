@@ -24,27 +24,23 @@ const BankInfiniteGrid = ({ availableBanks }: BankInfiniteGridProps) => {
       <style>
         {`
             @keyframes scroll-smooth-step {
-      0% { transform: translateX(-${cardWidth * banksPerRow}px); }
-      
-      5%, 20% { transform: translateX(-${cardWidth * (banksPerRow - 1)}px); }
-      
-      25%, 40% { transform: translateX(-${cardWidth * (banksPerRow - 2)}px); }
-      
-      45%, 60% { transform: translateX(-${cardWidth * (banksPerRow - 3)}px); }
-      
-      65%, 80% { transform: translateX(-${cardWidth * (banksPerRow - 4)}px); }
-      
-      85%, 100% { transform: translateX(0px); }
-    }
+            0% { transform: translateX(-${cardWidth * banksPerRow}px); }
+            5%, 20% { transform: translateX(-${cardWidth * (banksPerRow - 1)}px); }
+            25%, 40% { transform: translateX(-${cardWidth * (banksPerRow - 2)}px); }
+            45%, 60% { transform: translateX(-${cardWidth * (banksPerRow - 3)}px); }
+            65%, 80% { transform: translateX(-${cardWidth * (banksPerRow - 4)}px); }
+            85%, 100% { transform: translateX(0px); }
+            }
 
-    .infinite-scroll-row {
-      animation: scroll-smooth-step 15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
+            .infinite-scroll-row {
+              animation: scroll-smooth-step 15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+              will-change: transform; /* 성능 최적화 추가 */
+            }
 
-    .infinite-scroll-row:hover {
-      animation-play-state: paused;
-    }
-  `}
+            .infinite-scroll-row:hover {
+              animation-play-state: paused;
+            }
+        `}
       </style>
       {Array.from({ length: fixedRows }).map((_, rowIndex) => {
         const startIndex = rowIndex * banksPerRow;
