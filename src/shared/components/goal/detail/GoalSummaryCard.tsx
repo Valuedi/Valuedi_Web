@@ -5,9 +5,13 @@ import { useGoalDetail } from '@/features/goal';
 
 interface GoalSummaryCardProps {
   goalId: number;
+  /** 시뮬레이션으로 조정한 목표 금액 (없으면 API 응답값 사용) */
+  overrideTargetAmount?: number;
+  /** 시뮬레이션으로 조정한 남은 일자 (없으면 API 응답값 사용) */
+  overrideRemainingDays?: number;
 }
 
-const GoalSummaryCard = ({ goalId }: GoalSummaryCardProps) => {
+const GoalSummaryCard = ({ goalId, overrideTargetAmount, overrideRemainingDays }: GoalSummaryCardProps) => {
   const { data, isLoading: loading, error: queryError } = useGoalDetail(goalId);
   const goalData = data?.result ?? null;
   const error = queryError ? '데이터를 불러올 수 없습니다.' : data && !data.isSuccess ? data.message : null;
@@ -39,6 +43,9 @@ const GoalSummaryCard = ({ goalId }: GoalSummaryCardProps) => {
     return null;
   }
 
+  const targetAmount = overrideTargetAmount ?? goalData.targetAmount;
+  const remainingDays = overrideRemainingDays ?? goalData.remainingDays;
+
   return (
     <div className="p-3 bg-white rounded-3xl">
       <div className="flex items-center gap-2 mb-3"></div>
@@ -50,7 +57,7 @@ const GoalSummaryCard = ({ goalId }: GoalSummaryCardProps) => {
             <span className="text-xs">목표금액</span>
           </div>
 
-          <span className="text-xs font-bold">{formatAmount(goalData.targetAmount)}원</span>
+          <span className="text-xs font-bold">{formatAmount(targetAmount)}원</span>
         </div>
 
         <div className="flex items-center justify-between">
@@ -59,7 +66,7 @@ const GoalSummaryCard = ({ goalId }: GoalSummaryCardProps) => {
             <span className="text-xs">남은 일자</span>
           </div>
 
-          <span className="text-xs font-bold">{goalData.remainingDays}일</span>
+          <span className="text-xs font-bold">{remainingDays}일</span>
         </div>
 
         <div className="flex items-center justify-between">

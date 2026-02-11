@@ -20,7 +20,7 @@ const BankInfiniteGrid = ({ availableBanks }: BankInfiniteGridProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-[12px] px-[20px] py-[20px] mt-[20px] pb-[120px]">
+    <div className="flex flex-col gap-[12px] px-[20px] py-[20px] mt-[20px] pb-[120px] w-full max-w-[360px] mx-auto">
       <style>
         {`
           @keyframes scroll-left {

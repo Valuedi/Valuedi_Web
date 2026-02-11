@@ -64,6 +64,7 @@ const AmountAchievedPage = () => {
           isAmountAchievedActive={isCurrentActive}
           isSavingsSimulationActive={isPastActive}
           onMoreClick={() => setMoreSheetOpen(true)}
+          isSimulationEnabled={detail?.status === 'ACTIVE'}
         />
 
         <GoalProgressGauge goalId={goalId} />

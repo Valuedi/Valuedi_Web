@@ -1,17 +1,14 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import BankGNB from '@/shared/components/bank/BankGNB';
 import { Typography } from '@/shared/components/typography';
 import { BaseButton } from '@/shared/components/buttons/BaseButton';
-import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 import { useUserName } from '@/shared/hooks/useUserName';
 import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { BANKS } from '@/features/bank/constants/banks';
 
 const BankConnectionStartPage = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const userName = useUserName();
 
   const handleBack = () => {
@@ -19,12 +16,6 @@ const BankConnectionStartPage = () => {
   };
 
   const handleStart = () => {
-    setShowModal(true);
-  };
-
-  const handleModalConfirm = () => {
-    setShowModal(false);
-    // 다음 페이지로 이동 (은행 선택 페이지)
     navigate('/bank/select');
   };
 
@@ -50,9 +41,6 @@ const BankConnectionStartPage = () => {
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px]">
         <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStart} />
       </div>
-
-      {/* Info Modal */}
-      <BankInfoModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleModalConfirm} />
     </MobileLayout>
   );
 };

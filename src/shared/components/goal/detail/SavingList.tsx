@@ -5,7 +5,12 @@ import BusIcon from '@/assets/icons/goal/BusIcon.svg';
 import ShoppingIcon from '@/assets/icons/goal/ShoppingIcon.svg';
 import SavingInputBottomSheet, { type SavingCategoryItem } from './SavingInputBottomSheet';
 
-const SavingList = () => {
+interface SavingListProps {
+  /** 카테고리 절약 금액 총합이 변경될 때마다 호출 (단위: 원) */
+  onTotalChange?: (totalAmount: number) => void;
+}
+
+const SavingList = ({ onTotalChange }: SavingListProps) => {
   const initialItems: SavingCategoryItem[] = useMemo(
     () => [
       { id: 1, title: '식비에서', icon: FoodIcon },
@@ -32,7 +37,14 @@ const SavingList = () => {
   };
 
   const handleConfirm = (id: number, amountWon: number) => {
-    setItems((prev) => prev.map((x) => (x.id === id ? { ...x, amountWon } : x)));
+    setItems((prev) => {
+      const next = prev.map((x) => (x.id === id ? { ...x, amountWon } : x));
+      if (onTotalChange) {
+        const total = next.reduce((sum, item) => sum + (item.amountWon ?? 0), 0);
+        onTotalChange(total);
+      }
+      return next;
+    });
     setIsSheetOpen(false);
   };
 

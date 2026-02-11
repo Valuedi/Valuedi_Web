@@ -84,6 +84,21 @@ export interface GoalDetailResponse {
   result: GoalDetail;
 }
 
+// 홈 화면: 진행 중 목표 목록 조회 (/api/goals/primary)
+export interface PrimaryGoalsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result: {
+    goals: Array<{
+      goalId: number;
+      title: string;
+      targetAmount: number;
+      iconId: number;
+    }>;
+  };
+}
+
 //  목표-계좌 연결
 export interface LinkAccountRequest {
   accountId: number;

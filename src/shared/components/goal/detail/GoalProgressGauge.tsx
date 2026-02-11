@@ -3,9 +3,11 @@ import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
 interface GoalProgressGaugeProps {
   goalId: number;
+  /** 목표 계산기에서 모으기로 한 금액 (원 단위, 전달되면 이 값만 모은 금액으로 사용) */
+  extraSavingAmount?: number;
 }
 
-const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
+const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps) => {
   const { data, isLoading: loading, error: queryError } = useGoalDetail(goalId);
   const goalData = data?.result ?? null;
   const error = queryError ? '데이터를 불러오는데 실패했습니다.' : null;
@@ -30,11 +32,19 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
   const bgColor = goalData.colorCode ? toHexColor(goalData.colorCode) : undefined;
   const iconSrc = goalData.iconId != null ? GOAL_ICON_SRC[goalData.iconId] : null;
 
-  // achievementRate를 0-100 범위로 제한
-  const clampedRate = Math.min(Math.max(goalData.achievementRate, 0), 100);
+  // 목표 금액: 항상 생성 시 입력한 원래 목표 금액 사용
+  const targetAmount = goalData.targetAmount;
+
+  // 모인 금액: extraSavingAmount가 있으면 그 값만 사용, 없으면 API의 savedAmount 사용
+  const totalSavedForGauge =
+    extraSavingAmount != null ? extraSavingAmount : goalData.savedAmount;
+  const rawRate =
+    targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
+  // 0~100으로 클램프, 소수점은 반올림 처리
+  const clampedRate = Math.min(Math.max(Math.round(rawRate), 0), 100);
 
   return (
-    <div className="relative overflow-hidden bg-white min-h-[50px] flex flex-col justify-start pb-6 px-5 rounded-2xl mx-5">
+    <div className="relative overflow-hidden bg-white min-h-[50px] flex flex-col justify-start pb-6 px-5  mx-5">
       <div
         className="absolute bottom-0 left-0 w-full transition-all duration-1000 ease-out bg-primary-normal"
         style={{ height: `${clampedRate}%` }}
@@ -63,7 +73,7 @@ const GoalProgressGauge = ({ goalId }: GoalProgressGaugeProps) => {
 
         <div className="flex items-center gap-4 px-1">
           <span className="text-2xl font-bold text-black leading-tight font-pretendard">
-            {formatAmount(goalData.savedAmount)}원
+            {formatAmount(totalSavedForGauge)}원
           </span>
 
           <div className="px-3 py-1 bg-primary-normal rounded-full text-xs font-bold text-[#171714] font-pretendard">

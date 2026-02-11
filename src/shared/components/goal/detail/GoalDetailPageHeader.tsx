@@ -8,6 +8,8 @@ interface GoalDetailPageHeaderProps {
   isAmountAchievedActive: boolean;
   isSavingsSimulationActive: boolean;
   onMoreClick: () => void;
+  /** 지난 목표 등 시뮬레이션 비활성화 여부 */
+  isSimulationEnabled: boolean;
 }
 
 export default function GoalDetailPageHeader({
@@ -15,6 +17,7 @@ export default function GoalDetailPageHeader({
   isAmountAchievedActive,
   isSavingsSimulationActive,
   onMoreClick,
+  isSimulationEnabled,
 }: GoalDetailPageHeaderProps) {
   const navigate = useNavigate();
 
@@ -50,11 +53,16 @@ export default function GoalDetailPageHeader({
           달성 금액
         </button>
         <button
-          onClick={() => goalId && navigate(paths.goal.savingsSimulation(goalId))}
+          type="button"
+          disabled={!isSimulationEnabled}
+          onClick={() => {
+            if (!isSimulationEnabled || !goalId) return;
+            navigate(paths.goal.savingsSimulation(goalId));
+          }}
           className={`flex-1 py-4 text-center text-base transition-all ${
-            isSavingsSimulationActive
+            isSimulationEnabled && isSavingsSimulationActive
               ? 'font-bold text-gray-900 border-b-2 border-gray-900'
-              : 'font-medium text-gray-400'
+              : 'font-medium text-gray-300 cursor-not-allowed'
           }`}
         >
           절약 시뮬레이션
