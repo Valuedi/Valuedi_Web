@@ -117,23 +117,26 @@ export const RecommendPage = () => {
   return (
     <MobileLayout className="bg-neutral-10">
       {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
-      <div className="flex flex-row min-h-screen md:h-screen">
-        {/* 데스크탑 사이드바 */}
-        <SidebarNavigation activeItem="recommend" onItemClick={handleNavClick} />
+      <div className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden">
+        {/* 데스크탑 사이드바 (모바일에서는 숨김) */}
+        <div className="hidden md:block">
+          <SidebarNavigation activeItem="recommend" onItemClick={handleNavClick} />
+        </div>
 
         {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 flex flex-col min-h-screen md:min-h-0">
+        <div className="flex-1 flex flex-col w-full min-h-screen md:min-h-0">
           {/* GNB */}
           <div className="sticky top-0 z-10 w-full">
             <HomeGNB title="추천" />
           </div>
 
           {/* Content */}
-          <div className="pb-[64px] md:pb-0">
-            <div className="flex flex-col gap-[48px] md:gap-[32px] px-[20px] md:px-[32px] lg:px-[40px] py-[20px] md:py-[32px]">
+          <div className="flex-1 pb-[80px] md:pb-0 w-full">
+            <div className="flex flex-col gap-[32px] px-[20px] md:px-[32px] lg:px-[40px] py-[20px] md:py-[32px]">
+              {/* 배너 영역 - 모바일에서 가로 스와이프, 스크롤바는 숨김 */}
               <div
                 className={cn(
-                  'flex gap-[12px] overflow-x-auto',
+                  'flex gap-[12px] overflow-x-auto pb-2 scrollbar-none',
                   'md:grid md:grid-cols-2 md:overflow-x-visible md:gap-[20px]',
                   'lg:gap-[24px]'
                 )}
@@ -142,8 +145,10 @@ export const RecommendPage = () => {
                 <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
               </div>
 
+              {/* 필터 및 리스트 영역 */}
               <div className={cn('flex flex-col gap-[12px] w-full md:max-w-none')}>
-                <div className={cn('flex gap-[4px]')}>
+                {/* 카테고리 필터 - 모바일에서 가로 스크롤 가능 */}
+                <div className={cn('flex gap-[8px] overflow-x-auto py-[4px] scrollbar-none')}>
                   {categoryList.map((category) => (
                     <CategoryButton
                       key={category.type}
@@ -157,6 +162,7 @@ export const RecommendPage = () => {
                   ))}
                 </div>
 
+                {/* 리스트 및 상태 영역 */}
                 <div className={cn('flex flex-col gap-[12px]')}>
                   {(isLoading || isPolling) && (
                     <div className="flex flex-col gap-[8px] py-[20px]">
@@ -213,7 +219,9 @@ export const RecommendPage = () => {
                   )}
                   {!isLoading && !isError && filteredList.length > 0 && (
                     <>
-                      <div className={cn('flex flex-col gap-[4px] md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-[12px]')}>
+                      <div
+                        className={cn('flex flex-col gap-[4px] md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-[12px]')}
+                      >
                         {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product) => (
                           <RecommendListItem
                             key={product.finPrdtCd}
@@ -246,7 +254,7 @@ export const RecommendPage = () => {
           </div>
 
           {/* Bottom Navigation - 모바일 전용 */}
-          <div className="fixed bottom-0 left-0 w-full md:hidden">
+          <div className="fixed bottom-0 left-0 w-full z-20 md:hidden">
             <BottomNavigation activeItem="recommend" onItemClick={handleNavClick} />
           </div>
         </div>
