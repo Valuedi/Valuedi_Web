@@ -290,7 +290,8 @@ async function apiFetch<T = unknown>(
     const data: ApiResponse<T> = await response.json();
 
     // 401 에러이고 인증이 필요한 요청인 경우 토큰 재발급 시도
-    if (response.status === 401 && !skipAuth && retryCount === 0) {
+    // 단, 로그아웃 API는 토큰 재발급을 시도하지 않음 (이미 로그아웃된 토큰일 수 있음)
+    if (response.status === 401 && !skipAuth && retryCount === 0 && !normalizedEndpoint.includes('/auth/logout')) {
       // 이미 재발급 중이면 큐에 추가하고 대기
       if (isRefreshing && refreshPromise) {
         return new Promise<ApiResponse<T>>((resolve, reject) => {
