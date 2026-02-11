@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const RecommendListItem = ({ bankName, productName, description, onClick }: Props) => {
-  const targetBank = BANNER.find((item) => item.name === bankName);
+  const targetBank = BANNER.find((item) => item.name === bankName || bankName.includes(item.name));
   const backgroundColor = targetBank ? getColorToken(targetBank.color) : getColorToken('neutral-10');
 
   return (
