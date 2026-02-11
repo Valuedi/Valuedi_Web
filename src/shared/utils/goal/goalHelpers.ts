@@ -119,6 +119,14 @@ export function formatAmountInput(value: string): string {
   return numbers.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+/** 포맷팅된 금액 문자열에서 콤마를 제거하고 숫자로 변환 (서버 전송용) */
+export function parseAmountToNumber(formattedAmount: string): number {
+  if (!formattedAmount) return 0;
+  const numbers = formattedAmount.replace(/,/g, '');
+  const parsed = Number(numbers);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 /** 계좌번호 마스킹 (앞자리 유지, 중간 ****, 뒤 2~4자리) */
 export function maskAccountNumber(accountNumber: string): string {
   if (!accountNumber) return '-';

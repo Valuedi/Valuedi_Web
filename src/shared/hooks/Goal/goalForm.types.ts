@@ -21,6 +21,18 @@ export interface GoalFormValues {
   goalAmount: string;
 }
 
+export interface GoalFormErrors {
+  goalName: string;
+  startDate: string;
+  endDate: string;
+  goalAmount: string;
+}
+
+export interface StepValidationResult {
+  isValid: boolean;
+  error: string;
+}
+
 export interface UseGoalFormOptions {
   mode?: GoalFormMode;
   initialValues?: Partial<GoalFormValues> & { selectedAccount?: SelectedAccount | null };

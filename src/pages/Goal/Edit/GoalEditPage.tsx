@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AuthInput from '@/shared/components/login/AuthInput';
 import AccountLinkBottomSheet from '@/shared/components/goal/list/AccountLinkBottomSheet';
@@ -8,8 +8,9 @@ import { useGoalForm, type SelectedAccount } from '@/shared/hooks/Goal/useGoalFo
 import { useUpdateGoal, useGoalDetail } from '@/features/goal';
 import type { GoalDetail } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
-import { formatDate, toInputDate } from '@/shared/utils/goal/goalHelpers';
+import { formatDate, toInputDate, parseAmountToNumber } from '@/shared/utils/goal/goalHelpers';
 import GoalEditPageLayout from './components/GoalEditPageLayout';
+import GoalLeaveConfirmModal from '@/shared/components/goal/GoalLeaveConfirmModal';
 
 type GoalEditLocationState = {
   goalName?: string;
@@ -70,13 +71,17 @@ function GoalEditForm({
     canSubmit,
     submitButtonText,
     handleSubmit,
+    fieldErrors,
+    isLeaveModalOpen,
+    handleLeaveConfirm,
+    handleLeaveCancel,
   } = useGoalForm({
     mode: 'edit',
     initialValues,
     onSubmit: async (payload) => {
       const { goalName: title, startDate: start, endDate: end, goalAmount: amount } = payload;
-      const targetAmount = Number(String(amount).replace(/,/g, ''));
-      if (Number.isNaN(targetAmount)) {
+      const targetAmount = parseAmountToNumber(amount);
+      if (targetAmount === 0 && amount.trim().length > 0) {
         alert('목표 금액을 확인해주세요.');
         return;
       }
@@ -103,6 +108,14 @@ function GoalEditForm({
     onBack: () => navigate(-1),
   });
 
+  // 엔터 키 핸들러: 유효성 검사 통과 시 제출
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === 'NumpadEnter') && canSubmit && !updateGoalMutation.isPending) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
     <>
       <main className="flex-1 flex flex-col px-[20px] pt-[28px] pb-[32px] overflow-y-auto">
@@ -125,9 +138,11 @@ function GoalEditForm({
             name="goalAmount"
             value={goalAmount}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('goalAmount', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="목표액은 얼마인가요?"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.goalAmount}
           />
 
           <AuthInput
@@ -135,9 +150,11 @@ function GoalEditForm({
             name="endDate"
             value={endDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('endDate', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.endDate}
           />
 
           <AuthInput
@@ -145,9 +162,11 @@ function GoalEditForm({
             name="startDate"
             value={startDate}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('startDate', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.startDate}
           />
 
           <AuthInput
@@ -155,9 +174,11 @@ function GoalEditForm({
             name="goalName"
             value={goalName}
             onChange={(e: ChangeEvent<HTMLInputElement>) => updateField('goalName', e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="목표명을 작성 해주세요"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.goalName}
           />
         </div>
       </main>
@@ -170,6 +191,8 @@ function GoalEditForm({
       />
 
       <AccountLinkBottomSheet isOpen={isAccountSheetOpen} onClose={closeAccountSheet} onSelect={handleAccountSelect} />
+
+      <GoalLeaveConfirmModal isOpen={isLeaveModalOpen} onClose={handleLeaveCancel} onConfirm={handleLeaveConfirm} />
     </>
   );
 }

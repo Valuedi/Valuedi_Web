@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useNavigate, useBlocker } from 'react-router-dom';
 import { useGoalStep } from './useGoalStep';
 import { useGoalFormFields } from './useGoalFormFields';
 import { useGoalModalControl } from './useGoalModalControl';
@@ -18,11 +18,79 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
   const { currentStep, setCurrentStep, goToNext, goToBack } = useGoalStep({ initialStep: 1 });
 
   // 입력 필드 관리
-  const { fields, hasInputStarted, updateField, resetInputStarted, isFieldValid, getCurrentStepValue, isFormValid } =
-    useGoalFormFields({
-      mode,
-      initialValues: options.initialValues,
-    });
+  const {
+    fields,
+    hasInputStarted,
+    updateField,
+    resetInputStarted,
+    isFieldValid,
+    isStepValid,
+    getStepValidation,
+    getCurrentStepValue,
+    isFormValid,
+    isDirty,
+    getRawGoalAmount,
+    fieldErrors,
+  } = useGoalFormFields({
+    mode,
+    initialValues: options.initialValues,
+  });
+
+  // 이탈 방지 모달 상태
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+
+  // useBlocker를 사용한 SPA 내 네비게이션 이탈 방지
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isDirty && currentLocation.pathname !== nextLocation.pathname && !isLeaveModalOpen
+  );
+
+  // blocker 상태가 변경될 때 모달 표시
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      setIsLeaveModalOpen(true);
+      setPendingNavigation(() => {
+        return () => {
+          blocker.proceed?.();
+          setIsLeaveModalOpen(false);
+        };
+      });
+    }
+  }, [blocker]);
+
+  // 브라우저 이탈 방지 (새로고침, 탭 닫기 등)
+  useEffect(() => {
+    if (!isDirty) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isDirty]);
+
+  // 이탈 방지 모달 핸들러
+  const handleLeaveConfirm = useCallback(() => {
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    } else {
+      blocker.proceed?.();
+    }
+    setIsLeaveModalOpen(false);
+  }, [pendingNavigation, blocker]);
+
+  const handleLeaveCancel = useCallback(() => {
+    blocker.reset?.();
+    setIsLeaveModalOpen(false);
+    setPendingNavigation(null);
+  }, [blocker]);
 
   // 모달 제어
   const {
@@ -119,6 +187,20 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
     return hasInputStarted && currentValue.length > 0;
   }, [currentStep, selectedAccount, selectedIcon, fields.goalAmount, hasInputStarted, getCurrentStepValue]);
 
+  // 버튼 disabled 상태 (Step별 Validation 적용)
+  const isPrimaryButtonDisabled = useMemo(() => {
+    if (currentStep === 5) return false;
+    if (currentStep === 6) return !(selectedAccount !== null && fields.goalAmount.length > 0);
+    if (currentStep === 7) return selectedIcon === null;
+
+    // 1~4단계: 해당 단계의 유효성 검사 결과에 따라 disabled
+    if (currentStep >= 1 && currentStep <= 4) {
+      return !isStepValid(currentStep);
+    }
+
+    return false;
+  }, [currentStep, selectedAccount, selectedIcon, fields.goalAmount, isStepValid]);
+
   // 제출 가능 여부 (edit 모드용)
   const canSubmit = useMemo(() => {
     if (!isEdit) return false;
@@ -133,7 +215,7 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
       goalName: fields.goalName,
       startDate: fields.startDate,
       endDate: fields.endDate,
-      goalAmount: fields.goalAmount,
+      goalAmount: fields.goalAmount, // 포맷팅된 값 전달 (서버에서 parseAmountToNumber 사용)
       selectedAccount,
     });
   }, [fields, selectedAccount, options]);
@@ -161,9 +243,20 @@ export function useGoalForm(options: UseGoalFormOptions = {}) {
     handleAccountSelect,
     handleIconSelect,
     shouldShowPrimaryButton,
+    isPrimaryButtonDisabled,
     primaryButtonText,
     canSubmit,
     submitButtonText,
     handleSubmit,
+    // Dirty 상태 및 유틸 함수 추가
+    isDirty,
+    getRawGoalAmount,
+    isStepValid,
+    getStepValidation,
+    fieldErrors,
+    // 이탈 방지 관련
+    isLeaveModalOpen,
+    handleLeaveConfirm,
+    handleLeaveCancel,
   };
 }

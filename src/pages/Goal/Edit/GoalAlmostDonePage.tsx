@@ -5,7 +5,7 @@ import { BaseButton } from '@/shared/components/buttons/BaseButton';
 import GoalIconPickerBottomSheet from '@/shared/components/goal/detail/GoalIconPickerBottomSheet';
 import { useCreateGoal } from '@/features/goal/goal.hooks';
 import { paths } from '@/router/paths';
-import { basenameNoExt, formatDate } from '@/shared/utils/goal/goalHelpers';
+import { basenameNoExt, formatDate, parseAmountToNumber } from '@/shared/utils/goal/goalHelpers';
 import BackPageIcon from '@/assets/icons/BackPage.svg';
 import type { CreateGoalRequest } from '@/features/goal/goal.types';
 import { GOAL_COLOR_NAME_TO_HEX, GOAL_ICON_NAME_TO_ID } from '@/features/goal';
@@ -77,7 +77,7 @@ const GoalAlmostDonePage = () => {
     // 서버 전송용 데이터 객체 생성
     const newGoal: CreateGoalRequest = {
       title: goalName,
-      targetAmount: Number(goalAmount.replace(/,/g, '')),
+      targetAmount: parseAmountToNumber(goalAmount),
       startDate: formatDate(startDate),
       endDate: formatDate(endDate),
       bankAccountId: Number(selectedAccount.id),

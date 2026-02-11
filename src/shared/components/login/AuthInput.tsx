@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent, ReactNode, useState } from 'react';
+import { ChangeEvent, FocusEvent, KeyboardEvent, ReactNode, useState } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Typography } from '../typography';
 
@@ -12,6 +12,7 @@ interface AuthInputProps {
   success?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   focusBorderClassName?: string;
   rightElement?: ReactNode;
   timer?: string;
@@ -32,6 +33,7 @@ const AuthInput = ({
   success,
   onChange,
   onFocus,
+  onKeyDown,
   focusBorderClassName,
   rightElement,
   timer,
@@ -87,6 +89,7 @@ const AuthInput = ({
               setIsFocused(true);
               onFocus?.(e);
             }}
+            onKeyDown={onKeyDown}
             onBlur={() => setIsFocused(false)}
             readOnly={readOnly}
             className={cn(
