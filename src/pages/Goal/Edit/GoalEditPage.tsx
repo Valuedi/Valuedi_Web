@@ -10,6 +10,7 @@ import type { GoalDetail } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
 import { formatDate, toInputDate, parseAmountToNumber } from '@/shared/utils/goal/goalHelpers';
 import GoalEditPageLayout from './components/GoalEditPageLayout';
+import GoalLeaveConfirmModal from '@/shared/components/goal/GoalLeaveConfirmModal';
 
 type GoalEditLocationState = {
   goalName?: string;
@@ -70,6 +71,10 @@ function GoalEditForm({
     canSubmit,
     submitButtonText,
     handleSubmit,
+    fieldErrors,
+    isLeaveModalOpen,
+    handleLeaveConfirm,
+    handleLeaveCancel,
   } = useGoalForm({
     mode: 'edit',
     initialValues,
@@ -128,6 +133,7 @@ function GoalEditForm({
             placeholder="목표액은 얼마인가요?"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.goalAmount}
           />
 
           <AuthInput
@@ -138,6 +144,7 @@ function GoalEditForm({
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.endDate}
           />
 
           <AuthInput
@@ -148,6 +155,7 @@ function GoalEditForm({
             placeholder="YYYY-MM-DD"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.startDate}
           />
 
           <AuthInput
@@ -158,6 +166,7 @@ function GoalEditForm({
             placeholder="목표명을 작성 해주세요"
             focusBorderClassName="border-primary-normal"
             width="full"
+            error={fieldErrors.goalName}
           />
         </div>
       </main>
@@ -170,6 +179,8 @@ function GoalEditForm({
       />
 
       <AccountLinkBottomSheet isOpen={isAccountSheetOpen} onClose={closeAccountSheet} onSelect={handleAccountSelect} />
+
+      <GoalLeaveConfirmModal isOpen={isLeaveModalOpen} onClose={handleLeaveCancel} onConfirm={handleLeaveConfirm} />
     </>
   );
 }
