@@ -133,6 +133,17 @@ export const setGlobalErrorHandler = (handler: ErrorHandler | null): void => {
 };
 
 /**
+ * 전역 인증 에러 핸들러 (토큰 재발급 실패 시 호출)
+ * 로그인 페이지로 이동 및 토스트 메시지 표시를 담당합니다.
+ */
+type AuthErrorHandler = (error: ApiError) => void;
+let globalAuthErrorHandler: AuthErrorHandler | null = null;
+
+export const setGlobalAuthErrorHandler = (handler: AuthErrorHandler | null): void => {
+  globalAuthErrorHandler = handler;
+};
+
+/**
  * HTTP 상태 코드별 에러 처리 전략
  */
 const handleErrorByStatus = (status: number, error: ApiError, endpoint: string): void => {
@@ -298,9 +309,16 @@ async function apiFetch<T = unknown>(
         return apiFetch<T>(endpoint, options, retryCount + 1);
       } else {
         // 토큰 재발급 실패 - 큐에 있는 모든 요청 거절 및 로그아웃 처리
-        processQueue(new ApiError('AUTH_ERROR', '인증이 만료되었습니다. 다시 로그인해주세요.', 401));
+        const error = new ApiError('AUTH_ERROR', '세션이 만료되었습니다. 다시 로그인해주세요.', 401);
+        processQueue(error);
         removeAccessToken();
-        throw new ApiError('AUTH_ERROR', '인증이 만료되었습니다. 다시 로그인해주세요.', 401);
+
+        // 전역 인증 에러 핸들러 호출 (토스트 메시지 및 로그인 페이지 이동)
+        if (globalAuthErrorHandler) {
+          globalAuthErrorHandler(error);
+        }
+
+        throw error;
       }
     }
 
@@ -448,9 +466,15 @@ export async function refreshToken(): Promise<string | null> {
 
       // Refresh API가 401/403을 반환하면 세션 완전 만료
       if (response.status === 401 || response.status === 403) {
-        const error = new ApiError('AUTH_ERROR', '세션이 완전히 만료되었습니다. 다시 로그인해주세요.', response.status);
+        const error = new ApiError('AUTH_ERROR', '세션이 만료되었습니다. 다시 로그인해주세요.', response.status);
         processQueue(error);
         removeAccessToken();
+
+        // 전역 인증 에러 핸들러 호출 (토스트 메시지 및 로그인 페이지 이동)
+        if (globalAuthErrorHandler) {
+          globalAuthErrorHandler(error);
+        }
+
         return null;
       }
 
@@ -483,6 +507,12 @@ export async function refreshToken(): Promise<string | null> {
           : new ApiError('NETWORK_ERROR', '토큰 재발급 중 네트워크 오류가 발생했습니다.', 0);
       processQueue(apiError);
       removeAccessToken();
+
+      // 네트워크 에러가 아닌 경우 (인증 에러) 전역 핸들러 호출
+      if (apiError.code === 'AUTH_ERROR' && globalAuthErrorHandler) {
+        globalAuthErrorHandler(apiError);
+      }
+
       return null;
     } finally {
       isRefreshing = false;
