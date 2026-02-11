@@ -4,10 +4,6 @@ import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { Typography } from '@/shared/components';
 import { cn } from '@/shared/utils/cn';
 import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
-<<<<<<< HEAD
-import ProfileIcon from '@/assets/icons/mbti/Profile.svg';
-=======
->>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
 import MyMbti from './components/MyMbti';
 import { SegmentedButton } from '@/shared/components/buttons/SegmentedButton';
 import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';

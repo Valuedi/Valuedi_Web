@@ -43,13 +43,6 @@ const KakaoCallbackPage = () => {
         try {
           const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
 
-<<<<<<< HEAD
-        // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
-        try {
-          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
-
-=======
->>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
           // 은행 연동 여부 확인
           const hasBankConnection =
             connectionsRes.status === 'fulfilled' &&

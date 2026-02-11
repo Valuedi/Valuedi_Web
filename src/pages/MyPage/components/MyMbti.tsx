@@ -4,11 +4,8 @@ import { useGetProfile } from '@/shared/hooks/MyPage/useGetProfile';
 import { MbtiDetailChart } from '@/pages/Mbti/components/MbtiDetailChart';
 import { calculateMbtiScores } from '@/shared/utils/calculateMbtiScore';
 import { formatMbtiDescription } from '@/shared/utils/formatMbtiText';
-<<<<<<< HEAD
-=======
 import { MoreViewButton } from '@/shared/components/buttons';
 import { useState } from 'react';
->>>>>>> b2efa576c541744b9d5f642d3c88eb152feaadb0
 
 const MyMbti = () => {
   const { mbtiResult, isLoading } = useGetProfile();
