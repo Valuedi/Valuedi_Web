@@ -23,7 +23,7 @@ const BottomSheet = ({ isOpen, onClose, title, children }: BottomSheetProps) => 
             <div className="w-full max-w-[360px] pointer-events-auto">
               <motion.div
                 initial={{ y: '100%' }}
-                animate={{ y: 0 }}
+                animate={{ y: 0 }} 
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="relative rounded-t-3xl bg-white px-8 pb-10 pt-12 shadow-2xl"
