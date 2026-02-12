@@ -71,7 +71,9 @@ export const SectorSummarySection = ({
         ) : (
           <SectorChart
             data={[
+              // 상위 5개 카테고리
               ...sectorData.slice(0, 5),
+              // 그 외 카테고리들을 하나로 묶어서 "그외" 그룹으로 표시
               ...(sectorData.slice(5).reduce((sum, i) => sum + i.amount, 0) > 0
                 ? [
                     {
