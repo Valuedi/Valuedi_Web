@@ -66,7 +66,7 @@ export const AssetLedger = () => {
   const isLoading = isSummaryLoading || isTopCategoryLoading || isDailyLoading;
 
   return (
-    <div className={cn('flex flex-col w-full h-full bg-neutral-0 mt-[20px] px-[20px] gap-[20px]')}>
+    <div className={cn('flex flex-col w-full h-full bg-neutral-0 mt-[20px] px-[20px] md:px-[32px] lg:px-[40px] gap-[20px]')}>
       <div className={cn('flex flex-col gap-[20px]')}>
         <div className={cn('flex flex-col gap-[12px]')}>
           <div className={cn('flex items-center gap-[8px] py-[4px]')}>
@@ -141,13 +141,15 @@ export const AssetLedger = () => {
         </div>
       </div>
 
-      <div className={cn('h-[8px] bg-neutral-10 mx-[-20px]')} />
+      <div className={cn('h-[8px] bg-neutral-10 mx-[-20px] md:mx-[-32px] lg:mx-[-40px]')} />
 
-      <div className={cn('flex flex-col gap-[12px] w-full h-full')}>
+      <div className={cn('flex flex-col gap-[12px] w-full')}>
         <ViewToggleButton mode={viewMode} onToggle={setViewMode} leftText="목록" rightText="달력" />
       </div>
 
-      {viewMode === 'list' ? <LedgerList /> : <LedgerCalendar />}
+      <div className={cn('flex-1 min-h-0 w-full overflow-y-auto')}>
+        {viewMode === 'list' ? <LedgerList /> : <LedgerCalendar />}
+      </div>
     </div>
   );
 };

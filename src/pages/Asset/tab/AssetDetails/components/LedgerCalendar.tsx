@@ -52,9 +52,9 @@ export const LedgerCalendar = () => {
 
   return (
     <div className={cn('flex flex-col w-full')}>
-      <div className={cn('grid grid-cols-7')}>
+      <div className={cn('grid grid-cols-7 w-full')}>
         {WEEKDAYS.map((day) => (
-          <div key={day} className={cn('flex justify-center items-center py-[4px] gap-[4px] w-[44px]')}>
+          <div key={day} className={cn('flex justify-center items-center py-[4px] gap-[4px]')}>
             <Typography style="text-caption-1-12-regular" className={cn('text-neutral-90')}>
               {day}
             </Typography>
@@ -62,7 +62,7 @@ export const LedgerCalendar = () => {
         ))}
       </div>
 
-      <div className={cn('grid grid-cols-7 py-[4px]')}>
+      <div className={cn('grid grid-cols-7 w-full py-[4px]')}>
         {daysArray.map((date, index) => {
           if (!date) return <div key={`empty-${index}`} />;
 
@@ -74,7 +74,7 @@ export const LedgerCalendar = () => {
               onClick={() => {
                 if (data) setSelectedDate(date);
               }}
-              className={cn('flex flex-col items-center w-[44px] h-[70px] py-[4px]', data && 'cursor-pointer')}
+              className={cn('flex flex-col items-center h-[70px] py-[4px]', data && 'cursor-pointer')}
             >
               <div className={cn('flex gap-[4px] py-[8px]')}>
                 <Typography style="text-body-2-14-medium" className={cn(data ? 'text-neutral-90' : 'text-neutral-50')}>

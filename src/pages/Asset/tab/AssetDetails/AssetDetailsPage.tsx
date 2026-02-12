@@ -24,7 +24,7 @@ export const AssetDetails = () => {
 
   return (
     <div className={cn('flex flex-col w-full h-full bg-neutral-0')}>
-      <div className={cn('px-[20px] pt-[20px]')}>
+      <div className={cn('px-[20px] md:px-[32px] lg:px-[40px] pt-[20px]')}>
         <SegmentedButton<ViewType> value={viewType} onChange={setViewType} options={viewOptions} />
       </div>
 
