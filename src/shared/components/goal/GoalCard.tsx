@@ -34,7 +34,7 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
 
   const isPast = type === 'past';
 
-  // 상단 제목 & 상태 배지 (리스트·상세 동일하게 목표 이름 표시)
+  // 상단 제목 & 상태 배지
   const titleText = goal.title;
   let statusLabel: string | null = null;
   let statusClass = '';
@@ -83,7 +83,7 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
         </div>
       </div>
 
-      {/* 하단 내용: 현재 목표 / 지난 목표에 따라 다른 정보 표시 */}
+      {/* 하단 내용 */}
       {isPast ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
