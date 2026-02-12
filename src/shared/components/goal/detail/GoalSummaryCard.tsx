@@ -63,7 +63,7 @@ const GoalSummaryCard = ({ goalId, overrideTargetAmount, overrideRemainingDays }
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-gray-500">
             <img src={CalendarIcon} alt="" className="w-4 h-4 opacity-50" />
-            <span className="text-xs">남은 일자</span>
+            <span className="text-xs">남은일자</span>
           </div>
 
           <span className="text-xs font-bold">{remainingDays}일</span>
@@ -72,7 +72,7 @@ const GoalSummaryCard = ({ goalId, overrideTargetAmount, overrideRemainingDays }
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-gray-500">
             <img src={MoneyIcon} alt="" className="w-4 h-4 opacity-50" />
-            <span className="text-xs">저축 계좌</span>
+            <span className="text-xs">저축계좌</span>
           </div>
 
           <span className="text-xs">

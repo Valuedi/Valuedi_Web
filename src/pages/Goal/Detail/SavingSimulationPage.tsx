@@ -118,6 +118,7 @@ const SavingSimulationPage = () => {
           onIconChangeConfirm={handleIconChangeConfirm}
           initialColorId={initialColorId}
           initialIconId={initialIconId}
+          isPastGoal={detail?.status === 'COMPLETE' || detail?.status === 'FAILED'}
         />
         <GoalDeleteConfirmModal
           isOpen={deleteModalOpen}

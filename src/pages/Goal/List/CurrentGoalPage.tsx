@@ -111,7 +111,7 @@ export const CurrentGoalPage = () => {
                   ))
                 )}
               </div>
-
+ 
               <button className="flex items-center justify-center gap-1 py-6 text-sm font-medium text-gray-400 transition-opacity active:opacity-50 md:col-span-full">
                 목록 더 보기
                 <img src={DropDown} alt="dropdown" className="w-4 h-4 opacity-40" />

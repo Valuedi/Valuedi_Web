@@ -34,8 +34,8 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
 
   const isPast = type === 'past';
 
-  // 상단 제목 & 상태 배지
-  const titleText = isPast ? '목표성공입니다' : goal.title;
+  // 상단 제목 & 상태 배지 (리스트·상세 동일하게 목표 이름 표시)
+  const titleText = goal.title;
   let statusLabel: string | null = null;
   let statusClass = '';
 

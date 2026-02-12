@@ -10,6 +10,8 @@ interface GoalDetailPageHeaderProps {
   onMoreClick: () => void;
   /** 지난 목표 등 시뮬레이션 비활성화 여부 */
   isSimulationEnabled: boolean;
+  /** 지난 목표 상세일 때 true → 탭 숨기고 제목만 "지난 목표" */
+  isPastGoal?: boolean;
 }
 
 export default function GoalDetailPageHeader({
@@ -18,6 +20,7 @@ export default function GoalDetailPageHeader({
   isSavingsSimulationActive,
   onMoreClick,
   isSimulationEnabled,
+  isPastGoal = false,
 }: GoalDetailPageHeaderProps) {
   const navigate = useNavigate();
 
@@ -32,7 +35,9 @@ export default function GoalDetailPageHeader({
         >
           <img src={BackPageIcon} alt="뒤로가기" className="w-6 h-6" />
         </button>
-        <h1 className="text-xl font-bold text-gray-900 absolute left-1/2 -translate-x-1/2">목표</h1>
+        <h1 className="text-xl font-bold text-gray-900 absolute left-1/2 -translate-x-1/2">
+          {isPastGoal ? '지난 목표' : '목표'}
+        </h1>
         <button
           type="button"
           onClick={onMoreClick}
@@ -43,31 +48,33 @@ export default function GoalDetailPageHeader({
         </button>
       </div>
 
-      <div className="flex w-full border-b border-gray-200">
-        <button
-          onClick={() => goalId && navigate(paths.goal.amountAchieved(goalId))}
-          className={`flex-1 py-4 text-center text-base transition-all ${
-            isAmountAchievedActive ? 'font-bold text-gray-900 border-b-2 border-gray-900' : 'font-medium text-gray-400'
-          }`}
-        >
-          달성 금액
-        </button>
-        <button
-          type="button"
-          disabled={!isSimulationEnabled}
-          onClick={() => {
-            if (!isSimulationEnabled || !goalId) return;
-            navigate(paths.goal.savingsSimulation(goalId));
-          }}
-          className={`flex-1 py-4 text-center text-base transition-all ${
-            isSimulationEnabled && isSavingsSimulationActive
-              ? 'font-bold text-gray-900 border-b-2 border-gray-900'
-              : 'font-medium text-gray-300 cursor-not-allowed'
-          }`}
-        >
-          절약 시뮬레이션
-        </button>
-      </div>
+      {!isPastGoal && (
+        <div className="flex w-full border-b border-gray-200">
+          <button
+            onClick={() => goalId && navigate(paths.goal.amountAchieved(goalId))}
+            className={`flex-1 py-4 text-center text-base transition-all ${
+              isAmountAchievedActive ? 'font-bold text-gray-900 border-b-2 border-gray-900' : 'font-medium text-gray-400'
+            }`}
+          >
+            달성 금액
+          </button>
+          <button
+            type="button"
+            disabled={!isSimulationEnabled}
+            onClick={() => {
+              if (!isSimulationEnabled || !goalId) return;
+              navigate(paths.goal.savingsSimulation(goalId));
+            }}
+            className={`flex-1 py-4 text-center text-base transition-all ${
+              isSimulationEnabled && isSavingsSimulationActive
+                ? 'font-bold text-gray-900 border-b-2 border-gray-900'
+                : 'font-medium text-gray-300 cursor-not-allowed'
+            }`}
+          >
+            절약 시뮬레이션
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,8 @@ interface GoalMoreActionsBottomSheetProps {
   initialColorId?: string;
   initialIconId?: string;
   onIconChangeConfirm?: (payload: { colorId: string; iconId: string }) => void;
+  /** 지난 목표일 때 true → 아이콘 수정/목표 수정 비활성화 */
+  isPastGoal?: boolean;
 }
 
 const GoalMoreActionsBottomSheet = ({
@@ -20,6 +22,7 @@ const GoalMoreActionsBottomSheet = ({
   initialColorId,
   initialIconId,
   onIconChangeConfirm,
+  isPastGoal = false,
 }: GoalMoreActionsBottomSheetProps) => {
   const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
 
@@ -29,6 +32,7 @@ const GoalMoreActionsBottomSheet = ({
   };
 
   const handleIconChangeClick = () => {
+    if (isPastGoal) return;
     setIsIconPickerOpen(true);
     onClose();
   };
@@ -49,7 +53,8 @@ const GoalMoreActionsBottomSheet = ({
           <button
             type="button"
             onClick={handleIconChangeClick}
-            className="w-full flex items-center gap-3 py-4 text-left"
+            disabled={isPastGoal}
+            className={`w-full flex items-center gap-3 py-4 text-left ${isPastGoal ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             <span className="w-6 flex justify-center text-gray-500">♡</span>
             <span className="text-[16px] font-medium text-gray-700">아이콘 변경하기</span>
@@ -57,8 +62,9 @@ const GoalMoreActionsBottomSheet = ({
 
           <button
             type="button"
-            onClick={() => handleClick(onEditGoal)}
-            className="w-full flex items-center gap-3 py-4 text-left"
+            onClick={() => !isPastGoal && handleClick(onEditGoal)}
+            disabled={isPastGoal}
+            className={`w-full flex items-center gap-3 py-4 text-left ${isPastGoal ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             <span className="w-6 flex justify-center text-gray-500">✎</span>
             <span className="text-[16px] font-medium text-gray-700">목표 수정하기</span>

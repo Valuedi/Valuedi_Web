@@ -7,6 +7,7 @@ import GoalDeleteConfirmModal from '@/shared/components/goal/detail/GoalDeleteCo
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import GoalProgressGauge from '@/shared/components/goal/detail/GoalProgressGauge';
 import GoalSummaryCard from '@/shared/components/goal/detail/GoalSummaryCard';
+import PastGoalSummarySection from '@/shared/components/goal/detail/PastGoalSummarySection';
 import AmountAchievedLedgerList from '@/shared/components/goal/detail/AmountAchievedLedgerList';
 import { useGoalDetail, useGoalLedgers } from '@/features/goal';
 import { getBankDisplayName } from '@/features/connection/constants/organizationCodes';
@@ -56,6 +57,8 @@ const AmountAchievedPage = () => {
     setIsSheetOpen(true);
   };
 
+  const isPastGoal = detail?.status === 'COMPLETE' || detail?.status === 'FAILED';
+
   return (
     <MobileLayout>
       <div className="relative flex flex-col w-full min-h-screen bg-white">
@@ -65,10 +68,15 @@ const AmountAchievedPage = () => {
           isSavingsSimulationActive={isPastActive}
           onMoreClick={() => setMoreSheetOpen(true)}
           isSimulationEnabled={detail?.status === 'ACTIVE'}
+          isPastGoal={isPastGoal}
         />
 
-        <GoalProgressGauge goalId={goalId} />
-        <div className="px-5">
+        {isPastGoal && detail ? (
+          <PastGoalSummarySection detail={detail} />
+        ) : (
+          <GoalProgressGauge goalId={goalId} />
+        )}
+        <div className={isPastGoal ? 'px-5 pt-4' : 'px-5'}>
           <GoalSummaryCard goalId={goalId} />
         </div>
         <div className="flex flex-col gap-4 p-5">
@@ -90,6 +98,7 @@ const AmountAchievedPage = () => {
           onIconChangeConfirm={handleIconChangeConfirm}
           initialColorId={initialColorId}
           initialIconId={initialIconId}
+          isPastGoal={isPastGoal}
         />
         <GoalDeleteConfirmModal
           isOpen={deleteModalOpen}
