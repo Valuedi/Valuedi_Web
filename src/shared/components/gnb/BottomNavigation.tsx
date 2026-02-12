@@ -38,7 +38,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeItem =
     // 기본 네비게이션 동작
     switch (itemId) {
       case 'home':
-        navigate('/');
+        // 홈 탭 클릭 시 항상 홈 화면으로 이동
+        navigate('/home');
         break;
       case 'asset':
         navigate('/asset');
