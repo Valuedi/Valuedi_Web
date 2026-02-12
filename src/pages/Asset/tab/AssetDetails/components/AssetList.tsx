@@ -37,7 +37,7 @@ export const AssetList = () => {
   const [isCardExpanded, setIsCardExpanded] = useState(false);
 
   return (
-    <div className={cn('flex flex-col gap-[8px] px-[20px] mt-[20px] ')}>
+    <div className={cn('flex flex-col gap-[8px] px-[20px] md:px-[32px] lg:px-[40px] mt-[20px]')}>
       <div className={cn('rounded-[8px] px-[12px] py-[16px] gap-[2px]')}>
         <div className={cn('flex flex-col gap-[2px]')}>
           <Typography style="text-body-2-14-regular" className="text-neutral-70">

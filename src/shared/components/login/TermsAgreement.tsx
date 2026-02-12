@@ -60,26 +60,33 @@ export const TermsAgreement: React.FC<TermsAgreementProps> = ({ onRequirementCha
   }, [terms, onRequirementChange, onTermsChange]);
 
   return (
-    <div className="w-[320px] flex flex-col">
+    <div className="flex flex-col text-left w-[320px] mx-auto">
+      {/* 라벨 - 이메일/인증번호와 동일 */}
+      <div className="h-[28px] flex items-start">
+        <Typography variant="body-2" weight="semi-bold" className="text-text-body">
+          약관 동의
+        </Typography>
+      </div>
+
       {/* 전체 동의 영역 */}
-      <div className="flex items-center gap-3 min-w-0 cursor-pointer mb-4" onClick={handleAllCheck}>
+      <div className="flex items-center gap-3 min-w-0 cursor-pointer mt-0 mb-3" onClick={handleAllCheck}>
         <CheckBoxButton isChecked={isAllChecked} />
         <Typography variant="body-2" weight="bold" className={isAllChecked ? 'text-neutral-100' : 'text-neutral-60'}>
           전체 동의
         </Typography>
       </div>
 
-      <div className="w-full h-[1px] bg-neutral-10 mb-4" />
+      <div className="w-full h-[1px] bg-neutral-10 mb-3" />
 
-      {/* 개별 항목 리스트 (상세보기 우측 정렬 반영) */}
+      {/* 개별 항목 리스트 */}
       <div className="flex flex-col gap-[8px]">
         {TERMS_LIST.map((item) => (
           <div
             key={item.id}
-            className="flex items-center justify-between cursor-pointer w-full h-[28px] py-[4px]"
+            className="flex items-center justify-between cursor-pointer w-full min-h-[28px] py-[4px]"
             onClick={() => toggleItem(item.id)}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <CheckBoxButton isChecked={terms[item.id]} />
               <Typography
                 variant="body-2"
@@ -97,6 +104,9 @@ export const TermsAgreement: React.FC<TermsAgreementProps> = ({ onRequirementCha
           </div>
         ))}
       </div>
+
+      {/* AuthInput과 동일한 하단 여백 */}
+      <div className="h-[24px]" />
     </div>
   );
 };

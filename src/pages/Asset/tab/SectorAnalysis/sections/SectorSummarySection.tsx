@@ -83,10 +83,14 @@ export const SectorSummarySection = ({
                       percentage: sectorData.slice(5).reduce((sum, i) => sum + i.percentage, 0),
                       category: 'others_group',
                       items: [],
-                    },
-                  ]
-                : []),
-            ]}
+                    }
+                  : null;
+
+              // others가 있고 금액이 0보다 크면 추가
+              return mergedOthers && mergedOthers.amount > 0
+                ? [...nonOthersItems, mergedOthers]
+                : nonOthersItems;
+            })()}
           />
         )}
       </div>
