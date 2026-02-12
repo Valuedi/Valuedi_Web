@@ -135,6 +135,23 @@ export const RecommendDetailPage = () => {
     return sortedOptions[0]?.intrRate || 0;
   }, [product]);
 
+  const recommendationNotice = useMemo(
+    () => [
+      '제공되는 정보는 금융감독원 23.06.15일 공시된 내용 기반으로 작성되었으며, 금융상품 광고가 아닙니다.',
+      '실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭 다시 확인하시기 바랍니다.',
+    ],
+    []
+  );
+
+  const recommendationBulletNotices = useMemo(
+    () => [
+      '본 페이지는 밸류디에서 대가 관계 없이 정보제공 목적으로 자체 제작한 게시물입니다.',
+      '밸류디는 최신 정보 업데이트에 최선을 다하고 있습니다.',
+      '해당 금융사 홈페이지 등에서 상품 정보와 이용 조건을 확인하고 신청하시길 바랍니다.',
+    ],
+    []
+  );
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -262,18 +279,35 @@ export const RecommendDetailPage = () => {
         {productDetailInfo.length > 0 && <ProductInfoList items={productDetailInfo} initialCount={3} />}
 
         <div className={cn('flex flex-col gap-[8px] rounded-[8px]')}>
-          <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50 whitespace-pre-wrap')}>
-            {`제공되는 정보는 금융감독원 23.06.15일 공시된 내용 기반으로 작성되었으며, 금융상품 광고가 아닙니다.\n실제 상품 가입 시점에 변동될 수 있으므로 상품 가입 시 꼭 다시 확인하시기 바랍니다.`}
-          </Typography>
+          <div className={cn('flex flex-col gap-[4px]')}>
+            {recommendationNotice.map((notice) => (
+              <Typography
+                key={notice}
+                style="text-caption-1-12-regular"
+                className={cn('text-neutral-50 break-keep break-words')}
+              >
+                {notice}
+              </Typography>
+            ))}
+          </div>
 
-          <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50 whitespace-pre-wrap')}>
-            {`• 본 페이지는 밸류디에서 대가 관계 없이 정보제공 목적으로\n   자체 제작한 게시물입니다.\n• 밸류디는 최신 정보 업데이트에 최선을 다하고 있습니다.\n• 해당 금융사 홈페이지 등에서 상품 정보와 이용 조건을 확인\n   하고 신청하시길 바랍니다.`}
-          </Typography>
+          <ul className={cn('flex flex-col gap-[4px]')}>
+            {recommendationBulletNotices.map((notice) => (
+              <li key={notice} className={cn('flex items-start gap-[4px]')}>
+                <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50')}>
+                  •
+                </Typography>
+                <Typography style="text-caption-1-12-regular" className={cn('text-neutral-50 break-keep break-words')}>
+                  {notice}
+                </Typography>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
       <div className={cn('px-[20px] pb-[20px] mt-[47px]')}>
-        <LoginButton text="신청하기" />
+        <LoginButton text="신청하기" className={cn('w-full')} />
       </div>
     </MobileLayout>
   );

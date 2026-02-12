@@ -79,7 +79,7 @@ const GoalCreatePage = () => {
               color="neutral-70"
               className="text-neutral-70"
             >
-              저축 목표를 설정하고 어쩌구해요
+              목표를 설정해보세요. 밸류디가 이룰 수 있도록 도와드릴게요.
             </Typography>
           </div>
           <div className="flex-1 flex items-center justify-center mb-[32px]">
