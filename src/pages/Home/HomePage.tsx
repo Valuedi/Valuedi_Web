@@ -16,7 +16,7 @@ import { getAccountsApi, Account, getDailyTransactionsApi, assetApi } from '@/fe
 import { getTransactionSummaryApi } from '@/features/transaction/transaction.api';
 import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
 import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
-import { getPrimaryGoalsApi } from '@/features/goal/goal.api';
+import { getGoalDetailApi, getPrimaryGoalsApi } from '@/features/goal/goal.api';
 import { paths } from '@/router/paths';
 import { ApiError } from '@/shared/api';
 import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
@@ -24,9 +24,6 @@ import { BGBANKS } from '@/features/bank/constants/bgbanks';
 import { toHexColor } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import { getConnectionsApi } from '@/features/connection/connection.api';
-
-// 목표 색상 배열
-const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];
 
 const ConnectedAccountIcon = ({ icon }: { icon: string }) => {
   return (
@@ -47,7 +44,7 @@ const getBankInfo = (accountName: string) => {
 export const HomePage = () => {
   const navigate = useNavigate();
   const [goals, setGoals] = useState<
-    Array<{ id: string; name: string; amount: number; iconBg: string; colorCode?: string; iconId?: number }>
+    Array<{ id: string; name: string; amount: number; colorCode?: string; iconId?: number }>
   >([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactionSummary, setTransactionSummary] = useState<{
@@ -166,21 +163,35 @@ export const HomePage = () => {
           setTotalAccountCount(accountsRes.result.totalCount || 0);
         }
 
-        // 나의 목표 섹션: 진행 중 목표 목록 (/api/goals/primary)
+        // 진행 중 목표 목록 처리 (나의 목표 섹션)
         if (primaryGoalsRes?.result?.goals) {
           const primaryGoals = primaryGoalsRes.result.goals;
-          setTotalGoalCount(primaryGoals.length);
-          setGoals(
-            primaryGoals.slice(0, 3).map((g, index) => ({
-              id: String(g.goalId),
-              name: g.title,
-              amount: g.targetAmount,
-              iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
-            }))
+
+          const goalsWithDetails = await Promise.all(
+            primaryGoals.slice(0, 3).map(async (g) => {
+              try {
+                const detail = await getGoalDetailApi(g.goalId);
+                return {
+                  id: String(g.goalId),
+                  name: g.title,
+                  amount: g.targetAmount,
+                  colorCode: detail.result.colorCode,
+                  iconId: g.iconId,
+                };
+              } catch {
+                return {
+                  id: String(g.goalId),
+                  name: g.title,
+                  amount: g.targetAmount,
+                  colorCode: 'DEFAULT',
+                  iconId: g.iconId,
+                };
+              }
+            })
           );
-        } else {
-          setTotalGoalCount(0);
-          setGoals([]);
+
+          setTotalGoalCount(primaryGoals.length);
+          setGoals(goalsWithDetails);
         }
 
         // 연동된 은행 / 카드사 개수
@@ -324,8 +335,10 @@ export const HomePage = () => {
                     <>
                       <div className="flex flex-col gap-[8px] mb-[16px]">
                         {goals.map((goal) => {
-                          const bgColor = goal.colorCode ? toHexColor(goal.colorCode) : goal.iconBg;
+                          const bgColor = goal.colorCode ? toHexColor(goal.colorCode) : undefined;
                           const iconSrc = goal.iconId !== undefined ? GOAL_ICON_SRC[goal.iconId] : null;
+
+                          console.log(iconSrc);
                           return (
                             <div key={goal.id} className="flex items-center justify-between py-[8px]">
                               <div className="flex gap-[8px] items-center">
@@ -333,7 +346,9 @@ export const HomePage = () => {
                                   className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px]"
                                   style={{ backgroundColor: bgColor }}
                                 >
-                                  {iconSrc && <img src={iconSrc} alt="" className="w-[20px] h-[20px] object-contain" />}
+                                  {iconSrc && (
+                                    <img src={iconSrc} alt="goal icon" className="w-[20px] h-[20px] object-contain" />
+                                  )}
                                 </div>
                                 <div className="flex flex-col gap-[2px]">
                                   <Typography
