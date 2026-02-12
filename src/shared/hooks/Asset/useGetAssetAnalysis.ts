@@ -150,7 +150,7 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
       try {
         await rematchCategoriesApi({ yearMonth, fromDate, toDate });
       } catch (error) {
-        console.warn('카테고리 재매칭 실패 (계속 진행):', error);
+        // 카테고리 재매칭 실패 시 무시하고 계속 진행
       }
 
       // 거래 내역만 조회 (프론트엔드에서 직접 그룹화)
@@ -175,16 +175,12 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
                 ? (raw as { transactions: LedgerTransactionItem[] }).transactions
                 : [];
 
-          console.log(`[분야별 내역] 거래 내역: ${content.length}개`);
-
           if (content.length > 0) {
             // 지출(EXPENSE) 타입만 필터링하여 매핑
             const expenseItems = content.filter((item) => {
               const type = (item.type || '').toString().toUpperCase();
               return type === 'EXPENSE';
             });
-
-            console.log(`[분야별 내역] 지출 거래: ${expenseItems.length}개 (전체 ${content.length}개 중)`);
 
             const mapped = expenseItems
               .filter((item) => item && item.amount !== undefined && item.amount !== null)
@@ -197,26 +193,15 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
               return !isTransfer;
             });
 
-            console.log(
-              `[분야별 내역] TRANSFER 제외 후: ${nonTransferMapped.length}개 (제외: ${mapped.length - nonTransferMapped.length}개)`
-            );
-
             setTransactionsFromApi(nonTransferMapped);
           } else {
-            console.warn('[분야별 내역] 거래 내역이 비어있습니다.');
             setTransactionsFromApi([]);
           }
         } else {
-          console.warn('[분야별 내역] 거래 내역 API 응답이 유효하지 않습니다.', {
-            isSuccess: listRes?.isSuccess,
-            resultType: typeof listRes?.result,
-            fullResponse: listRes,
-          });
           setTransactionsFromApi([]);
         }
       })
-      .catch((error) => {
-        console.error('분야별 내역 데이터 조회 실패:', error);
+      .catch(() => {
         setTransactionsFromApi([]);
       })
       .finally(() => setIsLoading(false));
@@ -231,19 +216,8 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
 
   // 프론트엔드에서 직접 카테고리별로 그룹화
   const allSectors = useMemo((): SectorData[] => {
-    console.log(`[분야별 내역] 프론트엔드에서 직접 그룹화 시작`);
-
     // 카테고리별로 그룹화 및 합계 계산
     const grouped = groupTransactionsByCategory(transactionsFromApi);
-
-    console.log(
-      `[분야별 내역] 그룹화된 카테고리: ${Object.keys(grouped).length}개`,
-      Object.keys(grouped).map((key) => ({
-        key,
-        count: grouped[key].items.length,
-        amount: grouped[key].totalAmount,
-      }))
-    );
 
     // 카테고리 이름 매핑 생성 (거래 내역에서 추출)
     const categoryNameMap: Record<string, string> = {};
@@ -255,8 +229,6 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
 
     // SectorData 형태로 변환
     let sectors = createSectorsFromGroupedData(grouped, totalExpense, categoryNameMap);
-
-    console.log(`[분야별 내역] 프론트엔드 그룹화 완료: ${sectors.length}개 섹터`);
 
     // 금액이 큰 순서대로 정렬
     sectors.sort((a, b) => b.amount - a.amount);
@@ -274,17 +246,6 @@ export const useGetAssetAnalysis = (selectedDate: Date = new Date(), options?: {
     const displayPcts = getIntegerPercentagesSum100(sectors.map((s) => s.percentage));
 
     const finalSectors = sectors.map((s, i) => ({ ...s, displayPct: displayPcts[i] ?? 0 }));
-
-    console.log(
-      `[분야별 내역] 최종 섹터: ${finalSectors.length}개`,
-      finalSectors.map((s) => ({
-        key: s.key,
-        category: s.category,
-        amount: s.amount,
-        percentage: s.percentage.toFixed(2),
-        displayPct: s.displayPct,
-      }))
-    );
 
     return finalSectors;
   }, [transactionsFromApi, totalExpense]);

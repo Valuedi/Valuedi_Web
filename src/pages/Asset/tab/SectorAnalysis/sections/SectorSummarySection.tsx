@@ -70,20 +70,33 @@ export const SectorSummarySection = ({
           <SectorChartSkeleton />
         ) : (
           <SectorChart
-            data={[
-              ...sectorData.slice(0, 5),
-              ...(sectorData.slice(5).reduce((sum, i) => sum + i.amount, 0) > 0
-                ? [
-                    {
-                      key: 'others',
-                      amount: sectorData.slice(5).reduce((sum, i) => sum + i.amount, 0),
-                      percentage: sectorData.slice(5).reduce((sum, i) => sum + i.percentage, 0),
-                      category: 'others',
-                      items: [],
-                    },
-                  ]
-                : []),
-            ]}
+            data={(() => {
+              const top5 = sectorData.slice(0, 5);
+              const remaining = sectorData.slice(5);
+
+              // 상위 5개에 이미 others가 있는지 확인
+              const hasOthersInTop5 = top5.some((item) => item.key === 'others');
+
+              // 나머지 항목들의 합계 계산
+              const remainingTotal = remaining.reduce((sum, i) => sum + i.amount, 0);
+              const remainingPercentage = remaining.reduce((sum, i) => sum + i.percentage, 0);
+
+              // 나머지 항목이 있고, 상위 5개에 others가 없을 때만 others 추가
+              if (remainingTotal > 0 && !hasOthersInTop5) {
+                return [
+                  ...top5,
+                  {
+                    key: 'others-aggregated',
+                    amount: remainingTotal,
+                    percentage: remainingPercentage,
+                    category: 'others',
+                    items: [],
+                  },
+                ];
+              }
+
+              return top5;
+            })()}
           />
         )}
       </div>
