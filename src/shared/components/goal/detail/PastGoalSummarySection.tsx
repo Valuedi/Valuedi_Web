@@ -20,6 +20,10 @@ export default function PastGoalSummarySection({ detail }: PastGoalSummarySectio
       ? 'bg-primary-normal text-[#171714]'
       : 'bg-neutral-20 text-neutral-70';
 
+  /** 달성 성공이면 총 모인금액 = 목표 금액으로 표시 (서버가 0을 줄 수 있음) */
+  const totalCollectedAmount =
+    detail.status === 'COMPLETE' ? detail.targetAmount : detail.savedAmount;
+
   return (
     <div className="relative overflow-hidden bg-primary-normal px-5 pt-5 pb-8">
       <div className="flex items-center gap-2 mb-2">
@@ -43,7 +47,7 @@ export default function PastGoalSummarySection({ detail }: PastGoalSummarySectio
       <p className="text-sm font-medium text-neutral-50 mb-1">총 모인금액</p>
       <div className="flex items-center gap-3 flex-wrap">
         <span className="text-2xl font-bold text-[#171714] leading-tight">
-          {formatAmount(detail.savedAmount)} 원
+          {formatAmount(totalCollectedAmount)} 원
         </span>
         <span className={`px-3 py-1 rounded-full text-xs font-bold ${achievementPillClass}`}>
           {achievementLabel}
