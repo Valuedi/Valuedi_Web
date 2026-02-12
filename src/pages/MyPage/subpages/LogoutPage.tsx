@@ -15,13 +15,13 @@ export const LogoutPage = () => {
     mutationFn: logoutApi,
     onSuccess: () => {
       logout();
-      navigate('/login', { replace: true });
+      window.location.replace('/login');
     },
     onError: (error) => {
       // 에러가 발생해도 로컬에서 로그아웃 처리
       console.error('로그아웃 API 실패:', error);
       logout();
-      navigate('/login', { replace: true });
+      window.location.replace('/login');
     },
   });
 
