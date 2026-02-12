@@ -53,8 +53,12 @@ export const useAuthStore = create<AuthState>()(
         /**
          * 로그인 처리
          * Access Token을 메모리 상태와 localStorage에 모두 저장
+         * 로그인 전에 이전 토큰을 완전히 제거하여 로그아웃된 토큰이 남아있지 않도록 함
          */
         login: (memberId: number, accessToken: string) => {
+          // 이전 토큰 완전 제거 (로그아웃된 토큰이 남아있지 않도록)
+          clearAllAuthData();
+          // 새 토큰 저장
           setAccessTokenToStorage(accessToken);
           setAuthFlag(true);
           set({
@@ -67,6 +71,7 @@ export const useAuthStore = create<AuthState>()(
         /**
          * 로그아웃 처리
          * 모든 인증 관련 데이터 제거
+         * Zustand persist 상태도 완전히 초기화
          */
         logout: () => {
           clearAllAuthData();
@@ -75,6 +80,10 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             isAuthenticated: false,
           });
+          // persist 상태도 완전히 초기화하기 위해 localStorage의 auth-storage 키 제거
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth-storage');
+          }
         },
 
         /**

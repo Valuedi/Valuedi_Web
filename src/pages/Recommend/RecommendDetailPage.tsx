@@ -4,6 +4,7 @@ import { Typography } from '@/shared/components/typography';
 import { cn } from '@/shared/utils/cn';
 import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { BANNER } from '@/features/recommend/constants/banner';
+import { BGBANKS } from '@/features/bank/constants/bgbanks';
 import { getColorToken } from '@/shared/styles/design-system';
 import { InterestCalculator } from './components/InterestCalculator';
 import { InterestRateList, InterestRateItem } from './components/InterestRateList';
@@ -18,12 +19,60 @@ export const RecommendDetailPage = () => {
 
   const { data: detailData, isLoading, isError } = useSavingsDetail(finPrdtCd);
 
-  const product = detailData?.product;
+  const product = detailData;
 
-  // 은행명으로 BANNER 찾기 (korCoNm과 name 매칭)
-  const targetBank = useMemo(() => {
-    if (!product) return null;
-    return BANNER.find((bank) => bank.name === product.korCoNm || product.korCoNm.includes(bank.name));
+  // 은행명 정규화 함수
+  const normalizeBankName = (name: string): string => {
+    return name
+      .replace(/주식회사\s*/g, '')
+      .replace(/\(주\)\s*/g, '')
+      .replace(/\s*은행\s*/g, '')
+      .replace(/\s+/g, '')
+      .trim();
+  };
+
+  // 은행명 매칭 함수
+  const matchBankName = (bankName: string, targetName: string): boolean => {
+    const normalizedBank = normalizeBankName(bankName);
+    const normalizedTarget = normalizeBankName(targetName);
+
+    // 정규화된 이름으로 매칭
+    if (
+      normalizedBank === normalizedTarget ||
+      normalizedBank.includes(normalizedTarget) ||
+      normalizedTarget.includes(normalizedBank)
+    ) {
+      return true;
+    }
+
+    // 특수 케이스: 케이뱅크 <-> K뱅크
+    if (normalizedBank.includes('케이뱅크') && normalizedTarget === 'K뱅크') {
+      return true;
+    }
+    if (normalizedBank === 'K뱅크' && normalizedTarget.includes('케이뱅크')) {
+      return true;
+    }
+
+    // 원본 이름으로도 매칭 시도
+    return bankName.includes(targetName) || targetName.includes(bankName);
+  };
+
+  // 은행명으로 아이콘/색상 매핑
+  const { targetBank, iconSrc } = useMemo<{
+    targetBank: (typeof BANNER)[number] | null;
+    iconSrc: string | null;
+  }>(() => {
+    if (!product) {
+      return { targetBank: null, iconSrc: null };
+    }
+    // 1차: 추천 배너용 매핑 (색상 포함)
+    const bannerBank = BANNER.find((bank) => matchBankName(product.korCoNm, bank.name));
+    // 2차: 배경 은행 아이콘 매핑 (아이콘만)
+    const bgBank = BGBANKS.find((bank) => matchBankName(product.korCoNm, bank.name));
+
+    const icon = bannerBank?.icon ?? bgBank?.icon;
+
+    return { targetBank: bannerBank ?? null, iconSrc: icon ?? null };
   }, [product]);
 
   const backgroundColor = targetBank ? getColorToken(targetBank.color) : getColorToken('neutral-10');
@@ -71,13 +120,15 @@ export const RecommendDetailPage = () => {
     ].filter((item) => item.value); // 값이 있는 것만 필터링
   }, [product]);
 
-  // 최고 금리와 기본 금리 계산
+  // 최고 금리와 기본 금리 - API에서 직접 제공되면 사용, 없으면 options에서 계산
   const maxRate = useMemo(() => {
+    if (product?.maxRate !== undefined) return product.maxRate;
     if (!product?.options || product.options.length === 0) return 0;
     return Math.max(...product.options.map((opt) => opt.intrRate2));
   }, [product]);
 
   const basicRate = useMemo(() => {
+    if (product?.basicRate !== undefined) return product.basicRate;
     if (!product?.options || product.options.length === 0) return 0;
     // 가장 긴 기간의 기본 금리 사용 (일반적으로 가장 긴 기간이 기본)
     const sortedOptions = [...product.options].sort((a, b) => Number(b.saveTrm) - Number(a.saveTrm));
@@ -148,11 +199,9 @@ export const RecommendDetailPage = () => {
             style={{ backgroundColor: backgroundColor }}
             className={cn('w-[32px] h-[32px] flex items-center justify-center rounded-[8px]')}
           >
-            {targetBank ? (
-              <img src={targetBank.icon} alt={targetBank.name} className={cn('w-[18px] h-[18px] object-cover')} />
-            ) : (
-              <div className="w-full h-full bg-neutral-10" />
-            )}
+            {iconSrc ? (
+              <img src={iconSrc} alt={product.korCoNm} className={cn('w-[18px] h-[18px] object-cover')} />
+            ) : null}
           </div>
 
           <div className={cn('flex flex-col gap-[4px]')}>
@@ -160,7 +209,7 @@ export const RecommendDetailPage = () => {
               {product.korCoNm}
             </Typography>
 
-            <Typography style="text-headline-1-22-bold" className={cn('text-neutral-90')}>
+            <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
               {product.finPrdtNm}
             </Typography>
           </div>

@@ -32,8 +32,8 @@ export const AssetPage = () => {
         {/* 데스크탑 사이드바 */}
         <SidebarNavigation activeItem="asset" onItemClick={handleNavClick} />
 
-        {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 flex flex-col min-h-screen">
+        {/* 메인 콘텐츠 영역 (HomePage와 동일한 데스크탑 레이아웃 패턴) */}
+        <div className="flex-1 flex flex-col min-h-screen md:min-h-0 w-full overflow-x-hidden">
           <div className="sticky top-0 z-10 w-full">
             <HomeGNB />
           </div>

@@ -24,6 +24,16 @@
 
 @layer utilities {
   /* 커스텀 유틸리티 클래스 */
+
+  /* 가로/세로 스크롤바 숨기기용 유틸리티 */
+  .scrollbar-none {
+    -ms-overflow-style: none; /* IE 및 Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
 
 @keyframes slide-up {

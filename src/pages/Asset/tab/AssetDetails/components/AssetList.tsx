@@ -43,7 +43,7 @@ export const AssetList = () => {
           <Typography style="text-body-2-14-regular" className="text-neutral-70">
             총 자산
           </Typography>
-          <Typography style="text-headline-1-22-bold" className="text-neutral-90">
+          <Typography style="text-headline-1-22-semi-bold" className="text-neutral-90">
             {formatCurrency(totalAsset)}
           </Typography>
         </div>
@@ -125,7 +125,11 @@ export const AssetList = () => {
         </button>
       </div>
 
-      <div className={cn('flex items-center justify-between py-[8px]')}>
+      <button
+        type="button"
+        onClick={() => navigate('/bank/start')}
+        className={cn('flex items-center justify-between py-[8px] w-full')}
+      >
         <div className={cn('flex items-center gap-[8px]')}>
           <div className={cn('w-[32px] h-[32px] rounded-[8px] flex items-center justify-center bg-bank-plus')}>
             <img src={BankPlusIcon} alt="은행 추가" className="w-[20px] h-[20px] object-contain opacity-70" />
@@ -135,9 +139,13 @@ export const AssetList = () => {
           </Typography>
         </div>
         <MoreViewButton />
-      </div>
+      </button>
 
-      <div className={cn('flex items-center justify-between py-[8px]')}>
+      <button
+        type="button"
+        onClick={() => navigate('/card/start')}
+        className={cn('flex items-center justify-between py-[8px] w-full')}
+      >
         <div className={cn('flex items-center gap-[8px]')}>
           <div className={cn('w-[32px] h-[32px] rounded-[8px] flex items-center justify-center bg-atomic-yellow-95')}>
             <img src={CardPlusIcon} alt="카드 추가" className="w-[20px] h-[20px] object-contain opacity-70" />
@@ -147,7 +155,7 @@ export const AssetList = () => {
           </Typography>
         </div>
         <MoreViewButton />
-      </div>
+      </button>
     </div>
   );
 };

@@ -34,7 +34,7 @@ const BackPageGNB: React.FC<BackPageGNBProps> = ({
       <div className="flex items-center justify-start">
         <button
           type="button"
-          onClick={onBack}
+          onClick={onBack ?? (() => window.history.back())}
           className="flex items-center justify-center cursor-pointer w-[16px] md:w-[20px]"
         >
           <img src={BackPageIcon} alt="뒤로가기" className="w-[16px] h-[16px] md:w-[20px] md:h-[20px]" />

@@ -51,18 +51,16 @@ export interface SavingsDetailProduct {
   korCoNm: string;
   finPrdtCd: string;
   finPrdtNm: string;
+  basicRate: number;
+  maxRate: number;
   joinWay: string;
   mtrtInt: string;
   spclCnd: string;
   joinDeny: string;
   joinMember: string;
   etcNote: string;
-  maxLimit: string;
+  maxLimit: string | null;
   options: SavingsOption[];
-}
-
-export interface SavingsDetailResponse {
-  product: SavingsDetailProduct;
 }
 
 // ========== Query Key Factory ==========
@@ -101,8 +99,8 @@ export const createSavingsRecommendationsApi = async (): Promise<ApiResponse<Cre
  * GET /api/savings/recommendations/{finPrdtCd}
  * @param finPrdtCd 금융상품 코드
  */
-export const getSavingsDetailApi = async (finPrdtCd: string): Promise<ApiResponse<SavingsDetailResponse>> => {
-  return apiGet<SavingsDetailResponse>(`/api/savings/recommendations/${finPrdtCd}`);
+export const getSavingsDetailApi = async (finPrdtCd: string): Promise<ApiResponse<SavingsDetailProduct>> => {
+  return apiGet<SavingsDetailProduct>(`/api/savings/recommendations/${finPrdtCd}`);
 };
 
 /**

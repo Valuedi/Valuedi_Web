@@ -14,6 +14,7 @@ import type {
   GoalLedgersResponse,
   GetGoalLedgersParams,
   GoalUnlinkedAccountsResponse,
+  PrimaryGoalsResponse,
 } from './goal.types';
 
 const GOALS_PATH_PREFIX = '/api/goals';
@@ -45,6 +46,15 @@ export const goalApi = {
 
     const endpoint = `${GOALS_PATH_PREFIX}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     return apiGet<GoalsResponse['result']>(endpoint) as Promise<GoalsResponse>;
+  },
+
+  /**
+   * 진행 중 목표 목록 조회 (홈 화면용)
+   * GET /api/goals/primary
+   */
+  async getPrimaryGoals(): Promise<PrimaryGoalsResponse> {
+    const endpoint = `${GOALS_PATH_PREFIX}/primary`;
+    return apiGet<PrimaryGoalsResponse['result']>(endpoint) as Promise<PrimaryGoalsResponse>;
   },
 
   // 목표 추가
@@ -174,3 +184,6 @@ export const goalApi = {
 
 /** 목표 상세 조회 (HomePage 등에서 직접 호출용) */
 export const getGoalDetailApi = (goalId: number) => goalApi.getGoalDetail(goalId);
+
+/** 진행 중 목표 목록 조회 (홈 화면용) */
+export const getPrimaryGoalsApi = () => goalApi.getPrimaryGoals();

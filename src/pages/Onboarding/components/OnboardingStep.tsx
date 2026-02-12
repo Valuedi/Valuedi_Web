@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Typography } from '@/shared/components';
 import { cn } from '@/shared/utils/cn';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +10,16 @@ interface OnboardingStepProps {
   description: string;
   visual?: React.ReactNode;
   onNext?: () => void;
+  onPrev?: () => void;
 }
 
-export const OnboardingStep = ({ step, title, description, visual, onNext }: OnboardingStepProps) => {
+export const OnboardingStep = ({ step, title, description, visual, onNext, onPrev }: OnboardingStepProps) => {
   const navigate = useNavigate();
   const totalSteps = 4;
   const isLastStep = step === totalSteps;
+
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   const handleLogin = () => {
     if (isLastStep) {
@@ -28,8 +33,41 @@ export const OnboardingStep = ({ step, title, description, visual, onNext }: Onb
     }
   };
 
+  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+  };
+
+  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    if (startX == null || startY == null) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+
+    // 가로 스와이프만 인식 (세로 스크롤과 구분)
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+      return;
+    }
+
+    if (deltaX < 0 && !isLastStep && onNext) {
+      // 왼쪽으로 스와이프 → 다음 스텝
+      onNext();
+    } else if (deltaX > 0 && step > 1 && onPrev) {
+      // 오른쪽으로 스와이프 → 이전 스텝
+      onPrev();
+    }
+  };
+
   return (
-    <div className={cn('bg-white relative min-h-screen w-full flex flex-col')}>
+    <div
+      className={cn('bg-white relative min-h-screen w-full flex flex-col')}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* 메인 컨텐츠 영역 */}
       <div
         className={cn(
@@ -44,7 +82,11 @@ export const OnboardingStep = ({ step, title, description, visual, onNext }: Onb
       >
         {/* 텍스트 영역 */}
         <div className={cn('flex flex-col gap-3 sm:gap-4 items-center w-full max-w-[320px] flex-shrink-0')}>
-          <Typography style="text-headline-1-22-bold" className={cn('text-center text-neutral-90 w-full')} as="div">
+          <Typography
+            style="text-headline-1-22-semi-bold"
+            className={cn('text-center text-neutral-90 w-full')}
+            as="div"
+          >
             {title.split('\n').map((line, index) => (
               <p key={index} className={cn(index === 0 ? 'mb-0' : '')}>
                 {line}

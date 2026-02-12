@@ -12,19 +12,18 @@ import kbIcon from '@/assets/icons/bank/kb.svg';
 import SpendTodayIcon from '@/assets/icons/home/SpendToday.svg';
 import SpendYesterdayIcon from '@/assets/icons/home/SpendYesterday.svg';
 import MbtiHomeIcon from '@/assets/icons/home/MbtiHome.svg';
-import { getAccountsApi, Account, getDailyTransactionsApi } from '@/features/asset/asset.api';
+import { getAccountsApi, Account, getDailyTransactionsApi, assetApi } from '@/features/asset/asset.api';
 import { getTransactionSummaryApi } from '@/features/transaction/transaction.api';
 import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
 import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
-import { getGoalDetailApi } from '@/features/goal/goal.api';
+import { getGoalDetailApi, getPrimaryGoalsApi } from '@/features/goal/goal.api';
+import { paths } from '@/router/paths';
 import { ApiError } from '@/shared/api';
 import { useGetMbtiTestResult } from '@/shared/hooks/Mbti/useGetMbtiTestResult';
 import { BGBANKS } from '@/features/bank/constants/bgbanks';
 import { toHexColor } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
-
-// 목표 색상 배열
-const GOAL_COLORS = ['#f5f0c8', '#c8d1f5', '#c8def5', '#d8f5c8', '#f5c8e8', '#c8f5e0'];
+import { getConnectionsApi } from '@/features/connection/connection.api';
 
 const ConnectedAccountIcon = ({ icon }: { icon: string }) => {
   return (
@@ -45,7 +44,7 @@ const getBankInfo = (accountName: string) => {
 export const HomePage = () => {
   const navigate = useNavigate();
   const [goals, setGoals] = useState<
-    Array<{ id: string; name: string; amount: number; iconBg: string; colorCode?: string; iconId?: number }>
+    Array<{ id: string; name: string; amount: number; colorCode?: string; iconId?: number }>
   >([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactionSummary, setTransactionSummary] = useState<{
@@ -64,9 +63,66 @@ export const HomePage = () => {
   const [totalAccountCount, setTotalAccountCount] = useState(0);
   const [todayExpense, setTodayExpense] = useState(0);
   const [yesterdayExpense, setYesterdayExpense] = useState(0);
+  const [connectedBankCount, setConnectedBankCount] = useState(0);
+  const [connectedCardIssuerCount, setConnectedCardIssuerCount] = useState(0);
 
   // MBTI 결과 조회 (캐릭터 아이콘용)
   const { data: mbtiTestResult } = useGetMbtiTestResult();
+
+  // 새로고침 후 연동 상태 확인
+  useEffect(() => {
+    const shouldCheckConnection = sessionStorage.getItem('checkConnectionAfterLogin') === 'true';
+    if (shouldCheckConnection) {
+      sessionStorage.removeItem('checkConnectionAfterLogin');
+
+      // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      const checkConnectionAndRedirect = async () => {
+        try {
+          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
+
+          // 은행 연동 여부 확인
+          const hasBankConnection =
+            connectionsRes.status === 'fulfilled' &&
+            connectionsRes.value?.result &&
+            Array.isArray(connectionsRes.value.result) &&
+            connectionsRes.value.result.some((conn) => {
+              const businessType = conn.businessType || conn.type;
+              return businessType === 'BK';
+            });
+
+          // 금융 MBTI 존재 여부 확인
+          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 디버깅을 위한 로그
+          console.log('연동 상태 확인 결과:', {
+            hasBankConnection,
+            hasMbti,
+            connectionsData: connectionsRes?.status === 'fulfilled' ? connectionsRes.value?.result : null,
+            mbtiData: mbtiRes?.status === 'fulfilled' ? mbtiRes.value?.result : null,
+          });
+
+          // 조건에 따라 리디렉션
+          if (hasBankConnection && hasMbti) {
+            // 은행 연동 + 금융 MBTI 존재 → 홈에 그대로 유지
+            // 이미 홈 페이지이므로 리디렉션 불필요
+          } else if (hasBankConnection && !hasMbti) {
+            // 은행만 연동 → 금융 MBTI 페이지로
+            navigate('/mbti', { replace: true });
+          } else {
+            // 둘 다 없음 → 은행 연동 시작 페이지로
+            navigate('/bank/start', { replace: true });
+          }
+        } catch (error) {
+          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
+          console.error('연동 상태 확인 실패:', error);
+          navigate('/bank/start', { replace: true });
+        }
+      };
+
+      checkConnectionAndRedirect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,71 +134,72 @@ export const HomePage = () => {
         const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
         // 병렬로 모든 API 호출
-        const [accountsRes, transactionRes, dailyTransactionsRes, mbtiRes, mbtiTypesRes, recommendRes] =
-          await Promise.all([
-            getAccountsApi(),
-            getTransactionSummaryApi(yearMonth),
-            getDailyTransactionsApi(yearMonth).catch(() => null), // 일별 거래 내역
-            getFinanceMbtiResultApi().catch(() => null), // MBTI 결과가 없을 수 있음
-            getMbtiTypeDetails().catch(() => null), // MBTI 타입 상세 정보
-            getTop3RecommendationsApi().catch(() => null), // 추천 상품이 없을 수 있음
-          ]);
+        const [
+          accountsRes,
+          transactionRes,
+          dailyTransactionsRes,
+          mbtiRes,
+          mbtiTypesRes,
+          recommendRes,
+          primaryGoalsRes,
+          connectedBanksRes,
+          cardIssuersRes,
+        ] = await Promise.all([
+          getAccountsApi(),
+          getTransactionSummaryApi(yearMonth),
+          getDailyTransactionsApi(yearMonth).catch(() => null), // 일별 거래 내역
+          getFinanceMbtiResultApi().catch(() => null), // MBTI 결과가 없을 수 있음
+          getMbtiTypeDetails().catch(() => null), // MBTI 타입 상세 정보
+          getTop3RecommendationsApi().catch(() => null), // 추천 상품이 없을 수 있음
+          getPrimaryGoalsApi().catch(() => null), // 진행 중 목표 목록
+          assetApi.getConnectedBanks().catch(() => null), // 연동된 은행 목록
+          assetApi.getCardIssuers().catch(() => null), // 연동된 카드사 목록
+        ]);
 
-        // 계좌 목록 처리
+        // 계좌 목록 처리 (연결된 은행/계좌 섹션)
         if (accountsRes.result) {
           const accountList = accountsRes.result.accountList || [];
           setAccounts(accountList.slice(0, 3)); // 최대 3개만 표시
           setTotalAccountCount(accountsRes.result.totalCount || 0);
+        }
 
-          // 계좌 목록에서 goalInfo가 있는 것들을 목표로 추출
-          const goalAccounts = accountList.filter((acc) => acc.goalInfo !== null);
-          const uniqueGoals = new Map<number, { goalId: number; title: string }>();
+        // 진행 중 목표 목록 처리 (나의 목표 섹션)
+        if (primaryGoalsRes?.result?.goals) {
+          const primaryGoals = primaryGoalsRes.result.goals;
 
-          goalAccounts.forEach((acc) => {
-            if (acc.goalInfo) {
-              uniqueGoals.set(acc.goalInfo.goalId, {
-                goalId: acc.goalInfo.goalId,
-                title: acc.goalInfo.title,
-              });
-            }
-          });
-
-          // 각 목표의 상세 정보 조회
-          const goalDetailsPromises = Array.from(uniqueGoals.values())
-            .slice(0, 3)
-            .map(async (goal, index) => {
+          const goalsWithDetails = await Promise.all(
+            primaryGoals.slice(0, 3).map(async (g) => {
               try {
-                const detailRes = await getGoalDetailApi(goal.goalId);
-                if (detailRes.result) {
-                  return {
-                    id: String(goal.goalId),
-                    name: detailRes.result.title,
-                    amount: detailRes.result.savedAmount,
-                    iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
-                    colorCode: detailRes.result.colorCode,
-                    iconId: detailRes.result.iconId,
-                  };
-                }
-              } catch (error) {
-                // 목표 상세 조회 실패 시 기본 정보만 사용
+                const detail = await getGoalDetailApi(g.goalId);
                 return {
-                  id: String(goal.goalId),
-                  name: goal.title,
-                  amount: 0,
-                  colorCode: undefined,
-                  iconId: undefined,
-                  iconBg: GOAL_COLORS[index % GOAL_COLORS.length],
+                  id: String(g.goalId),
+                  name: g.title,
+                  amount: g.targetAmount,
+                  colorCode: detail.result.colorCode,
+                  iconId: g.iconId,
+                };
+              } catch {
+                return {
+                  id: String(g.goalId),
+                  name: g.title,
+                  amount: g.targetAmount,
+                  colorCode: 'DEFAULT',
+                  iconId: g.iconId,
                 };
               }
-              return null;
-            });
-
-          const goalDetails = (await Promise.all(goalDetailsPromises)).filter(
-            (goal): goal is NonNullable<typeof goal> => goal !== null
+            })
           );
 
-          setGoals(goalDetails);
-          setTotalGoalCount(uniqueGoals.size);
+          setTotalGoalCount(primaryGoals.length);
+          setGoals(goalsWithDetails);
+        }
+
+        // 연동된 은행 / 카드사 개수
+        if (connectedBanksRes?.result) {
+          setConnectedBankCount(connectedBanksRes.result.length);
+        }
+        if (cardIssuersRes?.result) {
+          setConnectedCardIssuerCount(cardIssuersRes.result.length);
         }
 
         // 거래 요약 처리
@@ -217,7 +274,7 @@ export const HomePage = () => {
   return (
     <MobileLayout className="bg-neutral-10">
       {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
-      <div className="flex flex-row min-h-screen md:h-screen">
+      <div className="flex flex-col md:flex-row min-h-screen md:h-screen">
         {/* 데스크탑 사이드바 */}
         <SidebarNavigation activeItem="home" onItemClick={handleNavClick} />
 
@@ -278,8 +335,10 @@ export const HomePage = () => {
                     <>
                       <div className="flex flex-col gap-[8px] mb-[16px]">
                         {goals.map((goal) => {
-                          const bgColor = goal.colorCode ? toHexColor(goal.colorCode) : goal.iconBg;
+                          const bgColor = goal.colorCode ? toHexColor(goal.colorCode) : undefined;
                           const iconSrc = goal.iconId !== undefined ? GOAL_ICON_SRC[goal.iconId] : null;
+
+                          console.log(iconSrc);
                           return (
                             <div key={goal.id} className="flex items-center justify-between py-[8px]">
                               <div className="flex gap-[8px] items-center">
@@ -287,7 +346,9 @@ export const HomePage = () => {
                                   className="w-[30px] h-[30px] flex items-center justify-center rounded-[8px]"
                                   style={{ backgroundColor: bgColor }}
                                 >
-                                  {iconSrc && <img src={iconSrc} alt="" className="w-[20px] h-[20px] object-contain" />}
+                                  {iconSrc && (
+                                    <img src={iconSrc} alt="goal icon" className="w-[20px] h-[20px] object-contain" />
+                                  )}
                                 </div>
                                 <div className="flex flex-col gap-[2px]">
                                   <Typography
@@ -307,7 +368,7 @@ export const HomePage = () => {
                                 </div>
                               </div>
                               <div className="w-[18px] h-[18px] flex items-center justify-center">
-                                <MoreViewButton />
+                                <MoreViewButton onClick={() => navigate(paths.goal.amountAchieved(goal.id))} />
                               </div>
                             </div>
                           );
@@ -335,11 +396,20 @@ export const HomePage = () => {
                 <div className="bg-white rounded-[8px] px-[12px] md:px-[16px] pt-[16px] md:pt-[20px] pb-[16px] md:pb-[20px] shadow-[0px_0px_16px_0px_rgba(25,25,20,0.04)]">
                   <Typography
                     style="text-body-2-14-regular"
-                    className="md:text-body-1-16-regular text-neutral-70 mb-[16px]"
+                    className="md:text-body-1-16-regular text-neutral-70 mb-[8px]"
                     fontFamily="pretendard"
                   >
                     연결된 은행 및 계좌
                   </Typography>
+                  {!isLoading && (connectedBankCount > 0 || connectedCardIssuerCount > 0) && (
+                    <Typography
+                      style="text-caption-1-12-regular"
+                      className="text-neutral-50 mb-[8px]"
+                      fontFamily="pretendard"
+                    >
+                      연동된 은행 {connectedBankCount}개 · 카드사 {connectedCardIssuerCount}개
+                    </Typography>
+                  )}
                   {isLoading ? (
                     <div className="flex items-center justify-center py-[20px]">
                       <Typography style="text-body-2-14-regular" className="text-neutral-50" fontFamily="pretendard">
@@ -379,7 +449,7 @@ export const HomePage = () => {
                                 </div>
                               </div>
                               <div className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] flex items-center justify-center">
-                                <MoreViewButton />
+                                <MoreViewButton onClick={() => navigate(`/asset/account/${account.accountId}`)} />
                               </div>
                             </div>
                           );

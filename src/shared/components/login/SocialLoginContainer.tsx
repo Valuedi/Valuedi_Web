@@ -42,7 +42,7 @@ const SocialLoginContainer: React.FC<SocialLoginContainerProps> = ({ className }
             로그인하고
           </Typography>
           <Typography variant="headline-2" weight="bold" className="text-neutral-100">
-            금융 목표를 이뤄보세요.
+            금융 목표를 실현해보세요.
           </Typography>
         </div>
         <Typography variant="body-2" className="text-neutral-60">

@@ -7,7 +7,7 @@ import { CompareBar } from './CompareBar';
 import { cn } from '@/shared/utils/cn';
 import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 import { CompareBarSkeleton } from './CompareBarSkeleton';
-import { getTransactionsByCategoryApi } from '@/features/asset/asset.api';
+import { getTransactionsByCategoryApi, rematchCategoriesApi } from '@/features/asset/asset.api';
 import { normalizeCategoryCode } from '@/features/asset/constants/category';
 import { useUserName } from '@/shared/hooks/useUserName';
 
@@ -34,7 +34,18 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
 
   const now = useMemo(() => new Date(), []);
   const yearMonth = useMemo(() => `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`, [now]);
+  const lastDay = useMemo(() => new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), [now]);
+  const fromDate = useMemo(() => `${yearMonth}-01`, [yearMonth]);
+  const toDate = useMemo(() => `${yearMonth}-${String(lastDay).padStart(2, '0')}`, [yearMonth, lastDay]);
 
+  // 월별로 카테고리 재매칭 한 번 실행 (결과는 UI에 직접 사용하지 않음)
+  useQuery({
+    queryKey: ['transactions', 'rematch', yearMonth],
+    queryFn: () => rematchCategoriesApi({ yearMonth, fromDate, toDate }),
+    retry: 0,
+  });
+
+  // 카테고리 통계 조회
   const { data, isLoading: isCategoryLoading } = useQuery({
     queryKey: ['transactions', 'by-category', yearMonth],
     queryFn: () => getTransactionsByCategoryApi(yearMonth),
@@ -58,15 +69,20 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
   const myCategoryTotal = useMemo(() => {
     const items = data?.result ?? [];
     if (!Array.isArray(items) || items.length === 0) return 0;
-    return items
+    const total = items
       .filter((item) => normalizeCategoryCode(item.categoryCode, item.categoryName) === selectedCategory)
       .reduce((sum, item) => sum + (item.totalAmount ?? 0), 0);
+    // 디버깅용 로그: 카테고리별 원본 데이터와 계산 결과 확인
+    console.log('[CategoryCompare] raw items', items);
+    console.log('[CategoryCompare] selectedCategory', selectedCategory);
+    console.log('[CategoryCompare] myCategoryTotal', total);
+    return total;
   }, [data, selectedCategory]);
 
   const peerCategoryTotal = PEER_AVERAGE_DATA.categories[selectedCategory] || 0;
 
   return (
-    <section className="px-5 py-8 bg-white border-b-[8px] border-neutral-5">
+    <section className="px-5 py-6 bg-white border-b-[8px] border-neutral-5">
       <Typography variant="headline-3" weight="semi-bold" color="neutral-90" className="mb-6">
         카테고리별 비교
       </Typography>
@@ -101,7 +117,7 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
       </div>
 
       {/* 💡 5. 바 차트 영역 로딩 처리 */}
-      <div className="flex justify-center items-end gap-14 px-10 h-44 mb-10">
+      <div className="flex justify-center items-end gap-6 min-h-[140px] w-full max-w-[360px] mx-auto px-2 mb-8">
         {isLoading || isCategoryLoading ? (
           <>
             <CompareBarSkeleton />
@@ -141,7 +157,7 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
           <>
             <div className="flex justify-between items-center">
               <Typography variant="body-3" color="neutral-90">
-                내 소비
+                {userName}님의 소비
               </Typography>
               <Typography variant="body-2" weight="semi-bold">
                 {formatCurrency(myCategoryTotal)}

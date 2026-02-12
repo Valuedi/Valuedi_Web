@@ -51,6 +51,7 @@ import { ConnectionDetailPage } from '@/pages/MyPage/subpages/ConnectionDetailPa
 import { LogoutPage } from '@/pages/MyPage/subpages/LogoutPage';
 import { WithdrawPage } from '@/pages/MyPage/subpages/WithdrawPage';
 import TermsSettingsPage from '@/pages/MyPage/subpages/TermsSettingsPage';
+import { PublicRoute } from '@/shared/components/auth/PublicRoute';
 import { paths } from './paths';
 
 export const router = createBrowserRouter([
@@ -83,11 +84,16 @@ export const router = createBrowserRouter([
       { path: paths.goal.createStep, element: <GoalCreateStep /> },
       { path: paths.goal.almostDone, element: <GoalAlmostDonePage /> },
       { path: paths.goal.createComplete, element: <GoalCompletePage /> },
-      { path: 'login', element: <DefaultLogin /> },
-      { path: 'login/form', element: <LoginPage /> },
+      {
+        element: <PublicRoute />, // 인증된 사용자는 아래 경로 접근 불가
+        children: [
+          { path: 'login', element: <DefaultLogin /> },
+          { path: 'login/form', element: <LoginPage /> },
+          { path: 'signup', element: <SignUpPage /> },
+          { path: '/signup/email', element: <EmailForm /> },
+        ],
+      },
       { path: 'login/kakao/callback', element: <KakaoCallbackPage /> },
-      { path: 'signup', element: <SignUpPage /> },
-      { path: '/signup/email', element: <EmailForm /> },
       { path: 'mbti', element: <MbtiPage /> },
       { path: 'bank/start', element: <BankConnectionStartPage /> },
       { path: 'bank/select', element: <BankSelectPage /> },

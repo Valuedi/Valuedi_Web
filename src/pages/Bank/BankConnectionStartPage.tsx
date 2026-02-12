@@ -4,27 +4,26 @@ import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import BankGNB from '@/shared/components/bank/BankGNB';
 import { Typography } from '@/shared/components/typography';
 import { BaseButton } from '@/shared/components/buttons/BaseButton';
-import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 import { useUserName } from '@/shared/hooks/useUserName';
 import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { BANKS } from '@/features/bank/constants/banks';
+import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 
 const BankConnectionStartPage = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
   const userName = useUserName();
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
   };
 
-  const handleStart = () => {
-    setShowModal(true);
+  const handleStartClick = () => {
+    setIsInfoModalOpen(true);
   };
 
-  const handleModalConfirm = () => {
-    setShowModal(false);
-    // 다음 페이지로 이동 (은행 선택 페이지)
+  const handleInfoConfirm = () => {
+    setIsInfoModalOpen(false);
     navigate('/bank/select');
   };
 
@@ -48,11 +47,10 @@ const BankConnectionStartPage = () => {
 
       {/* Button */}
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px]">
-        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStart} />
+        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStartClick} />
       </div>
 
-      {/* Info Modal */}
-      <BankInfoModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleModalConfirm} />
+      <BankInfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} onConfirm={handleInfoConfirm} />
     </MobileLayout>
   );
 };

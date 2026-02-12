@@ -15,47 +15,49 @@ interface SavingInputBottomSheetProps {
   onConfirm: (id: number, amountWon: number) => void;
 }
 
-const MIN_MAN = 1;
-const MAX_MAN = 1000;
+// 최소/최대 금액 (원 단위)
+const MIN_AMOUNT = 0;
+const MAX_AMOUNT = 1000 * 10_000; // 0원 ~ 1,000만원
 
 function formatWon(won: number) {
   return won.toLocaleString('ko-KR');
 }
 
-function clampMan(value: number) {
-  return Math.min(MAX_MAN, Math.max(MIN_MAN, value));
+function clampAmount(value: number) {
+  return Math.min(MAX_AMOUNT, Math.max(MIN_AMOUNT, value));
 }
 
 const SavingInputBottomSheet = ({ isOpen, onClose, item, onConfirm }: SavingInputBottomSheetProps) => {
-  const initialMan = useMemo(() => {
-    if (!item?.amountWon) return MIN_MAN;
-    const man = Math.round(item.amountWon / 10000);
-    return Math.min(MAX_MAN, Math.max(MIN_MAN, man));
+  // 최초 금액: 기존 amountWon이 있으면 그대로, 없으면 0원
+  const initialAmount = useMemo(() => {
+    if (!item?.amountWon) return MIN_AMOUNT;
+    return clampAmount(item.amountWon);
   }, [item]);
 
-  const [man, setMan] = useState<number>(MIN_MAN);
+  // 내부 상태는 항상 "원 단위" 금액으로 관리
+  const [amount, setAmount] = useState<number>(MIN_AMOUNT);
   const [mode, setMode] = useState<'slider' | 'direct'>('slider');
-  const [directValue, setDirectValue] = useState<string>(String(MIN_MAN));
+  const [directValue, setDirectValue] = useState<string>(String(initialAmount));
 
   useEffect(() => {
     if (isOpen) {
-      setMan(initialMan);
+      setAmount(initialAmount);
       setMode('slider');
-      setDirectValue(String(initialMan));
+      setDirectValue(String(initialAmount));
     }
-  }, [initialMan, isOpen]);
+  }, [initialAmount, isOpen]);
 
-  const amountWon = man * 10000;
-  const rangeFill = ((man - MIN_MAN) / (MAX_MAN - MIN_MAN)) * 100;
+  const amountWon = amount;
+  const rangeFill = ((amountWon - MIN_AMOUNT) / (MAX_AMOUNT - MIN_AMOUNT)) * 100;
 
   if (!item) return null;
 
   const applyDirectValue = (next: string) => {
     const normalized = next.replace(/^0+(?=\d)/, '');
     const asNumber = Number(normalized || '0');
-    const nextMan = clampMan(asNumber || MIN_MAN);
-    setDirectValue(String(nextMan));
-    setMan(nextMan);
+    const nextAmount = clampAmount(asNumber || 0);
+    setDirectValue(String(nextAmount));
+    setAmount(nextAmount);
   };
 
   const handleDigit = (digit: number) => {
@@ -78,27 +80,27 @@ const SavingInputBottomSheet = ({ isOpen, onClose, item, onConfirm }: SavingInpu
           </div>
           <span className="text-[18px] font-bold text-[#171714]">{item.title}</span>
         </div>
-        <span className="text-[18px] font-bold text-[#171714]">{man}만원</span>
+        <span className="text-[18px] font-bold text-[#171714]">{formatWon(amountWon)}원</span>
       </div>
 
       {mode === 'slider' ? (
         <>
           {/* 슬라이더 */}
           <div className="flex items-center justify-between text-sm text-gray-500 mb-3 px-1">
-            <span>1만원</span>
-            <span>{MAX_MAN.toLocaleString('ko-KR')}만원</span>
+            <span>0원</span>
+            <span>{formatWon(MAX_AMOUNT)}원</span>
           </div>
 
           <input
             type="range"
-            min={MIN_MAN}
-            max={MAX_MAN}
-            step={1}
-            value={man}
+            min={MIN_AMOUNT}
+            max={MAX_AMOUNT}
+            step={10_000} // 슬라이더는 1만원 단위로 이동
+            value={amount}
             onChange={(e) => {
-              const nextMan = clampMan(Number(e.target.value));
-              setMan(nextMan);
-              setDirectValue(String(nextMan));
+              const nextAmount = clampAmount(Number(e.target.value));
+              setAmount(nextAmount);
+              setDirectValue(String(nextAmount));
             }}
             className="saving-range"
             style={{ ['--range-fill' as unknown as string]: `${rangeFill}%` } as CSSProperties}
@@ -116,17 +118,17 @@ const SavingInputBottomSheet = ({ isOpen, onClose, item, onConfirm }: SavingInpu
           {/* 빠른 추가 */}
           <div className="flex items-center gap-2 mb-5">
             {[
-              { label: '+1만원', delta: 1 },
-              { label: '+5만원', delta: 5 },
-              { label: '+10만원', delta: 10 },
+              { label: '+1만원', delta: 10_000 },
+              { label: '+5만원', delta: 50_000 },
+              { label: '+10만원', delta: 100_000 },
             ].map((x) => (
               <button
                 key={x.label}
                 type="button"
                 onClick={() => {
-                  const nextMan = clampMan(man + x.delta);
-                  setMan(nextMan);
-                  setDirectValue(String(nextMan));
+                  const nextAmount = clampAmount(amount + x.delta);
+                  setAmount(nextAmount);
+                  setDirectValue(String(nextAmount));
                 }}
                 className="px-3 py-2 text-sm font-bold text-[#171714] bg-white border border-gray-200 rounded-full"
               >
@@ -137,8 +139,8 @@ const SavingInputBottomSheet = ({ isOpen, onClose, item, onConfirm }: SavingInpu
             <button
               type="button"
               onClick={() => {
-                setMan(MAX_MAN);
-                setDirectValue(String(MAX_MAN));
+                setAmount(MAX_AMOUNT);
+                setDirectValue(String(MAX_AMOUNT));
               }}
               className="ml-auto px-3 py-2 text-sm font-bold text-[#171714] bg-white border border-gray-200 rounded-full"
             >

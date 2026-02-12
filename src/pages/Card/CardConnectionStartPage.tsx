@@ -4,30 +4,29 @@ import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import CardGNB from '@/shared/components/card/CardGNB';
 import { Typography } from '@/shared/components/typography';
 import { BaseButton } from '@/shared/components/buttons/BaseButton';
-import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 import { useUserName } from '@/shared/hooks/useUserName';
 import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { CARDS } from '@/features/card/constants/cards';
 import { cn } from '@/shared/utils/cn';
 import { assetApi } from '@/features/asset';
+import BankInfoModal from '@/shared/components/bank/BankInfoModal';
 
 const CardConnectionStartPage = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
-  const [isFirstLogin, setIsFirstLogin] = useState(true);
   const userName = useUserName();
+  const [isFirstLogin, setIsFirstLogin] = useState(true);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   useEffect(() => {
-    // 사용자가 이미 연동한 카드가 있는지 확인합니다.
+    // 사용자가 이미 연동한 카드가 있는지 확인
     const checkConnection = async () => {
       try {
         const response = await assetApi.getCardIssuers();
-        // 연동된 카드사(result)가 존재하고, 그 길이가 0보다 크면 이미 연동한 유저로 판단
         if (response.isSuccess && response.result && response.result.length > 0) {
           setIsFirstLogin(false);
         }
       } catch (error) {
-        console.error('연동 상태 확인 실패:', error);
+        console.error('카드 연동 상태 확인 실패:', error);
       }
     };
 
@@ -43,13 +42,13 @@ const CardConnectionStartPage = () => {
     navigate('/mbti');
   };
 
-  const handleStart = () => {
-    setShowModal(true);
+  const handleStartClick = () => {
+    setIsInfoModalOpen(true);
   };
 
-  const handleModalConfirm = () => {
-    setShowModal(false);
-    // 다음 페이지로 이동 (카드 선택 페이지)
+  const handleInfoConfirm = () => {
+    setIsInfoModalOpen(false);
+    // 바로 카드 선택 페이지로 이동
     navigate('/card/select');
   };
 
@@ -69,24 +68,23 @@ const CardConnectionStartPage = () => {
         </div>
       </div>
 
-      {/* Bank Infinite Grid */}
+      {/* 카드사 무한 스크롤 그리드 */}
       <BankInfiniteGrid availableBanks={CARDS} />
 
-      {/* Button */}
+      {/* 하단 버튼 영역 */}
       <div className="absolute bottom-[41px] left-1/2 transform -translate-x-1/2 w-[320px] flex flex-col items-center">
         {isFirstLogin && (
           <button type="button" className={cn('cursor-pointer px-[10px] py-[8px]')} onClick={handleSkip}>
-            <Typography style="text-body-2-14-regular" className={cn('text-neutral-50')}>
+            <Typography style="text-body-2-14-regular" className="text-neutral-50">
               다음에 할게요
             </Typography>
           </button>
         )}
 
-        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStart} />
+        <BaseButton variant="primary" size="medium" text="시작하기" fullWidth onClick={handleStartClick} />
       </div>
 
-      {/* Info Modal */}
-      <BankInfoModal isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleModalConfirm} />
+      <BankInfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} onConfirm={handleInfoConfirm} />
     </MobileLayout>
   );
 };
