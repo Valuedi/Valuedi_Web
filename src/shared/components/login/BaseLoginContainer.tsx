@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Typography } from '@/shared/components/typography';
 import AuthInput from '@/shared/components/login/AuthInput';
