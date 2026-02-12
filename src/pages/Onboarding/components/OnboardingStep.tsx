@@ -1,20 +1,25 @@
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
+import { useRef } from 'react';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
 import { useNavigate } from 'react-router-dom';
-import { BaseButton } from '@/components/buttons/BaseButton';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
 
 interface OnboardingStepProps {
   step: number;
   title: string;
   description: string;
+  visual?: React.ReactNode;
   onNext?: () => void;
-  onSkip?: () => void;
+  onPrev?: () => void;
 }
 
-export const OnboardingStep = ({ step, title, description, onNext, onSkip }: OnboardingStepProps) => {
+export const OnboardingStep = ({ step, title, description, visual, onNext, onPrev }: OnboardingStepProps) => {
   const navigate = useNavigate();
   const totalSteps = 4;
   const isLastStep = step === totalSteps;
+
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   const handleLogin = () => {
     if (isLastStep) {
@@ -28,34 +33,41 @@ export const OnboardingStep = ({ step, title, description, onNext, onSkip }: Onb
     }
   };
 
-  const handleSkip = () => {
-    if (onSkip) {
-      onSkip();
-    } else {
-      navigate('/login');
+  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+  };
+
+  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    if (startX == null || startY == null) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+
+    // 가로 스와이프만 인식 (세로 스크롤과 구분)
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+      return;
+    }
+
+    if (deltaX < 0 && !isLastStep && onNext) {
+      // 왼쪽으로 스와이프 → 다음 스텝
+      onNext();
+    } else if (deltaX > 0 && step > 1 && onPrev) {
+      // 오른쪽으로 스와이프 → 이전 스텝
+      onPrev();
     }
   };
 
   return (
-    <div className={cn('bg-white relative min-h-screen w-full flex flex-col')}>
-      {/* 상단 건너뛰기 */}
-      <div
-        className={cn('w-full h-[50px] bg-neutral-10 flex items-center justify-end px-4 sm:px-5 flex-shrink-0 z-10')}
-      >
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSkip();
-          }}
-          className={cn('underline py-2 px-1')}
-        >
-          <Typography style="text-body-3-13-regular" color="neutral-60" className={cn('underline')}>
-            건너뛰기
-          </Typography>
-        </button>
-      </div>
-
+    <div
+      className={cn('bg-white relative min-h-screen w-full flex flex-col')}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* 메인 컨텐츠 영역 */}
       <div
         className={cn(
@@ -70,7 +82,11 @@ export const OnboardingStep = ({ step, title, description, onNext, onSkip }: Onb
       >
         {/* 텍스트 영역 */}
         <div className={cn('flex flex-col gap-3 sm:gap-4 items-center w-full max-w-[320px] flex-shrink-0')}>
-          <Typography style="text-headline-1-22-bold" className={cn('text-center text-neutral-90 w-full')} as="div">
+          <Typography
+            style="text-headline-1-22-semi-bold"
+            className={cn('text-center text-neutral-90 w-full')}
+            as="div"
+          >
             {title.split('\n').map((line, index) => (
               <p key={index} className={cn(index === 0 ? 'mb-0' : '')}>
                 {line}
@@ -87,11 +103,7 @@ export const OnboardingStep = ({ step, title, description, onNext, onSkip }: Onb
         </div>
 
         {/* 이미지 영역 */}
-        <div
-          className={cn(
-            'w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[182px] md:h-[182px] bg-neutral-30 rounded-lg flex-shrink-0'
-          )}
-        />
+        <div className="w-full flex justify-center items-center h-[300px]">{visual}</div>
 
         {/* 진행 표시기 */}
         <div className={cn('flex gap-2 sm:gap-[8px] items-center mt-auto mb-4')}>

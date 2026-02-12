@@ -2,7 +2,7 @@
  * 인증 관련 API 함수들
  */
 
-import { apiGet, apiPost, ApiResponse, ApiError } from '@/utils/api';
+import { apiGet, apiPost, apiDelete, ApiResponse, ApiError } from '@/shared/api';
 
 // ApiError를 re-export하여 features/auth에서 사용할 수 있도록 함
 export { ApiError };
@@ -64,8 +64,18 @@ export interface UserInfoResponse {
   name: string;
 }
 
-export interface KakaoLoginUrlResponse {
-  // URL 문자열 반환
+// 회원 탈퇴 사유 코드 (Swagger Member → DELETE /api/users/me 설명에 명시된 값들)
+export type WithdrawReasonCode =
+  | 'NOT_HELPFUL' // 금융 관리에 도움이 되지 않았어요
+  | 'DIFFICULT_TO_USE' // 사용이 어려워요
+  | 'MISSING_FEATURES' // 필요한 기능이 없어요
+  | 'SECURITY_CONCERNS' // 보안이 걱정돼요
+  | 'FREQUENT_ERRORS' // 오류가 자주 발생해요
+  | 'OTHER'; // 기타
+
+export interface WithdrawRequest {
+  // Swagger/curl 기준 필드명: reason
+  reason: WithdrawReasonCode;
 }
 
 // ========== API 함수들 ==========
@@ -137,18 +147,13 @@ export const getKakaoLoginUrlApi = async (): Promise<ApiResponse<KakaoLoginUrlRe
 
 /**
  * 카카오 로그인 콜백
- * GET /auth/oauth/kakao/callback?code=...&state=...&originalState=...
+ * GET /auth/oauth/kakao/callback?code=...&state=...
  */
-export const kakaoCallbackApi = async (
-  code: string,
-  state: string,
-  originalState: string
-): Promise<ApiResponse<LoginResponse>> => {
+export const kakaoCallbackApi = async (code: string, state: string): Promise<ApiResponse<LoginResponse>> => {
   // URL 파라미터 구성
   const params = new URLSearchParams({
     code: code,
     state: state,
-    originalState: originalState,
   });
 
   const url = `/auth/oauth/kakao/callback?${params.toString()}`;
@@ -158,8 +163,6 @@ export const kakaoCallbackApi = async (
     code: code.substring(0, 30) + '...',
     codeLength: code.length,
     state,
-    originalState,
-    stateMatch: state === originalState,
     url: url.substring(0, 100) + '...',
   });
 
@@ -172,4 +175,14 @@ export const kakaoCallbackApi = async (
  */
 export const getUserInfoApi = async (): Promise<ApiResponse<UserInfoResponse>> => {
   return apiGet<UserInfoResponse>('/api/users/me');
+};
+
+/**
+ * 회원 탈퇴
+ * DELETE /api/users/me
+ */
+export const withdrawMemberApi = async (data: WithdrawRequest): Promise<ApiResponse<null>> => {
+  return apiDelete<null>('/api/users/me', {
+    body: JSON.stringify(data),
+  });
 };

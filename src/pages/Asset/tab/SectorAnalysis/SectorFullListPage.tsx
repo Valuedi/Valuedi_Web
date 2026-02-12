@@ -1,24 +1,27 @@
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { cn } from '@/utils/cn';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import { cn } from '@/shared/utils/cn';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { SectorListItem } from './components/SectorListItem';
 import { CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { useGetAssetAnalysis } from '@/hooks/Asset/useGetAssetAnalysis';
+import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 import type { SectorData } from './components/SectorListItem';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 export const SectorFullListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const locationState = location.state as { selectedDate?: string; filter?: string } | null;
 
-  const selectedDate = location.state?.selectedDate
-    ? new Date(location.state.selectedDate)
-    : new Date();
+  // 💡 최초 진입 시에만 location.state에서 날짜를 읽어와 고정
+  const [selectedDate] = useState<Date>(() =>
+    locationState?.selectedDate ? new Date(locationState.selectedDate) : new Date()
+  );
 
   const { allSectors, isLoading } = useGetAssetAnalysis(selectedDate);
 
-  const isFilterOthers = location.state?.filter === 'others';
+  const isFilterOthers = locationState?.filter === 'others';
   const displayItems = isFilterOthers ? allSectors.slice(5) : allSectors;
   const title = isFilterOthers ? `그외 ${displayItems.length}개` : `분야별 전체내역`;
 
@@ -38,36 +41,34 @@ export const SectorFullListPage = () => {
 
         {/* 분야별 리스트 영역 */}
         <div className={cn('flex-1 flex flex-col px-[20px] gap-[12px] mt-[20px] no-scrollbar pb-10')}>
-          {isLoading ? (
-            Array.from({ length: 5 }).map((_, idx) => (
-              <div key={idx} className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-10 h-10 rounded-full" />
-                  <div className="flex flex-col gap-2">
-                    <Skeleton className="w-24 h-4 rounded" />
-                    <Skeleton className="w-12 h-3 rounded" />
+          {isLoading
+            ? Array.from({ length: 5 }).map((_, idx) => (
+                <div key={idx} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="w-10 h-10 rounded-full" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="w-24 h-4 rounded" />
+                      <Skeleton className="w-12 h-3 rounded" />
+                    </div>
                   </div>
+                  <Skeleton className="w-20 h-5 rounded" />
                 </div>
-                <Skeleton className="w-20 h-5 rounded" />
-              </div>
-            ))
-          ) : (
-            displayItems.map((item: SectorData) => {
-              const categoryKey = item.key || 'default';
-              return (
-                <SectorListItem
-                  key={categoryKey}
-                  data={item}
-                  label={CATEGORY_LABELS[categoryKey] || item.category || CATEGORY_LABELS.default}
-                  onClick={() => {
-                    navigate(`/asset/sector/${categoryKey}`, {
-                      state: { sectorData: item, selectedDate: selectedDate.toISOString() },
-                    });
-                  }}
-                />
-              );
-            })
-          )}
+              ))
+            : displayItems.map((item: SectorData) => {
+                const categoryKey = item.key || 'default';
+                return (
+                  <SectorListItem
+                    key={categoryKey}
+                    data={item}
+                    label={CATEGORY_LABELS[categoryKey] || item.category || CATEGORY_LABELS.default}
+                    onClick={() => {
+                      navigate(`/asset/sector/${categoryKey}`, {
+                        state: { sectorData: item, selectedDate: selectedDate.toISOString() },
+                      });
+                    }}
+                  />
+                );
+              })}
         </div>
       </div>
     </MobileLayout>

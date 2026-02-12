@@ -19,7 +19,16 @@ export interface CategoryStyle {
 
 /** 프론트에서 쓰는 카테고리 키 목록 (아이콘/스타일 매칭용) */
 const FRONTEND_KEYS = [
-  'transfer', 'traffic', 'shopping', 'food', 'leisure', 'medical', 'market', 'living', 'cafe', 'others',
+  'transfer',
+  'traffic',
+  'shopping',
+  'food',
+  'leisure',
+  'medical',
+  'market',
+  'living',
+  'cafe',
+  'others',
 ] as const;
 
 /** API에서 오는 카테고리 코드 → 프론트 키 (백엔드 DB code 컬럼 기준) */
@@ -122,12 +131,7 @@ export function normalizeCategoryCode(
   categoryName?: string | null,
   categoryId?: number | string | null
 ): string {
-  const id =
-    categoryId != null
-      ? typeof categoryId === 'string'
-        ? parseInt(categoryId, 10)
-        : categoryId
-      : undefined;
+  const id = categoryId != null ? (typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId) : undefined;
   if (id != null && !Number.isNaN(id) && API_CATEGORY_ID_MAP[id]) return API_CATEGORY_ID_MAP[id];
 
   const codeRaw = (apiCode ?? '').toString().trim().toLowerCase();
@@ -180,7 +184,10 @@ export const CATEGORY_LABELS: Record<string, string> = {
   market: '편의점 · 마트 · 잡화',
   living: '주거 · 통신',
   cafe: '카페 · 디저트',
-  others: '그외', // 상세 페이지에서도 쓰이니 추가해두면 좋아요
+  // API 기준 "카테고리 없음(기타)"에 해당하는 기본 기타 카테고리
+  others: '카테고리 없음(기타)',
+  // 분야별 분석 화면에서 Top5 이외의 카테고리를 묶어서 보여주는 "그외 N개"
+  others_group: '그외',
   default: '카테고리 없음',
 };
 
@@ -195,5 +202,8 @@ export const CATEGORY_STYLES: Record<string, CategoryStyle> = {
   market: { bgColor: 'bg-atomic-light-blue-90', barColor: 'bg-atomic-light-blue-50', icon: ShoppingIcon }, // 마켓
   living: { bgColor: 'bg-atomic-purple-90', barColor: 'bg-atomic-purple-50', icon: LivingIcon }, // 주거
   cafe: { bgColor: 'bg-atomic-green-90', barColor: 'bg-atomic-green-50', icon: CafeIcon }, // 카페
-  others: { bgColor: 'bg-neutral-60', barColor: 'bg-neutral-80', icon: OthersIcon }, // 그외
+  // "카테고리 없음(기타)"는 Default 아이콘 + neutral-30 배경 사용
+  others: { bgColor: 'bg-neutral-30', barColor: 'bg-neutral-50', icon: DefaultIcon },
+  // Top5 이외 묶음 "그외 N개"는 기존 Others 스타일 유지
+  others_group: { bgColor: 'bg-neutral-60', barColor: 'bg-neutral-80', icon: OthersIcon },
 };

@@ -72,10 +72,7 @@ export const transformToCategoryGroups = (
 /**
  * 💡 4-1. 카테고리별 퍼센트 합이 정확히 100이 되도록 정규화
  */
-export function normalizeSectorPercentages(
-  sectors: SectorData[],
-  totalExpense: number
-): SectorData[] {
+export function normalizeSectorPercentages(sectors: SectorData[], totalExpense: number): SectorData[] {
   if (sectors.length === 0 || totalExpense <= 0) return sectors;
   const totalPct = sectors.reduce((sum, s) => sum + s.percentage, 0);
   const scale = totalPct > 0 ? 100 / totalPct : 1;

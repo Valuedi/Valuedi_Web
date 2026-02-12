@@ -1,9 +1,20 @@
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
 import { AssetDailyHeader } from './AssetDailyHeader';
 import { AssetItemList } from './AssetItemList';
+import { useMemo } from 'react';
+import { useLedgerStore } from '@/shared/hooks/Asset/usetLedgerStore';
 
 export const LedgerList = () => {
-  const { transactionHistory } = useGetAccountDetail();
+  // 전역 스토어에서 월 가져오기
+  const currentMonth = useLedgerStore((state) => state.currentMonth);
+
+  // 훅에 전달할 yearMonth 계산
+  const yearMonth = useMemo(() => {
+    const year = new Date().getFullYear();
+    return `${year}-${String(currentMonth).padStart(2, '0')}`;
+  }, [currentMonth]);
+
+  const { transactionHistory } = useGetAccountDetail(yearMonth);
   return (
     <div className="flex flex-col gap-[12px]">
       {transactionHistory.map((group, index) => (
@@ -11,9 +22,9 @@ export const LedgerList = () => {
           <AssetDailyHeader date={group.date} dailyTotal={group.dailyTotal} />
 
           <div className="flex flex-col gap-[8px]">
-            {group.items.map((tx) => (
+            {group.items.map((tx, idx) => (
               <AssetItemList
-                key={tx.id}
+                key={`${group.day}-${tx.id}-${idx}`}
                 title={tx.title}
                 subTitle={tx.sub}
                 amount={tx.amount}

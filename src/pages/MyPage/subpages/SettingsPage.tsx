@@ -1,26 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { MoreViewButton } from '@/components/buttons/MoreViewButton';
-import { Toast } from '@/components/common/Toast';
-import { useEffect, useState } from 'react';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { MoreViewButton } from '@/shared/components/buttons/MoreViewButton';
 
 export const SettingsPage = () => {
   const navigate = useNavigate();
-  const [showToast, setShowToast] = useState(false);
-
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => setShowToast(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [showToast]);
-
-  const handleDevelopingClick = () => {
-    setShowToast(true); // 💡 "개발중이에요" 알림 띄우기
-  };
 
   return (
     <MobileLayout className="bg-white">
@@ -51,22 +37,17 @@ export const SettingsPage = () => {
         {/* 2. 회원 정보 */}
         <SettingsSection title="회원 정보">
           <SettingsItem label="MBTI 검사하기" onClick={() => navigate('/mbti')} />
-          <SettingsItem label="회원정보 변경" onClick={handleDevelopingClick} />
-          <SettingsItem label="비밀번호 재설정" onClick={handleDevelopingClick} />
+          <SettingsItem label="약관 및 마케팅 동의 관리" onClick={() => navigate('/mypage/settings/terms')} />
         </SettingsSection>
 
         <SectionDivider />
 
         {/* 3. 서비스 정보 */}
         <SettingsSection title="서비스 정보">
-          <SettingsItem label="공지사항" onClick={() => {}} />
-          <SettingsItem label="1:1 문의 안내" onClick={() => {}} />
-          <SettingsItem label="버전 안내" onClick={() => {}} />
           <SettingsItem label="로그아웃" isDanger onClick={() => navigate('/logout')} />
           <SettingsItem label="밸류디 탈퇴하기" isDanger onClick={() => navigate('/withdraw')} />
         </SettingsSection>
       </div>
-      <Toast message="개발중이에요" isOpen={showToast} />
     </MobileLayout>
   );
 };

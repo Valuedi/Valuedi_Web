@@ -13,3 +13,19 @@ export interface GoalCompleteState {
   /** 목표 아이콘 ID (1~11). 있으면 해당 아이콘 표시 */
   iconId?: number;
 }
+
+/** 목표 생성 전 (아이콘 선택 후) location.state로 전달되는 데이터 */
+export interface GoalBeforeCreateState {
+  goalName: string;
+  targetAmount: number;
+  startDate: string;
+  endDate: string;
+  remainingDays: number;
+  bankName: string;
+  accountNumber: string;
+  bankAccountId: number;
+  /** 목표 색상 (6자리 hex) */
+  colorCode: string;
+  /** 목표 아이콘 ID (1~11) */
+  iconId: number;
+}

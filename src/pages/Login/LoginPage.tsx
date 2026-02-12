@@ -1,4 +1,4 @@
-import BaseLoginContainer from '@/components/login/BaseLoginContainer';
+import BaseLoginContainer from '@/shared/components/login/BaseLoginContainer';
 
 const LoginPage = () => {
   return (

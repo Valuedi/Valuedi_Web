@@ -1,7 +1,7 @@
-import { Typography } from '@/components';
-import { cn } from '@/utils/cn';
-import { LoginButton } from '@/components/buttons';
-import { useMbtiActions } from '@/hooks/Mbti/useMbtiStore';
+import { Typography } from '@/shared/components';
+import { cn } from '@/shared/utils/cn';
+import { LoginButton } from '@/shared/components/buttons';
+import { useMbtiActions } from '@/shared/hooks/Mbti/useMbtiStore';
 import { motion, Variants } from 'framer-motion';
 
 import APGVIcon from '@/assets/icons/mbti/intro/APGV.svg?react';

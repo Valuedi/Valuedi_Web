@@ -3,19 +3,42 @@
  * Swagger: https://api.valuedi.site/swagger-ui/index.html → Ledger (거래내역)
  */
 
-import { apiGet, apiPost, ApiResponse } from '@/utils/api';
-import type { ConnectedBanksResponse, BankAccountsResponse, Account } from './asset.types';
+import { apiGet, apiPost, ApiResponse } from '@/shared/api';
+import { createQueryKeys } from '@/shared/api/queryKeys';
+import type {
+  ConnectedBanksResponse,
+  BankAccountsResponse,
+  Account,
+  AssetSummaryResponse,
+  AccountsListResponse,
+  CardsListResponse,
+  CardIssuerCardsResponse,
+  CardIssuersListResponse,
+} from './asset.types';
 
 export type { Account };
 
 const API_BASE_URL = 'https://api.valuedi.site';
 
+// ========== Query Key Factory ==========
+
+export const assetKeys = createQueryKeys('assets', {
+  banks: () => ['banks'] as const,
+  bankAccounts: (bankCode: string) => ['banks', bankCode] as const,
+  summary: () => ['summary'] as const,
+  accounts: () => ['accounts'] as const,
+  cards: () => ['cards'] as const,
+  cardIssuers: () => ['cardIssuers'] as const,
+  cardIssuerCards: (issuerCode: string) => ['cardIssuers', issuerCode, 'cards'] as const,
+});
+
 // ========== 거래(가계부) 관련 타입 및 API ==========
 
 /** rematchCategories 요청 (Swagger 스펙에 맞게 조정) */
 export interface RematchCategoriesRequest {
-  yearMonth?: string; // YYYY-MM
-  [key: string]: unknown;
+  yearMonth: string; // YYYY-MM
+  fromDate: string; // YYYY-MM-DD
+  toDate: string; // YYYY-MM-DD
 }
 
 /** rematchCategories 응답 */
@@ -27,13 +50,13 @@ export interface RematchCategoriesResult {
 
 /**
  * 거래 내역 카테고리 재매칭 (키워드 등으로 재분류)
- * POST /api/transactions/rematch-categories
+ * POST /api/transactions/rematch
  * Swagger: Ledger (거래내역) → rematchCategories
  */
 export const rematchCategoriesApi = async (
-  params?: RematchCategoriesRequest
+  params: RematchCategoriesRequest
 ): Promise<ApiResponse<RematchCategoriesResult | null>> => {
-  return apiPost<RematchCategoriesResult | null>('/api/transactions/rematch-categories', params ?? {});
+  return apiPost<RematchCategoriesResult | null>('/api/transactions/rematch', params);
 };
 
 // ========== GET /api/transactions/by-category (getCategoryStats) ==========
@@ -73,6 +96,8 @@ export interface LedgerCategoryRef {
 }
 
 export interface LedgerTransactionItem {
+  /** 공통 ID (신규 스펙: id, 구 스펙: transactionId) */
+  id?: number;
   transactionId?: number;
   date?: string;
   transactionAt?: string; // API가 ISO 날짜로 내려줄 수 있음
@@ -88,6 +113,8 @@ export interface LedgerTransactionItem {
   /** 문자열이면 코드, 객체면 { code, name, id } */
   category?: string | LedgerCategoryRef;
   type?: string;
+  memo?: string;
+  afterBalance?: number;
   [key: string]: unknown;
 }
 
@@ -214,9 +241,44 @@ export const getTopCategoriesApi = async (params: {
   return apiGet<TopCategoryItem[]>(`/api/transactions/top-category?${search.toString()}`);
 };
 
+// ========== GET /api/transactions/peer-compare (또래 비교) ==========
+
+export interface PeerCompareResult {
+  myTotalExpense?: number;
+  perAverageExpense?: number;
+  message?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * 또래 비교 (MVP)
+ * GET /api/transactions/peer-compare?yearMonth=YYYY-MM
+ * Swagger: Ledger (거래내역) → peer-compare
+ */
+export const getPeerCompareApi = async (yearMonth: string): Promise<ApiResponse<PeerCompareResult>> => {
+  return apiGet<PeerCompareResult>(`/api/transactions/peer-compare?yearMonth=${encodeURIComponent(yearMonth)}`);
+};
+
+// ========== GET /api/transactions/by-day (일별 수입/지출 합계) ==========
+
+export interface DailyTransactionSummary {
+  date: string; // YYYY-MM-DD
+  totalIncome: number;
+  totalExpense: number;
+}
+
+/**
+ * 일별 수입/지출 합계 (달력용)
+ * GET /api/transactions/by-day?yearMonth=YYYY-MM
+ * Swagger: Ledger (거래내역) → by-day
+ */
+export const getDailyTransactionsApi = async (yearMonth: string): Promise<ApiResponse<DailyTransactionSummary[]>> => {
+  return apiGet<DailyTransactionSummary[]>(`/api/transactions/by-day?yearMonth=${encodeURIComponent(yearMonth)}`);
+};
+
 // ========== 자산(계좌) 관련 타입 및 API ==========
 
-// 인증 헤더 생성 함수 (fetch 사용 시)
+// 인증 헤더 생성 함수 (fetch 사용 시 - 하위 호환성 유지)
 const getAuthHeaders = () => {
   const token = localStorage.getItem('accessToken');
   const headers: Record<string, string> = {
@@ -233,6 +295,7 @@ const getAuthHeaders = () => {
 export const assetApi = {
   /**
    * 연동된 은행 목록 조회
+   * GET /api/assets/banks
    */
   async getConnectedBanks(): Promise<ConnectedBanksResponse> {
     const url = `${API_BASE_URL}/api/assets/banks`;
@@ -267,6 +330,7 @@ export const assetApi = {
 
   /**
    * 은행별 계좌 및 목표 목록 조회
+   * GET /api/assets/banks/{bankCode}
    */
   async getBankAccounts(bankCode: string): Promise<BankAccountsResponse> {
     const url = `${API_BASE_URL}/api/assets/banks/${encodeURIComponent(bankCode)}`;
@@ -298,6 +362,73 @@ export const assetApi = {
     const result = await response.json();
     return result;
   },
+
+  /**
+   * 연동 자산 개수 및 요약 조회
+   * GET /api/assets/summary
+   */
+  async getAssetSummary(): Promise<ApiResponse<AssetSummaryResponse['result']>> {
+    return apiGet<AssetSummaryResponse['result']>('/api/assets/summary');
+  },
+
+  /**
+   * 전체 계좌 목록 조회
+   * GET /api/assets/accounts
+   */
+  async getAccounts(): Promise<ApiResponse<AccountsListResponse['result']>> {
+    return apiGet<AccountsListResponse['result']>('/api/assets/accounts');
+  },
+
+  /**
+   * 전체 카드 목록 조회
+   * GET /api/assets/cards
+   */
+  async getCards(): Promise<ApiResponse<CardsListResponse['result']>> {
+    return apiGet<CardsListResponse['result']>('/api/assets/cards');
+  },
+
+  /**
+   * 연동된 카드사 목록 조회
+   * GET /api/assets/cardIssuers
+   */
+  async getCardIssuers(): Promise<CardIssuersListResponse> {
+    const url = `${API_BASE_URL}/api/assets/cardIssuers`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = { message: response.statusText };
+      }
+
+      const error = new Error(`Failed to fetch card issuers: ${response.statusText}`) as Error & {
+        response?: { status: number; data: typeof errorData };
+      };
+      error.response = {
+        status: response.status,
+        data: errorData,
+      };
+      throw error;
+    }
+
+    const result = await response.json();
+    return result;
+  },
+
+  /**
+   * 카드사별 카드 목록 조회
+   * GET /api/assets/cardIssuers/{issuerCode}/cards
+   */
+  async getCardIssuerCards(issuerCode: string): Promise<ApiResponse<CardIssuerCardsResponse['result']>> {
+    return apiGet<CardIssuerCardsResponse['result']>(`/api/assets/cardIssuers/${encodeURIComponent(issuerCode)}/cards`);
+  },
 };
 
 /** 연동 은행 목록 + 은행별 계좌를 합쳐 accountList, totalCount 형태로 반환 (홈 등에서 사용) */
@@ -328,6 +459,7 @@ export async function getAccountsApi(): Promise<GetAccountsApiResponse> {
           accountName: acc.accountName,
           balanceAmount: acc.balanceAmount,
           connectedGoalId: acc.connectedGoalId,
+          bankName: bank.organizationName,
           goalInfo: goal ? { goalId: goal.goalId, title: goal.title } : null,
         });
       });

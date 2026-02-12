@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { SectorListItem, SectorData } from '../components/SectorListItem';
 import { CATEGORY_LABELS } from '@/features/asset/constants/category';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 /** 카테고리 key → 한글 라벨 (key 대소문자 무관, API 한글명 fallback) */
 function getCategoryLabel(item: SectorData): string {
@@ -21,11 +21,7 @@ interface SectorListSectionProps {
   selectedDate: Date;
 }
 
-export const SectorListSection = ({
-  data,
-  isLoading = false,
-  selectedDate,
-}: SectorListSectionProps) => {
+export const SectorListSection = ({ data, isLoading = false, selectedDate }: SectorListSectionProps) => {
   const navigate = useNavigate();
 
   const topSectors = data.slice(0, 5);
@@ -73,15 +69,16 @@ export const SectorListSection = ({
               />
             ))}
 
-            {/* 그외 N개 로직 */}
+            {/* 그외 N개 로직 (Top5 이외 카테고리 묶음) */}
             {otherCount > 0 && (
               <SectorListItem
                 data={{
-                  key: 'others',
+                  // 실제 API 기타 카테고리(others)와 구분하기 위해 별도 키 사용
+                  key: 'others_group',
                   amount: otherTotalAmount,
                   percentage: 0,
                   displayPct: othersDisplayPct,
-                  category: 'others',
+                  category: 'others_group',
                   items: [],
                 }}
                 label={`그외 ${otherCount}개`}

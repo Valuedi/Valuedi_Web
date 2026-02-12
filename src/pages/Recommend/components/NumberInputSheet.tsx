@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { LoginButton } from '@/components/buttons';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { LoginButton } from '@/shared/components/buttons';
 
 interface QuickButton {
   label: string;

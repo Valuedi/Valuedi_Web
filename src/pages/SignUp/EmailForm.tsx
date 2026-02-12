@@ -1,5 +1,5 @@
-import SignUpEmailContainer from '@/components/login/SignUpEmailContainer';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import SignUpEmailContainer from '@/shared/components/login/SignUpEmailContainer';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 
 const EmailForm = () => {
   return (

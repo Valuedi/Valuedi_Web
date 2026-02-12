@@ -1,7 +1,7 @@
-import { Typography } from '@/components';
-import ProgressBar from '@/components/bar/ProgressBar';
-import { cn } from '@/utils/cn';
-import { useMbtiActions, useMbtiStore } from '@/hooks/Mbti/useMbtiStore';
+import { Typography } from '@/shared/components';
+import ProgressBar from '@/shared/components/bar/ProgressBar';
+import { cn } from '@/shared/utils/cn';
+import { useMbtiActions, useMbtiStore } from '@/shared/hooks/Mbti/useMbtiStore';
 import { getMbtiQuestions } from '@/features/mbti/mbti.api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';

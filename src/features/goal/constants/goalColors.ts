@@ -2,7 +2,7 @@ export const GOAL_COLOR_NAME_TO_CODE: Record<string, string> = {
   Red: '#FF6363',
   RedOrange: '#FF7B2E',
   Orange: '#FFA938',
-  yellow: '#F8D444',
+  yellow: '#FFEB38',
   Lime: '#6BE016',
   Green: '#1ED45A',
   Cyan: '#28D0ED',

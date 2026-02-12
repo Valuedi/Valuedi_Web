@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Hamburger from '@/assets/icons/Hamburger.svg';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
-import TotalSection from '@/components/goal/TotalSection';
-import GoalBottomSheet from '@/components/goal/GoalBottonSheet';
+import TotalSection from '@/shared/components/goal/TotalSection';
+import GoalBottomSheet from '@/shared/components/goal/GoalBottonSheet';
+import type { TransactionItem } from '@/shared/utils/goal/ledgerHelpers';
 import { paths } from '@/router/paths';
 
-interface TransactionItem {
+// 로컬 목데이터용 타입 (실제 API TransactionItem과는 별개)
+interface MockTransactionItem {
   id: number;
   type: string;
   amount: string;
@@ -15,12 +17,15 @@ interface TransactionItem {
   balanceAfter: string;
   account: string;
   isPositive: boolean;
+  dateKey: string;
+  dateLabel: string;
+  rawAmount: number;
 }
 
 interface TransactionGroup {
   date: string;
   dailyBalance: string;
-  items: TransactionItem[];
+  items: MockTransactionItem[];
 }
 
 // --- 목데이터 ---
@@ -38,6 +43,9 @@ const mockTransactions: TransactionGroup[] = [
         balanceAfter: '23,000원',
         account: '국민은행 592802-04-170725',
         isPositive: true,
+        dateKey: '2025-12-03',
+        dateLabel: '3일 오늘',
+        rawAmount: 3000,
       },
       {
         id: 102,
@@ -48,6 +56,9 @@ const mockTransactions: TransactionGroup[] = [
         balanceAfter: '10,000원',
         account: '우리은행 1002-123-456789',
         isPositive: false,
+        dateKey: '2025-12-03',
+        dateLabel: '3일 오늘',
+        rawAmount: -13000,
       },
     ],
   },
@@ -64,6 +75,9 @@ const mockTransactions: TransactionGroup[] = [
         balanceAfter: '230,000원',
         account: '국민은행 592802-04-170725',
         isPositive: true,
+        dateKey: '2025-12-02',
+        dateLabel: '2일 어제',
+        rawAmount: 3000,
       },
     ],
   },
@@ -85,8 +99,15 @@ const AmountAchievedPage = () => {
   const isCurrentActive = location.pathname === paths.goal.amountAchieved(id || '');
   const isPastActive = location.pathname === paths.goal.savingsSimulation(id || '');
 
-  const handleItemClick = (item: TransactionItem) => {
-    setSelectedItem(item);
+  const handleItemClick = (item: MockTransactionItem) => {
+    // 목데이터를 실제 TransactionItem 타입으로 매핑 (GoalBottomSheet가 사용하는 필드만 채움)
+    const adapted: TransactionItem = {
+      ...item,
+      dateKey: '',
+      dateLabel: '',
+      rawAmount: 0,
+    };
+    setSelectedItem(adapted);
     setIsSheetOpen(true);
   };
 
@@ -132,7 +153,6 @@ const AmountAchievedPage = () => {
         <div className="py-2">
           <div className="mb-2 text-lg font-bold text-gray-900">저금 목록</div>
 
-          
           {/* 리스트 렌더링 */}
           <div className="flex flex-col">
             {mockTransactions.map((group) => (

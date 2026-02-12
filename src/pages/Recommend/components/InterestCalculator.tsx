@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { CategoryButton } from '@/components/buttons';
-import { Typography } from '@/components/typography';
-import { cn } from '@/utils/cn';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { useState, useMemo, useEffect } from 'react';
+import { CategoryButton } from '@/shared/components/buttons';
+import { Typography } from '@/shared/components/typography';
+import { cn } from '@/shared/utils/cn';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import { CustomSlider } from './CustomSlider';
 import { NumberInputBottomSheet } from './NumberInputSheet';
-import { useInterestCalculator } from '@/hooks/Recommend/useInterestCalculator';
+import { calculateInterest } from '@/shared/utils/calculateInterest';
 
 const AMOUNT_LIMITS = {
   MIN: 50000,
@@ -23,18 +23,25 @@ const DURATION_LIMITS = {
   STEP: 1,
 };
 
-export const InterestCalculator = () => {
-  const {
-    monthlyAmount,
-    setMonthlyAmount,
-    duration,
-    setDuration,
-    currentRate,
-    setCurrentRate,
-    estimatedInterest,
-    basicRate,
-    maxRate,
-  } = useInterestCalculator();
+interface InterestCalculatorProps {
+  basicRate?: number;
+  maxRate?: number;
+}
+
+export const InterestCalculator = ({ basicRate = 0, maxRate = 0 }: InterestCalculatorProps) => {
+  const [monthlyAmount, setMonthlyAmount] = useState(400000);
+  const [duration, setDuration] = useState(12);
+  const [currentRate, setCurrentRate] = useState(basicRate);
+
+  useEffect(() => {
+    if (basicRate > 0) {
+      setCurrentRate(basicRate);
+    }
+  }, [basicRate]);
+
+  const estimatedInterest = useMemo(() => {
+    return calculateInterest(monthlyAmount, duration, currentRate);
+  }, [monthlyAmount, duration, currentRate]);
 
   const [isAmountSheetOpen, setIsAmountSheetOpen] = useState(false);
   const [isDurationSheetOpen, setIsDurationSheetOpen] = useState(false);

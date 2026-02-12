@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import CardGNB from '@/components/card/CardGNB';
-import { Typography } from '@/components/typography';
-import { BaseButton } from '@/components/buttons/BaseButton';
-import CardCard from '@/components/card/CardCard';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import CardGNB from '@/shared/components/card/CardGNB';
+import { Typography } from '@/shared/components/typography';
+import { BaseButton } from '@/shared/components/buttons/BaseButton';
+import CardCard from '@/shared/components/card/CardCard';
 import { CARDS } from '@/features/card/constants/cards';
-import { useUserName } from '@/hooks/useUserName';
+import { useUserName } from '@/shared/hooks/useUserName';
 
 const CardSelectPage = () => {
   const navigate = useNavigate();

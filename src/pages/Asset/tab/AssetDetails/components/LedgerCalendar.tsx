@@ -1,18 +1,39 @@
 import { useState, useMemo } from 'react';
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
 import { TransactionGroup } from '@/features/asset/constants/account';
 import { DailyTransactionSheet } from './DailyTransactionSheet';
-import { useLedgerStore } from '@/hooks/Asset/usetLedgerStore';
+import { useLedgerStore } from '@/shared/hooks/Asset/usetLedgerStore';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 export const LedgerCalendar = () => {
-  const { transactionHistory } = useGetAccountDetail();
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const currentMonth = useLedgerStore((state) => state.currentMonth);
+
+  const currentYear = new Date().getFullYear();
+
+  const { startDayIndex, totalDays } = useMemo(() => {
+    // 해당 월의 1일 객체 생성
+    const firstDay = new Date(currentYear, currentMonth - 1, 1);
+    // 해당 월의 마지막 날 객체 생성 (다음 달의 0일은 이번 달의 마지막 날)
+    const lastDay = new Date(currentYear, currentMonth, 0);
+
+    return {
+      startDayIndex: firstDay.getDay(), // 0(일) ~ 6(토)
+      totalDays: lastDay.getDate(), // 28, 29, 30, 31 등 실재하는 일수
+    };
+  }, [currentYear, currentMonth]);
+
+  const yearMonth = useMemo(() => {
+    const year = new Date().getFullYear();
+    return `${year}-${String(currentMonth).padStart(2, '0')}`;
+  }, [currentMonth]);
+
+  const { transactionHistory } = useGetAccountDetail(yearMonth);
+
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
 
   // 데이터를 미리 날짜별로 정리정돈 해주는 코드
   const calendarData = useMemo(() => {
@@ -25,9 +46,6 @@ export const LedgerCalendar = () => {
     return dataMap;
   }, [transactionHistory]);
 
-  const startDayIndex = 3; // 수요일을 1일로 가정
-  const totalDays = 31;
-  // startDayIndex 기준으로 빈칸(null)을 만들고, 1일부터 말일까지의 숫자를 만듭니다.
   const daysArray = [...Array(startDayIndex).fill(null), ...Array.from({ length: totalDays }, (_, i) => i + 1)];
 
   const selectedData = selectedDate ? calendarData[selectedDate] : null;

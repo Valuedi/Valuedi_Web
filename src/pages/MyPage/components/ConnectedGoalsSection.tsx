@@ -1,6 +1,6 @@
-import { Typography } from '@/components/typography';
-import { Skeleton } from '@/components/skeleton/Skeleton';
-import { ConnectedGoalItem } from '@/components/mypage/ConnectedGoalItem';
+import { Typography } from '@/shared/components/typography';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
+import { ConnectedGoalItem } from '@/shared/components/mypage/ConnectedGoalItem';
 
 interface ConnectedGoalsSectionProps {
   goals?: Array<{ id: string; title: string; subText: string }>;

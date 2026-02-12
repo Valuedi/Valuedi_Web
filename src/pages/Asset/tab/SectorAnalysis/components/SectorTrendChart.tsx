@@ -1,6 +1,6 @@
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import type { TrendItem } from '@/features/asset/asset.api';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface SectorTrendChartProps {
   data: TrendItem[];
@@ -10,9 +10,7 @@ interface SectorTrendChartProps {
 
 export function SectorTrendChart({ data, isLoading, className }: SectorTrendChartProps) {
   if (isLoading) {
-    return (
-      <div className={cn('w-full h-[120px] bg-neutral-10 rounded-lg animate-pulse', className)} />
-    );
+    return <div className={cn('w-full h-[120px] bg-neutral-10 rounded-lg animate-pulse', className)} />;
   }
 
   const values = data.map((d) => Number(d.amount ?? d.totalExpense ?? 0));
@@ -27,9 +25,7 @@ export function SectorTrendChart({ data, isLoading, className }: SectorTrendChar
         {data.map((item, idx) => {
           const amount = Number(item.amount ?? item.totalExpense ?? 0);
           const heightPct = maxAmount > 0 ? (amount / maxAmount) * 100 : 0;
-          const monthLabel = item.yearMonth
-            ? `${new Date(item.yearMonth + '-01').getMonth() + 1}월`
-            : `${idx + 1}`;
+          const monthLabel = item.yearMonth ? `${new Date(item.yearMonth + '-01').getMonth() + 1}월` : `${idx + 1}`;
           return (
             <div key={item.yearMonth ?? idx} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full flex flex-col justify-end h-20">

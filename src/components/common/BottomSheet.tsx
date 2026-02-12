@@ -19,7 +19,7 @@ const BottomSheet = ({ isOpen, onClose, title, children }: BottomSheetProps) => 
             exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 z-[100] bg-black/40"
-          />{' '}
+          />
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}

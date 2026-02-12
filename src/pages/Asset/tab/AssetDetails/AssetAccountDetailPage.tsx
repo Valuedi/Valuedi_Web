@@ -1,14 +1,14 @@
-import { cn } from '@/utils/cn';
-import { Typography } from '@/components/typography';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { cn } from '@/shared/utils/cn';
+import { Typography } from '@/shared/components/typography';
+import { formatCurrency } from '@/shared/utils/formatCurrency';
 import kbIcon from '@/assets/icons/bank/kb.svg';
-import { MobileLayout } from '@/components/layout/MobileLayout';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { useNavigate } from 'react-router-dom';
-import BackPageGNB from '@/components/gnb/BackPageGNB';
+import BackPageGNB from '@/shared/components/gnb/BackPageGNB';
 import { AssetItemList } from './components/AssetItemList';
 import { AssetDailyHeader } from './components/AssetDailyHeader';
-import { useGetAccountDetail } from '@/hooks/Asset/useGetAccountDetail';
-import { ColorToken, getColorToken } from '@/styles/design-system';
+import { useGetAccountDetail } from '@/shared/hooks/Asset/useGetAccountDetail';
+import { ColorToken, getColorToken } from '@/shared/styles/design-system';
 
 const BankIcon = ({ bgColor }: { bgColor: ColorToken }) => (
   <div
@@ -50,7 +50,7 @@ export const AssetAccountDetailPage = () => {
             <Typography style="text-caption-1-12-regular" className={cn('text-neutral-70')}>
               {accountInfo.accountNumber}
             </Typography>
-            <Typography style="text-headline-1-22-bold" className={cn('text-neutral-90')}>
+            <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
               {formatCurrency(accountInfo.balance)}
             </Typography>
           </div>
@@ -67,9 +67,9 @@ export const AssetAccountDetailPage = () => {
                 <AssetDailyHeader date={group.date} dailyTotal={group.dailyTotal} />
 
                 <div className={cn('flex flex-col gap-[8px]')}>
-                  {group.items.map((item) => (
+                  {group.items.map((item, idx) => (
                     <AssetItemList
-                      key={item.id}
+                      key={`${group.day}-${item.id}-${idx}`}
                       title={item.title}
                       subTitle={item.sub}
                       amount={item.amount}

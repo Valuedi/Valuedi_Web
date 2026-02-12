@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@/components/typography';
+import { Typography } from '@/shared/components/typography';
 import { SectorChart } from '../components/SectorChart';
 import { SectorChartSkeleton } from '../components/SectorChartSkeleton';
 import { SectorData } from '../utils/sectorUtils';
-import { Skeleton } from '@/components/skeleton/Skeleton';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
 interface SectorSummarySectionProps {
   selectedDate: Date;
@@ -60,8 +60,7 @@ export const SectorSummarySection = ({
         <Skeleton className="w-48 h-4 mb-5 rounded" />
       ) : (
         <Typography variant="body-3" color="neutral-50" className="mb-5">
-          지난 달 같은 기간보다{' '}
-          <span className="text-neutral-90 font-bold text-[13px]">{diffAmountText}원</span>
+          지난 달 같은 기간보다 <span className="text-neutral-90 font-bold text-[13px]">{diffAmountText}원</span>
           {isMore ? ' 더 ' : ' 덜 '} 썼어요
         </Typography>
       )}
@@ -76,10 +75,11 @@ export const SectorSummarySection = ({
               ...(sectorData.slice(5).reduce((sum, i) => sum + i.amount, 0) > 0
                 ? [
                     {
-                      key: 'others',
+                      // Top5 이외 카테고리 묶음 → "그외" 구간
+                      key: 'others_group',
                       amount: sectorData.slice(5).reduce((sum, i) => sum + i.amount, 0),
                       percentage: sectorData.slice(5).reduce((sum, i) => sum + i.percentage, 0),
-                      category: 'others',
+                      category: 'others_group',
                       items: [],
                     },
                   ]

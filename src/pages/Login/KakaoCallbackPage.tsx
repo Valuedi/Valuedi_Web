@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { kakaoCallbackApi, ApiError } from '@/features/auth';
 import { useAuthStore } from '@/features/auth';
-import { MobileLayout } from '@/components/layout/MobileLayout';
-import { Typography } from '@/components/typography';
+import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { Typography } from '@/shared/components/typography';
+import { getConnectionsApi } from '@/features/connection/connection.api';
+import { getFinanceMbtiResultApi } from '@/features/mbti/mbti.api';
 
 const KakaoCallbackPage = () => {
   const navigate = useNavigate();
@@ -14,7 +16,6 @@ const KakaoCallbackPage = () => {
 
   const code = searchParams.get('code');
   const state = searchParams.get('state'); // 카카오에서 전달한 state
-  const originalState = sessionStorage.getItem('kakao_oauth_state'); // 저장해둔 원본 state
 
   const kakaoCallbackMutation = useMutation({
     mutationFn: () => {
@@ -22,26 +23,19 @@ const KakaoCallbackPage = () => {
       if (!code || !state) {
         throw new Error('카카오 로그인 정보가 없습니다.');
       }
-      if (!originalState) {
-        throw new Error('저장된 state 정보가 없습니다. 다시 로그인해주세요.');
-      }
 
-      // GET /auth/oauth/kakao/callback?code=...&state=...&originalState=... 호출
-      return kakaoCallbackApi(code, state, originalState);
+      // GET /auth/oauth/kakao/callback?code=...&state=... 호출
+      return kakaoCallbackApi(code, state);
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.result) {
-        // 성공 시 state 제거
-        sessionStorage.removeItem('kakao_oauth_state');
-
-        // accessToken 저장 및 로그인 상태 유지
+        // accessToken을 스토어/스토리지에 반영 (Refresh Token은 HttpOnly 쿠키로 관리)
         login(response.result.memberId, response.result.accessToken);
 
-        // refreshToken은 백엔드가 쿠키에 저장하므로 별도 처리 불필요
-        // (필요시 localStorage에 저장할 수도 있음)
-
-        // 은행 연결 페이지로 이동
-        navigate('/bank/start', { replace: true });
+        // 로그인 성공 후 상태가 완전히 반영되도록 새로고침
+        // 새로고침 후 연동 상태 확인을 위해 플래그 저장
+        sessionStorage.setItem('checkConnectionAfterLogin', 'true');
+        window.location.reload();
       }
     },
     onError: (error: ApiError | Error) => {
@@ -75,6 +69,59 @@ const KakaoCallbackPage = () => {
   });
 
   useEffect(() => {
+    // 새로고침 후 연동 상태 확인
+    const shouldCheckConnection = sessionStorage.getItem('checkConnectionAfterLogin') === 'true';
+    if (shouldCheckConnection) {
+      sessionStorage.removeItem('checkConnectionAfterLogin');
+
+      // 은행 연동 상태와 금융 MBTI 상태 확인 후 리디렉션
+      const checkConnectionAndRedirect = async () => {
+        try {
+          const [connectionsRes, mbtiRes] = await Promise.allSettled([getConnectionsApi(), getFinanceMbtiResultApi()]);
+
+          // 은행 연동 여부 확인
+          const hasBankConnection =
+            connectionsRes.status === 'fulfilled' &&
+            connectionsRes.value?.result &&
+            Array.isArray(connectionsRes.value.result) &&
+            connectionsRes.value.result.some((conn) => {
+              const businessType = conn.businessType || conn.type;
+              return businessType === 'BK';
+            });
+
+          // 금융 MBTI 존재 여부 확인
+          const hasMbti = mbtiRes.status === 'fulfilled' && !!mbtiRes.value?.result;
+
+          // 디버깅을 위한 로그
+          console.log('연동 상태 확인 결과:', {
+            hasBankConnection,
+            hasMbti,
+            connectionsData: connectionsRes?.status === 'fulfilled' ? connectionsRes.value?.result : null,
+            mbtiData: mbtiRes?.status === 'fulfilled' ? mbtiRes.value?.result : null,
+          });
+
+          // 조건에 따라 리디렉션
+          if (hasBankConnection && hasMbti) {
+            // 은행 연동 + 금융 MBTI 존재 → 홈으로
+            navigate('/home', { replace: true });
+          } else if (hasBankConnection && !hasMbti) {
+            // 은행만 연동 → 금융 MBTI 페이지로
+            navigate('/mbti', { replace: true });
+          } else {
+            // 둘 다 없음 → 은행 연동 시작 페이지로
+            navigate('/bank/start', { replace: true });
+          }
+        } catch (error) {
+          // 에러 발생 시 기본적으로 은행 연동 시작 페이지로 이동
+          console.error('연동 상태 확인 실패:', error);
+          navigate('/bank/start', { replace: true });
+        }
+      };
+
+      checkConnectionAndRedirect();
+      return;
+    }
+
     // 중복 호출 방지
     if (hasProcessedRef.current) {
       return;
@@ -82,13 +129,6 @@ const KakaoCallbackPage = () => {
 
     // 카카오에서 전달한 code와 state 파라미터 확인
     if (code && state) {
-      // 저장된 originalState 확인
-      if (!originalState) {
-        alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        navigate('/login', { replace: true });
-        return;
-      }
-
       // 중복 호출 방지 플래그 설정
       hasProcessedRef.current = true;
 
