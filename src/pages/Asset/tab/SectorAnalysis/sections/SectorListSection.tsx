@@ -21,16 +21,31 @@ interface SectorListSectionProps {
   selectedDate: Date;
 }
 
+// 주요 카테고리 목록 (항상 개별 표시)
+const MAIN_CATEGORIES = ['food', 'traffic', 'shopping', 'living', 'leisure', 'cafe', 'medical', 'market'];
+
 export const SectorListSection = ({ data, isLoading = false, selectedDate }: SectorListSectionProps) => {
   const navigate = useNavigate();
 
+  // 상위 5개는 항상 표시
   const topSectors = data.slice(0, 5);
-  const otherSectors = data.slice(5);
+
+  // 6번째부터의 섹터들 중에서
+  const remainingSectors = data.slice(5);
+
+  // 주요 카테고리는 개별 표시, 나머지만 "그외"로 묶기
+  const mainCategorySectors = remainingSectors.filter((item) => MAIN_CATEGORIES.includes(item.key));
+  const otherSectors = remainingSectors.filter((item) => !MAIN_CATEGORIES.includes(item.key));
 
   const otherCount = otherSectors.length;
   const otherTotalAmount = otherSectors.reduce((sum, item) => sum + item.amount, 0);
-  const top5PctSum = topSectors.reduce((sum, item) => sum + (item.displayPct ?? Math.floor(item.percentage)), 0);
-  const othersDisplayPct = Math.max(0, 100 - top5PctSum);
+
+  // 상위 5개 + 주요 카테고리 개별 표시 항목들의 퍼센트 합계
+  const displayedPctSum = [...topSectors, ...mainCategorySectors].reduce(
+    (sum, item) => sum + (item.displayPct ?? Math.floor(item.percentage)),
+    0
+  );
+  const othersDisplayPct = Math.max(0, 100 - displayedPctSum);
 
   return (
     <section className="px-5 bg-white pb-10">
@@ -56,6 +71,7 @@ export const SectorListSection = ({ data, isLoading = false, selectedDate }: Sec
           </div>
         ) : (
           <>
+            {/* 상위 5개 표시 */}
             {topSectors.map((item) => (
               <SectorListItem
                 key={item.key}
@@ -69,7 +85,21 @@ export const SectorListSection = ({ data, isLoading = false, selectedDate }: Sec
               />
             ))}
 
-            {/* 그외 N개 로직 */}
+            {/* 주요 카테고리 개별 표시 (6번째 이후지만 주요 카테고리인 경우) */}
+            {mainCategorySectors.map((item) => (
+              <SectorListItem
+                key={item.key}
+                data={item}
+                label={getCategoryLabel(item)}
+                onClick={() => {
+                  navigate(`/asset/sector/${item.key}`, {
+                    state: { sectorData: item, selectedDate: selectedDate.toISOString() },
+                  });
+                }}
+              />
+            ))}
+
+            {/* 그외 N개 로직 (주요 카테고리가 아닌 작은 항목들만) */}
             {otherCount > 0 && (
               <SectorListItem
                 data={{

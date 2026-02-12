@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/shared/utils/cn';
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
@@ -8,16 +9,36 @@ import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 import type { SectorData } from './components/SectorListItem';
 import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 
+// 주요 카테고리 목록 (항상 개별 표시)
+const MAIN_CATEGORIES = ['food', 'traffic', 'shopping', 'living', 'leisure', 'cafe', 'medical', 'market'];
+
 export const SectorFullListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const selectedDate = location.state?.selectedDate ? new Date(location.state.selectedDate) : new Date();
+  // selectedDate를 안정화하여 무한 루프 방지
+  const selectedDate = useMemo(() => {
+    if (location.state?.selectedDate) {
+      const date = new Date(location.state.selectedDate);
+      return isNaN(date.getTime()) ? new Date() : date;
+    }
+    return new Date();
+  }, [location.state?.selectedDate]);
 
   const { allSectors, isLoading } = useGetAssetAnalysis(selectedDate);
 
   const isFilterOthers = location.state?.filter === 'others';
-  const displayItems = isFilterOthers ? allSectors.slice(5) : allSectors;
+
+  // "그외" 필터링: 상위 5개 이후의 항목 중에서도 주요 카테고리는 제외
+  const displayItems = useMemo(() => {
+    if (isFilterOthers) {
+      return allSectors
+        .slice(5) // 상위 5개 제외
+        .filter((item) => !MAIN_CATEGORIES.includes(item.key)); // 주요 카테고리도 제외
+    }
+    return allSectors;
+  }, [allSectors, isFilterOthers]);
+
   const title = isFilterOthers ? `그외 ${displayItems.length}개` : `분야별 전체내역`;
 
   return (

@@ -7,13 +7,16 @@ import { useGetAssetAnalysis } from '@/shared/hooks/Asset/useGetAssetAnalysis';
 export const SectorAnalysis = () => {
   const location = useLocation();
 
-  const [selectedDate, setSelectedDate] = useState<Date>(
-    location.state?.selectedDate ? new Date(location.state.selectedDate) : new Date()
-  );
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    if (location.state?.selectedDate) {
+      const date = new Date(location.state.selectedDate);
+      return isNaN(date.getTime()) ? new Date() : date;
+    }
+    return new Date();
+  });
 
-  const memoizedDate = useMemo(() => new Date(selectedDate), [selectedDate]);
-
-  const { totalExpense, isLoading, allSectors } = useGetAssetAnalysis(memoizedDate);
+  // 선택된 날짜의 년월 기준으로 데이터 조회 (날짜 객체를 직접 전달)
+  const { totalExpense, isLoading, allSectors } = useGetAssetAnalysis(selectedDate);
 
   const lastMonthDate = useMemo(
     () => new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1),

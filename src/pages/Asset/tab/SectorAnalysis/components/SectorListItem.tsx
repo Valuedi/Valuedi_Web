@@ -50,11 +50,16 @@ export const SectorListItem = ({ data, label, onClick }: SectorListItemProps) =>
             {label}
           </Typography>
           {/* 퍼센트가 0보다 클 때만 노출 (소수점 없이 정수형) */}
-          {(data.displayPct ?? data.percentage) > 0 && (
-            <Typography variant="caption-1" color="neutral-40">
-              {data.displayPct ?? Math.floor(data.percentage)}%
-            </Typography>
-          )}
+          {(() => {
+            // displayPct가 있고 0보다 크면 사용, 아니면 percentage를 정수로 변환하여 사용
+            const displayPct =
+              data.displayPct !== undefined && data.displayPct > 0 ? data.displayPct : Math.floor(data.percentage);
+            return displayPct > 0 ? (
+              <Typography variant="caption-1" color="neutral-40">
+                {displayPct}%
+              </Typography>
+            ) : null;
+          })()}
         </div>
       </div>
 
