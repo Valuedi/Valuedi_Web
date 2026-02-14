@@ -6,6 +6,7 @@ export interface AccountData {
   amount: number;
   bankName?: string;
   cardName?: string;
+  cardNoMasked?: string;
   iconBg: ColorToken;
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Typography } from '@/shared/components/typography';
 import { formatCurrency } from '@/shared/utils/formatCurrency';
+import { formatCardNumber } from '@/shared/utils/formatCardNumber';
 import kbIcon from '@/assets/icons/bank/kb.svg';
 import BankPlusIcon from '@/assets/icons/asset/BankPlus.svg';
 import CardPlusIcon from '@/assets/icons/asset/CardPlus.svg';
@@ -93,20 +94,17 @@ export const AssetList = () => {
         </Typography>
         <div className={cn('flex flex-col gap-[8px]')}>
           {(isCardExpanded ? cardAccounts : cardAccounts.slice(0, 4)).map((card) => (
-            <div key={card.id} className={cn('flex items-center justify-between py-[8px]')}>
+            <div key={card.id} className={cn('flex items-center py-[8px]')}>
               <div className={cn('flex items-center gap-[8px]')}>
                 <CardIcon bgColor={card.iconBg} />
                 <div className={cn('flex flex-col gap-[2px]')}>
                   <Typography style="text-body-2-14-semi-bold" className="text-neutral-90">
-                    {formatCurrency(card.amount)}
-                  </Typography>
-                  <Typography style="text-caption-1-12-regular" className="text-neutral-70">
                     {card.name}
                   </Typography>
+                  <Typography style="text-caption-1-12-regular" className="text-neutral-70">
+                    {formatCardNumber(card.cardNoMasked) || '카드번호 정보 없음'}
+                  </Typography>
                 </div>
-              </div>
-              <div className="w-[18px] h-[18px] flex items-center justify-center">
-                <MoreViewButton onClick={() => navigate(`/asset/account/${card.id}`)} />
               </div>
             </div>
           ))}

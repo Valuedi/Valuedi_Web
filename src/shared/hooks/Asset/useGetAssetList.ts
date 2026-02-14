@@ -92,9 +92,10 @@ export const useGetAssetList = () => {
       // 카드 API에 별도 ID가 없으므로 인덱스로 임시 ID 생성
       id: index + 1,
       name: card.cardName,
-      // 카드 자산 금액은 별도 필드가 없어 현재는 0으로 표시 (추후 백엔드 스펙 확장 시 교체)
+      // 카드 API 응답에 잔고 필드가 없어 금액은 표시용으로 사용하지 않는다.
       amount: 0,
       cardName: card.cardName,
+      cardNoMasked: card.cardNoMasked,
       iconBg: getCardColorByOrgCode(card.organization),
     }));
   }, [cardsData]);
