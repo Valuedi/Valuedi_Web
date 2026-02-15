@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { AccountInfo, TransactionGroup } from '@/features/asset/constants/account';
 import { useAccounts, useCards } from '@/features/asset';
 import {
-  getTransactionsApi,
+  getAccountTransactionsApi,
   getCardTransactionsApi,
   type LedgerTransactionItem,
   type AssetTransactionsResult,
@@ -132,6 +132,7 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
   const { data: cardsData } = useCards();
   const [transactionHistory, setTransactionHistory] = useState<TransactionGroup[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [accountTxMeta, setAccountTxMeta] = useState<AssetTransactionsResult | null>(null);
   const [cardTxMeta, setCardTxMeta] = useState<AssetTransactionsResult | null>(null);
 
   // 상세 상단 정보는 계좌/카드 목록 API를 기반으로 구성
@@ -146,6 +147,7 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
         accountNumber: cardTxMeta?.assetNumber ?? selected?.cardNoMasked ?? '카드번호 정보 없음',
         balance: null,
         bgColor: getCardColorByOrgCode(cardTxMeta?.organizationCode ?? selected?.organization),
+        organizationCode: cardTxMeta?.organizationCode ?? selected?.organization,
       };
     }
 
@@ -160,22 +162,32 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
         accountNumber: '연결된 계좌가 없습니다',
         balance: 0,
         bgColor: 'bank-plus',
+        organizationCode: undefined,
       };
     }
 
-    const bankName = getBankDisplayName(selected.organization);
-    const accountNumber = `${bankName} | ${selected.accountName}`;
+    const bankName = accountTxMeta?.assetName ?? getBankDisplayName(selected.organization);
+    const accountNumber = accountTxMeta?.assetNumber ?? `${bankName} | ${selected.accountName}`;
 
     return {
       bankName,
       accountNumber,
-      balance: selected.balanceAmount,
-      bgColor: getBankColorByOrgCode(selected.organization),
+      balance: accountTxMeta?.currentBalance ?? selected.balanceAmount,
+      bgColor: getBankColorByOrgCode(accountTxMeta?.organizationCode ?? selected.organization),
+      organizationCode: accountTxMeta?.organizationCode ?? selected.organization,
     };
-  }, [accountsData, assetId, cardTxMeta, cardsData, isCardDetail]);
+  }, [accountTxMeta, accountsData, assetId, cardTxMeta, cardsData, isCardDetail]);
 
-  // 내역은 기존 가계부 API(/api/transactions)로 조회
+  // 계좌/카드 상세내역 API로 조회
   useEffect(() => {
+    if (!assetId) {
+      setAccountTxMeta(null);
+      setCardTxMeta(null);
+      setTransactionHistory([]);
+      setTotalCount(0);
+      return;
+    }
+
     let isCancelled = false;
 
     const fetchTransactions = async () => {
@@ -185,6 +197,7 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
         const targetYearMonth = params?.yearMonth ?? defaultYearMonth;
         let content: LedgerTransactionItem[] = [];
         let count = 0;
+        let accountMeta: AssetTransactionsResult | null = null;
         let cardMeta: AssetTransactionsResult | null = null;
 
         if (isCardDetail && assetId) {
@@ -213,23 +226,40 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
 
           count = cardMeta?.totalElements ?? content.length;
         } else {
-          const res = await getTransactionsApi({
-            yearMonth: targetYearMonth,
-            date: params?.date,
-            size: 200,
-            sort: 'LATEST',
-          });
-          const raw = res?.result as { content?: LedgerTransactionItem[]; totalElements?: number } | null | undefined;
-          content = Array.isArray(raw?.content) ? raw.content : [];
-          count = raw?.totalElements ?? content.length;
+          const size = 50;
+          let page = 0;
+          let totalPages = 1;
+
+          while (page < totalPages) {
+            const accountRes = await getAccountTransactionsApi(assetId, {
+              yearMonth: targetYearMonth,
+              date: params?.date,
+              page,
+              size,
+            });
+
+            const result = accountRes?.result;
+            if (!result) break;
+            if (!accountMeta) accountMeta = result;
+
+            const pageContent = Array.isArray(result.content) ? result.content : [];
+            content = content.concat(pageContent);
+
+            totalPages = result.totalPages ?? 1;
+            page += 1;
+          }
+
+          count = accountMeta?.totalElements ?? content.length;
         }
 
         if (isCancelled) return;
+        setAccountTxMeta(accountMeta);
         setCardTxMeta(cardMeta);
         setTransactionHistory(groupTransactionsByDate(content));
         setTotalCount(count);
       } catch {
         if (isCancelled) return;
+        setAccountTxMeta(null);
         setCardTxMeta(null);
         setTransactionHistory([]);
         setTotalCount(0);
@@ -241,7 +271,7 @@ export const useGetAccountDetail = (params?: { yearMonth?: string; date?: string
     return () => {
       isCancelled = true;
     };
-  }, [params?.yearMonth, params?.date]);
+  }, [assetId, isCardDetail, params?.yearMonth, params?.date]);
 
   return {
     accountInfo,

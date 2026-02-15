@@ -81,6 +81,7 @@ export const useGetAssetList = () => {
       id: acc.accountId,
       name: acc.accountName,
       amount: acc.balanceAmount,
+      organizationCode: acc.organization,
       bankName: getBankDisplayName(acc.organization),
       iconBg: getBankColorByOrgCode(acc.organization),
     }));
@@ -93,6 +94,7 @@ export const useGetAssetList = () => {
       name: card.cardName,
       // 카드 API 응답에 잔고 필드가 없어 금액은 표시용으로 사용하지 않는다.
       amount: 0,
+      organizationCode: card.organization,
       cardName: card.cardName,
       cardNoMasked: card.cardNoMasked,
       iconBg: getCardColorByOrgCode(card.organization),

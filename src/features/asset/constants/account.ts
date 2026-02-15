@@ -4,6 +4,7 @@ export interface AccountData {
   id: number | null;
   name: string;
   amount: number;
+  organizationCode?: string;
   bankName?: string;
   cardName?: string;
   cardNoMasked?: string;
@@ -15,6 +16,7 @@ export interface AccountInfo {
   accountNumber: string;
   balance: number | null;
   bgColor: ColorToken;
+  organizationCode?: string;
 }
 
 export interface TransactionItem {
