@@ -54,6 +54,7 @@ export const HomePage = () => {
   const [mbtiResult, setMbtiResult] = useState<string>('');
   const [recommendedProducts, setRecommendedProducts] = useState<
     Array<{
+      finPrdtCd: string;
       korCoNm: string;
       finPrdtNm: string;
     }>
@@ -236,6 +237,7 @@ export const HomePage = () => {
         if (recommendRes?.result?.products) {
           setRecommendedProducts(
             recommendRes.result.products.slice(0, 3).map((product) => ({
+              finPrdtCd: product.finPrdtCd,
               korCoNm: product.korCoNm,
               finPrdtNm: product.finPrdtNm,
             }))
@@ -653,8 +655,10 @@ export const HomePage = () => {
                 ) : (
                   <div className="flex gap-[12px] overflow-x-auto px-[12px] -mx-[12px] md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0">
                     {recommendedProducts.map((product, index) => (
-                      <div
+                      <button
                         key={index}
+                        type="button"
+                        onClick={() => navigate(`/recommend/detail/${product.finPrdtCd}`)}
                         className="bg-neutral-10 rounded-[16px] p-[16px] min-w-[221px] md:min-w-0 flex flex-col gap-[4px]"
                       >
                         <Typography
@@ -671,7 +675,7 @@ export const HomePage = () => {
                         >
                           {product.korCoNm}
                         </Typography>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}
