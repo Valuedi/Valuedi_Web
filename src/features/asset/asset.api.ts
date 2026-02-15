@@ -103,6 +103,7 @@ export interface LedgerTransactionItem {
   transactionAt?: string; // API가 ISO 날짜로 내려줄 수 있음
   amount?: number;
   title?: string;
+  transactionType?: string;
   categoryCode?: string;
   categoryName?: string;
   categoryId?: number;
@@ -114,6 +115,7 @@ export interface LedgerTransactionItem {
   category?: string | LedgerCategoryRef;
   type?: string;
   memo?: string;
+  currentBalance?: number | null;
   afterBalance?: number;
   [key: string]: unknown;
 }
@@ -171,6 +173,57 @@ export const getTransactionsApi = async (params: {
   if (params.size != null) search.set('size', String(params.size));
   if (params.sort) search.set('sort', params.sort);
   return apiGet<LedgerListResponse>(`/api/transactions?${search.toString()}`);
+};
+
+export interface AssetTransactionsResult {
+  totalElements?: number;
+  page?: number;
+  size?: number;
+  totalPages?: number;
+  organizationCode?: string;
+  assetName?: string;
+  assetNumber?: string;
+  currentBalance?: number | null;
+  content?: LedgerTransactionItem[];
+}
+
+interface AssetTransactionsParams {
+  yearMonth?: string;
+  date?: string;
+  page?: number;
+  size?: number;
+}
+
+/**
+ * 특정 계좌 거래내역 조회
+ * GET /api/assets/accounts/{accountId}/transactions
+ */
+export const getAccountTransactionsApi = async (
+  accountId: number,
+  params?: AssetTransactionsParams
+): Promise<ApiResponse<AssetTransactionsResult>> => {
+  const search = new URLSearchParams();
+  if (params?.yearMonth) search.set('yearMonth', params.yearMonth);
+  if (params?.date) search.set('date', params.date);
+  search.set('page', String(params?.page ?? 0));
+  search.set('size', String(params?.size ?? 20));
+  return apiGet<AssetTransactionsResult>(`/api/assets/accounts/${accountId}/transactions?${search.toString()}`);
+};
+
+/**
+ * 특정 카드 승인내역 조회
+ * GET /api/assets/cards/{cardId}/transactions
+ */
+export const getCardTransactionsApi = async (
+  cardId: number,
+  params?: AssetTransactionsParams
+): Promise<ApiResponse<AssetTransactionsResult>> => {
+  const search = new URLSearchParams();
+  if (params?.yearMonth) search.set('yearMonth', params.yearMonth);
+  if (params?.date) search.set('date', params.date);
+  search.set('page', String(params?.page ?? 0));
+  search.set('size', String(params?.size ?? 20));
+  return apiGet<AssetTransactionsResult>(`/api/assets/cards/${cardId}/transactions?${search.toString()}`);
 };
 
 // ========== GET /api/transactions/summary (월 소비 내역 요약) ==========

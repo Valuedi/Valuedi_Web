@@ -108,7 +108,7 @@ export const AssetList = () => {
         </Typography>
         <div className={cn('flex flex-col gap-[8px]')}>
           {(isCardExpanded ? cardAccounts : cardAccounts.slice(0, 4)).map((card) => (
-            <div key={card.id} className={cn('flex items-center py-[8px]')}>
+            <div key={`${card.name}-${card.cardNoMasked}`} className={cn('flex items-center justify-between py-[8px]')}>
               <div className={cn('flex items-center gap-[8px]')}>
                 <CardIcon bgColor={card.iconBg} />
                 <div className={cn('flex flex-col gap-[2px]')}>
@@ -120,6 +120,11 @@ export const AssetList = () => {
                   </Typography>
                 </div>
               </div>
+              {card.id != null && (
+                <div className="w-[18px] h-[18px] flex items-center justify-center">
+                  <MoreViewButton onClick={() => navigate(`/asset/card/${card.id}`)} />
+                </div>
+              )}
             </div>
           ))}
         </div>

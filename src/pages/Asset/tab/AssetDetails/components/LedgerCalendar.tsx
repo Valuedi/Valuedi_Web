@@ -31,7 +31,7 @@ export const LedgerCalendar = () => {
     return `${year}-${String(currentMonth).padStart(2, '0')}`;
   }, [currentMonth]);
 
-  const { transactionHistory } = useGetAccountDetail(yearMonth);
+  const { transactionHistory } = useGetAccountDetail({ yearMonth });
 
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
 

@@ -14,7 +14,7 @@ export const LedgerList = () => {
     return `${year}-${String(currentMonth).padStart(2, '0')}`;
   }, [currentMonth]);
 
-  const { transactionHistory } = useGetAccountDetail(yearMonth);
+  const { transactionHistory } = useGetAccountDetail({ yearMonth });
   return (
     <div className="flex flex-col gap-[12px]">
       {transactionHistory.map((group, index) => (

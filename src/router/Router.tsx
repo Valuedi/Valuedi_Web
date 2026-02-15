@@ -72,6 +72,7 @@ export const router = createBrowserRouter([
       },
       { path: 'asset', element: <AssetPage /> },
       { path: 'asset/account/:id', element: <AssetAccountDetailPage /> },
+      { path: 'asset/card/:id', element: <AssetAccountDetailPage /> },
       { path: 'recommend', element: <RecommendPage /> },
       { path: 'recommend/detail/:id', element: <RecommendDetailPage /> },
       { path: 'goal', element: <Navigate to="/goal/current" replace /> },

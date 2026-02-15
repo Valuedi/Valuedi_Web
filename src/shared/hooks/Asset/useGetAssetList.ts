@@ -88,9 +88,8 @@ export const useGetAssetList = () => {
 
   const cardAccounts: AccountData[] = useMemo(() => {
     const list = cardsData?.result?.cardList ?? [];
-    return list.map((card, index) => ({
-      // 카드 API에 별도 ID가 없으므로 인덱스로 임시 ID 생성
-      id: index + 1,
+    return list.map((card) => ({
+      id: card.cardId ?? null,
       name: card.cardName,
       // 카드 API 응답에 잔고 필드가 없어 금액은 표시용으로 사용하지 않는다.
       amount: 0,

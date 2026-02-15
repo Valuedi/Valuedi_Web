@@ -96,6 +96,7 @@ export interface AccountsListResponse {
 
 // 카드 상세 정보 (전체 카드 목록 조회용)
 export interface CardDetail {
+  cardId?: number; // 카드 ID (상세내역 조회 API 경로 파라미터)
   cardName: string; // 카드명
   cardNoMasked: string; // 마스킹된 카드번호 (예: "4321-****-****-1234")
   cardType: 'CREDIT' | 'CHECK' | 'DEBIT'; // 카드 타입 (신용카드, 체크카드, 직불카드)

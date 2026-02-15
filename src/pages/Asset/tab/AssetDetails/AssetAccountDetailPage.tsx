@@ -22,6 +22,8 @@ const BankIcon = ({ bgColor }: { bgColor: ColorToken }) => (
 export const AssetAccountDetailPage = () => {
   const navigate = useNavigate();
   const { accountInfo, transactionHistory, totalCount } = useGetAccountDetail();
+  const balance = accountInfo.balance;
+  const isBalanceUnavailable = balance == null;
 
   const handleBack = () => {
     navigate(-1);
@@ -50,9 +52,25 @@ export const AssetAccountDetailPage = () => {
             <Typography style="text-caption-1-12-regular" className={cn('text-neutral-70')}>
               {accountInfo.accountNumber}
             </Typography>
-            <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
-              {formatCurrency(accountInfo.balance)}
-            </Typography>
+            {isBalanceUnavailable ? (
+              <div className={cn('flex items-center gap-[8px]')}>
+                <Typography style="text-body-3-13-medium" className={cn('text-neutral-90')}>
+                  승인 내역만 제공되는 카드예요
+                </Typography>
+                <span
+                  className={cn(
+                    'inline-flex items-center rounded-[999px] bg-white/70 px-[8px] py-[2px]',
+                    'text-[11px] leading-[16px] font-pretendard font-medium text-neutral-70'
+                  )}
+                >
+                  잔액 정보 없음
+                </span>
+              </div>
+            ) : (
+              <Typography style="text-headline-1-22-semi-bold" className={cn('text-neutral-90')}>
+                {formatCurrency(balance)}
+              </Typography>
+            )}
           </div>
         </div>
 
