@@ -7,7 +7,8 @@ import BankInfiniteGrid from '@/shared/components/bank/BankInfiniteGrid';
 import { CARDS } from '@/features/card/constants/cards';
 import { useQuery } from '@tanstack/react-query';
 import { getConnectionsApi } from '@/features/connection';
-import { getBankIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
+import { getCardIdFromOrganizationCode } from '@/features/connection/constants/organizationCodes';
+import { getFinanceMbtiResultApi } from '@/features/mbti/mbti.api';
 
 const CardAdditionalConnectionPage = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const CardAdditionalConnectionPage = () => {
       })
       .map((conn) => {
         const organizationCode = conn.organizationCode || conn.organization;
-        return organizationCode ? getBankIdFromOrganizationCode(organizationCode) : null;
+        return organizationCode ? getCardIdFromOrganizationCode(organizationCode) : null;
       })
       .filter((id): id is string => id !== null) || [];
 
@@ -42,8 +43,17 @@ const CardAdditionalConnectionPage = () => {
     navigate('/card/select');
   };
 
-  const handleSkip = () => {
-    // mbti 검사 페이지로 이동
+  const handleSkip = async () => {
+    // 기존 사용자(이미 MBTI 결과 존재)는 자산으로 복귀, 최초 사용자만 MBTI로 이동
+    try {
+      const mbtiRes = await getFinanceMbtiResultApi();
+      if (mbtiRes?.result) {
+        navigate('/asset');
+        return;
+      }
+    } catch {
+      // MBTI 미존재/조회 실패 시 온보딩 흐름 유지
+    }
     navigate('/mbti');
   };
 

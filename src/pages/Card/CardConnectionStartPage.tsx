@@ -10,6 +10,7 @@ import { CARDS } from '@/features/card/constants/cards';
 import { cn } from '@/shared/utils/cn';
 import { assetApi } from '@/features/asset';
 import BankInfoModal from '@/shared/components/bank/BankInfoModal';
+import { getFinanceMbtiResultApi } from '@/features/mbti/mbti.api';
 
 const CardConnectionStartPage = () => {
   const navigate = useNavigate();
@@ -37,8 +38,17 @@ const CardConnectionStartPage = () => {
     navigate(-1);
   };
 
-  const handleSkip = () => {
-    // MBTI 페이지로 이동
+  const handleSkip = async () => {
+    // 기존 사용자(이미 MBTI 결과 존재)는 자산으로 복귀, 최초 사용자만 MBTI로 이동
+    try {
+      const mbtiRes = await getFinanceMbtiResultApi();
+      if (mbtiRes?.result) {
+        navigate('/asset');
+        return;
+      }
+    } catch {
+      // MBTI 미존재/조회 실패 시 온보딩 흐름 유지
+    }
     navigate('/mbti');
   };
 
