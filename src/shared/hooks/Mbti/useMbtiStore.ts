@@ -10,6 +10,7 @@ interface MbtiState {
     setStep: (step: StepType) => void;
     setTestStep: (step: number) => void;
     setAnswer: (questionId: number, score: number) => void;
+    clearAnswers: () => void;
     reset: () => void;
   };
 }
@@ -23,6 +24,7 @@ export const useMbtiStore = create<MbtiState>((set) => ({
     setStep: (step) => set({ step }),
     setTestStep: (step) => set({ testStep: step }),
     setAnswer: (id, value) => set((state) => ({ answers: { ...state.answers, [id]: value } })),
+    clearAnswers: () => set({ answers: {} }),
     reset: () => set({ step: 'intro', testStep: 0, answers: {} }),
   },
 }));

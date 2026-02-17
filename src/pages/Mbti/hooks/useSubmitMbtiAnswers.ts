@@ -5,7 +5,7 @@ import { formatMbtiAnswersForSubmit } from '@/features/mbti/mbti.mapper';
 import { useMbtiActions } from '@/shared/hooks/Mbti/useMbtiStore';
 
 export const useSubmitMbtiAnswers = (answers: Record<number, number>) => {
-  const { setStep } = useMbtiActions();
+  const { setStep, clearAnswers } = useMbtiActions();
   const queryClient = useQueryClient();
   const isMountedRef = useRef(false);
   const hasSubmittedRef = useRef(false);
@@ -17,6 +17,7 @@ export const useSubmitMbtiAnswers = (answers: Record<number, number>) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: mbtiKeys.result() });
       if (!isMountedRef.current) return;
+      clearAnswers();
       setStep('result');
     },
     onError: (error) => {
