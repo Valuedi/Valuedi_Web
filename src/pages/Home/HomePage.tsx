@@ -15,7 +15,8 @@ import MbtiHomeIcon from '@/assets/icons/home/MbtiHome.svg';
 import { getAccountsApi, Account, getDailyTransactionsApi, assetApi } from '@/features/asset/asset.api';
 import { getTransactionSummaryApi } from '@/features/transaction/transaction.api';
 import { getFinanceMbtiResultApi, getMbtiTypeDetails } from '@/features/mbti/mbti.api';
-import { getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
+import { createSavingsRecommendationsApi, getTop3RecommendationsApi } from '@/features/recommend/recommend.api';
+import { cn } from '@/shared/utils/cn';
 import { getGoalDetailApi, getPrimaryGoalsApi } from '@/features/goal/goal.api';
 import { paths } from '@/router/paths';
 import { ApiError } from '@/shared/api';
@@ -66,6 +67,7 @@ export const HomePage = () => {
   const [yesterdayExpense, setYesterdayExpense] = useState(0);
   const [connectedBankCount, setConnectedBankCount] = useState(0);
   const [connectedCardIssuerCount, setConnectedCardIssuerCount] = useState(0);
+  const [isCreatingRecommendations, setIsCreatingRecommendations] = useState(false);
 
   // MBTI 결과 조회 (캐릭터 아이콘용)
   const { data: mbtiTestResult } = useGetMbtiTestResult();
@@ -270,6 +272,29 @@ export const HomePage = () => {
       case 'goal':
         navigate('/goal');
         break;
+    }
+  };
+
+  const handleCreateRecommendations = async () => {
+    if (isCreatingRecommendations) return;
+
+    try {
+      setIsCreatingRecommendations(true);
+      const createRes = await createSavingsRecommendationsApi();
+
+      if (createRes.result?.products) {
+        setRecommendedProducts(
+          createRes.result.products.slice(0, 3).map((product) => ({
+            finPrdtCd: product.finPrdtCd,
+            korCoNm: product.korCoNm,
+            finPrdtNm: product.finPrdtNm,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error('추천 생성 실패:', error);
+    } finally {
+      setIsCreatingRecommendations(false);
     }
   };
 
@@ -648,9 +673,16 @@ export const HomePage = () => {
                   </div>
                 ) : recommendedProducts.length === 0 ? (
                   <div className="flex items-center justify-center py-[20px]">
-                    <Typography style="text-body-2-14-regular" className="text-neutral-50" fontFamily="pretendard">
-                      추천 상품이 없습니다
-                    </Typography>
+                    <button
+                      onClick={handleCreateRecommendations}
+                      disabled={isCreatingRecommendations}
+                      className={cn(
+                        'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
+                        isCreatingRecommendations && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      {isCreatingRecommendations ? '추천 생성 중...' : '추천 상품 받기'}
+                    </button>
                   </div>
                 ) : (
                   <div className="flex gap-[12px] overflow-x-auto px-[12px] -mx-[12px] md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-x-visible md:px-0 md:mx-0">

@@ -269,16 +269,6 @@ export const RecommendPage = () => {
                   )}
                   {isEmptyResult && (
                     <div className="flex flex-col gap-[8px] py-[20px]">
-                      <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                        {recommendationsData?.message || '해당 적립 유형의 추천 결과가 없습니다.'}
-                      </Typography>
-                    </div>
-                  )}
-                  {!isLoading && !isError && !isEmptyResult && filteredList.length === 0 && (
-                    <div className="flex flex-col gap-[8px] py-[20px]">
-                      <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                        추천 상품이 없습니다.
-                      </Typography>
                       <button
                         onClick={() => createRecommendationsMutation.mutate()}
                         disabled={createRecommendationsMutation.isPending}
@@ -287,7 +277,21 @@ export const RecommendPage = () => {
                           createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
                         )}
                       >
-                        {createRecommendationsMutation.isPending ? '추천 생성 중...' : '추천 받기'}
+                        {createRecommendationsMutation.isPending ? '추천 생성 중...' : '추천 상품 받기'}
+                      </button>
+                    </div>
+                  )}
+                  {!isLoading && !isError && !isEmptyResult && filteredList.length === 0 && (
+                    <div className="flex flex-col gap-[8px] py-[20px]">
+                      <button
+                        onClick={() => createRecommendationsMutation.mutate()}
+                        disabled={createRecommendationsMutation.isPending}
+                        className={cn(
+                          'px-[16px] py-[8px] bg-primary-60 text-white rounded-[4px] text-body-2-14-semi-bold',
+                          createRecommendationsMutation.isPending && 'opacity-50 cursor-not-allowed'
+                        )}
+                      >
+                        {createRecommendationsMutation.isPending ? '추천 생성 중...' : '추천 상품 받기'}
                       </button>
                     </div>
                   )}
