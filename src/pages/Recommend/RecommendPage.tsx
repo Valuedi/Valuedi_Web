@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
 import { BottomNavigation } from '@/shared/components/gnb/BottomNavigation';
@@ -9,6 +9,7 @@ import { RecommendListItem } from './components/RecommendListItem';
 import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
 import { RecommendBannerCard } from './components/RecommendBannerCard';
 import { CategoryButton } from '@/shared/components/buttons';
+import { Skeleton } from '@/shared/components/skeleton/Skeleton';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
 import {
   useSavingsRecommendations,
@@ -26,6 +27,7 @@ export const categoryList = [
 ] as const;
 
 export const RecommendPage = () => {
+  const POLLING_TIMEOUT_MS = 30000;
   const navigate = useNavigate();
 
   const handleNavClick = (item: 'home' | 'asset' | 'recommend' | 'goal') => {
@@ -50,6 +52,7 @@ export const RecommendPage = () => {
   const [isPolling, setIsPolling] = useState(false); // 폴링 상태 관리
   const [pollingStartTime, setPollingStartTime] = useState<number | null>(null); // 폴링 시작 시간
   const [refetchInterval, setRefetchInterval] = useState<number | undefined>(undefined); // 폴링 간격
+  const hasAutoTriggeredRef = useRef(false);
 
   // 필터에 따라 rsrvType 결정: 'free' -> 'F', 'fixed' -> 'S', 'all' -> undefined
   const rsrvType = useMemo(() => {
@@ -92,6 +95,32 @@ export const RecommendPage = () => {
     }
   }, [createRecommendationsMutation.isSuccess, createRecommendationsMutation.isError, refetch]);
 
+  // 추천 페이지 첫 진입 시 기존 추천이 없다면 자동으로 추천 생성 트리거
+  useEffect(() => {
+    const shouldAutoCreate =
+      filter === 'all' &&
+      !hasAutoTriggeredRef.current &&
+      !isLoading &&
+      !isError &&
+      recommendationsData?.status === 'SUCCESS' &&
+      products.length === 0 &&
+      !isPolling &&
+      !createRecommendationsMutation.isPending;
+
+    if (!shouldAutoCreate) return;
+
+    hasAutoTriggeredRef.current = true;
+    createRecommendationsMutation.mutate();
+  }, [
+    filter,
+    isLoading,
+    isError,
+    recommendationsData?.status,
+    products.length,
+    isPolling,
+    createRecommendationsMutation,
+  ]);
+
   // 결과가 나오면 폴링 중지
   useEffect(() => {
     if (isPolling && products.length > 0) {
@@ -103,12 +132,16 @@ export const RecommendPage = () => {
 
   // 타임아웃 시 폴링 중지
   useEffect(() => {
-    if (pollingStartTime !== null && Date.now() - pollingStartTime >= 30000) {
+    if (pollingStartTime === null) return;
+
+    const timeoutId = setTimeout(() => {
       setIsPolling(false);
       setPollingStartTime(null);
       setRefetchInterval(undefined);
-    }
-  }, [pollingStartTime]);
+    }, POLLING_TIMEOUT_MS);
+
+    return () => clearTimeout(timeoutId);
+  }, [pollingStartTime, POLLING_TIMEOUT_MS]);
 
   // 필터링 및 중복 제거 (API에서 이미 필터링되지만, 혹시 몰라서 클라이언트에서도 필터링)
   const filteredList = useMemo(() => {
@@ -183,12 +216,36 @@ export const RecommendPage = () => {
                 <div className={cn('flex flex-col gap-[12px]')}>
                   {(isLoading || isPolling) && (
                     <div className="flex flex-col gap-[8px] py-[20px]">
-                      <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
-                        {isPolling ? '추천 상품을 생성하고 있습니다...' : '추천 상품을 불러오는 중...'}
-                      </Typography>
-                      {isPolling && (
-                        <Typography style="text-caption-1-12-regular" className="text-neutral-50 text-center">
-                          잠시만 기다려주세요
+                      {isPolling ? (
+                        <>
+                          <div className="rounded-[12px] border border-primary-20 bg-primary-5 px-[16px] py-[14px]">
+                            <Typography style="text-body-2-14-semi-bold" className="text-primary-normal text-center">
+                              AI가 회원님께 맞는 적금을 고르고 있어요
+                            </Typography>
+                            <Typography
+                              style="text-caption-1-12-regular"
+                              className="text-neutral-60 text-center mt-[4px]"
+                            >
+                              결과를 찾는 중이니 잠시만 기다려 주세요
+                            </Typography>
+                          </div>
+
+                          <div className="flex flex-col gap-[8px] mt-[4px]">
+                            {Array.from({ length: 3 }).map((_, index) => (
+                              <div
+                                key={`recommend-skeleton-${index}`}
+                                className="rounded-[10px] border border-neutral-20 p-[14px]"
+                              >
+                                <Skeleton className="w-[72px] h-[14px] rounded mb-[10px]" />
+                                <Skeleton className="w-[70%] h-[18px] rounded mb-[8px]" />
+                                <Skeleton className="w-[50%] h-[14px] rounded" />
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <Typography style="text-body-2-14-regular" className="text-neutral-70 text-center">
+                          추천 상품을 불러오는 중...
                         </Typography>
                       )}
                     </div>

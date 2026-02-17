@@ -9,7 +9,6 @@ export const useSubmitMbtiAnswers = (answers: Record<number, number>) => {
   const queryClient = useQueryClient();
   const isMountedRef = useRef(false);
   const hasSubmittedRef = useRef(false);
-  const stepTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const formattedAnswers = useMemo(() => formatMbtiAnswersForSubmit(answers), [answers]);
 
@@ -17,10 +16,8 @@ export const useSubmitMbtiAnswers = (answers: Record<number, number>) => {
     mutationFn: submitMbtiTest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: mbtiKeys.result() });
-      stepTimerRef.current = setTimeout(() => {
-        if (!isMountedRef.current) return;
-        setStep('result');
-      }, 1500);
+      if (!isMountedRef.current) return;
+      setStep('result');
     },
     onError: (error) => {
       console.error('제출 실패:', error);
@@ -34,9 +31,6 @@ export const useSubmitMbtiAnswers = (answers: Record<number, number>) => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      if (stepTimerRef.current) {
-        clearTimeout(stepTimerRef.current);
-      }
     };
   }, []);
 

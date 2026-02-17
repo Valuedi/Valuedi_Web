@@ -43,7 +43,7 @@ export const MbtiLoading = () => {
             분석중이에요
           </Typography>
           <Typography style="text-body-2-14-regular" className={cn('text-neutral-70 whitespace-pre-line')}>
-            검사결과지를 바탕으로 MBTI를 분석 중이에요
+            답변을 저장하고 금융 MBTI 유형을 확인하고 있어요
             <br />
             잠시만 기다려 주세요.
           </Typography>
