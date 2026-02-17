@@ -10,7 +10,12 @@ import { HomeGNB } from '@/shared/components/gnb/HomeGNB';
 import { RecommendBannerCard } from './components/RecommendBannerCard';
 import { CategoryButton } from '@/shared/components/buttons';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
-import { useSavingsRecommendations, useCreateSavingsRecommendations } from '@/features/recommend/recommend.hooks';
+import {
+  useSavingsRecommendations,
+  useCreateSavingsRecommendations,
+  useTop3Recommendations,
+} from '@/features/recommend/recommend.hooks';
+import { getBankIdByName } from '@/features/recommend/constants/bankMapper';
 
 export type ProductType = 'all' | 'free' | 'fixed';
 
@@ -67,6 +72,11 @@ export const RecommendPage = () => {
   // 빈 결과인지 확인 (status가 SUCCESS이고 products가 빈 배열인 경우)
   const isEmptyResult = !isLoading && !isError && recommendationsData?.status === 'SUCCESS' && products.length === 0;
 
+  // Top3 추천 데이터 호출
+  const { data: topData } = useTop3Recommendations();
+
+  const top3Products = topData?.products || [];
+
   // 추천 생성 성공 시 폴링 시작, 실패 시 폴링 중지
   useEffect(() => {
     if (createRecommendationsMutation.isSuccess) {
@@ -115,7 +125,7 @@ export const RecommendPage = () => {
   }, [products, filter]);
 
   return (
-    <MobileLayout className="bg-neutral-10">
+    <MobileLayout className="bg-neutral-0">
       {/* 데스크탑 레이아웃: 사이드바 + 메인 콘텐츠 */}
       <div className="flex flex-col md:flex-row min-h-screen w-full overflow-x-hidden">
         {/* 데스크탑 사이드바 (모바일에서는 숨김) */}
@@ -141,8 +151,15 @@ export const RecommendPage = () => {
                   'lg:gap-[24px]'
                 )}
               >
-                <RecommendBannerCard title="새마을금고" subTitle="청년들을 위한 우대 금리" bankId="saemaul" />
-                <RecommendBannerCard title="KB청년도약계좌" subTitle="내 집 마련의 꿈" bankId="kb" />
+                {top3Products.map((product) => (
+                  <RecommendBannerCard
+                    key={product.finPrdtCd}
+                    title={product.finPrdtNm}
+                    subTitle={product.korCoNm}
+                    bankId={getBankIdByName(product.korCoNm)}
+                    onClick={() => navigate(`/recommend/detail/${product.finPrdtCd}`)}
+                  />
+                ))}
               </div>
 
               {/* 필터 및 리스트 영역 */}
