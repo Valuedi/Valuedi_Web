@@ -12,6 +12,25 @@ import { ProductInfoList, ProductInfoItem } from './components/ProductInfoList';
 import { LoginButton } from '@/shared/components/buttons';
 import { useSavingsDetail } from '@/features/recommend/recommend.hooks';
 import { useMemo } from 'react';
+import { getBankIdByName } from '@/features/recommend/constants/bankMapper';
+
+const BANK_APPLY_URLS: Record<string, string> = {
+  kb: 'https://www.kbstar.com',
+  kdb: 'https://www.ibk.co.kr',
+  ibk: 'https://www.kdb.co.kr',
+  nh: 'https://banking.nonghyup.com',
+  woori: 'https://www.wooribank.com',
+  hana: 'https://www.hanabank.com',
+  kbank: 'https://www.kbanknow.com',
+  shinhan: 'https://www.shinhan.com',
+  busan: 'https://www.busanbank.co.kr',
+  saemaul: 'https://www.kfcc.co.kr',
+  postbank: 'https://www.epostbank.go.kr',
+  suhyup: 'https://www.suhyup-bank.com',
+  shinhyup: 'https://openbank.cu.co.kr',
+  sc: 'https://www.standardchartered.co.kr',
+  citi: 'https://www.citibank.co.kr',
+};
 
 export const RecommendDetailPage = () => {
   const navigate = useNavigate();
@@ -154,6 +173,23 @@ export const RecommendDetailPage = () => {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const applyUrl = useMemo(() => {
+    if (!product) return null;
+
+    const urlInJoinWay = product.joinWay?.match(/https?:\/\/[^\s)]+/i)?.[0];
+    if (urlInJoinWay) {
+      return urlInJoinWay.replace(/[.,;!?]+$/, '');
+    }
+
+    const bankId = getBankIdByName(product.korCoNm);
+    return BANK_APPLY_URLS[bankId] ?? null;
+  }, [product]);
+
+  const handleApply = () => {
+    if (!applyUrl) return;
+    window.open(applyUrl, '_blank', 'noopener,noreferrer');
   };
 
   if (isLoading) {
@@ -307,7 +343,7 @@ export const RecommendDetailPage = () => {
       </div>
 
       <div className={cn('px-[20px] pb-[20px] mt-[47px]')}>
-        <LoginButton text="신청하기" className={cn('w-full')} />
+        <LoginButton text="신청하기" className={cn('w-full')} onClick={handleApply} />
       </div>
     </MobileLayout>
   );
