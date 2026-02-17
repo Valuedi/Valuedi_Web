@@ -27,13 +27,13 @@ export const MbtiLoading = () => {
   });
 
   useEffect(() => {
-    // 서버 규격에 맞게 데이터 가공
     const formattedAnswers = Object.entries(answers).map(([id, value]) => ({
       questionId: Number(id),
       choiceValue: value,
     }));
+
     mutate(formattedAnswers);
-  }, [mutate, answers]);
+  }, []); // 마운트 시점에 한 번만 실행
 
   return (
     <div className={cn('flex flex-col h-full min-h-screen bg-neutral-0')}>
