@@ -1,4 +1,4 @@
-// features/recommend/utils/bankMapper.ts (새로 생성 추천)
+// 은행 명칭 -> 배너 ID 변환
 export const getBankIdByName = (bankName: string): string => {
   if (bankName.includes('국민')) return 'kb';
   if (bankName.includes('기업')) return 'kdb';
