@@ -7,6 +7,7 @@ import GoalDetailPageHeader from '@/shared/components/goal/detail/GoalDetailPage
 import GoalProgressGauge from '@/shared/components/goal/detail/GoalProgressGauge';
 import GoalSummaryCard from '@/shared/components/goal/detail/GoalSummaryCard';
 import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/shared/hooks/Goal/useGoalDetailActions';
+import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
 
 const SavingSimulationPage = () => {
   const {
@@ -32,7 +33,7 @@ const SavingSimulationPage = () => {
 
   // ====== 목표 계산기 시뮬레이션 상태 ======
   const originalRemainingDays = useMemo(() => (detail ? detail.remainingDays : 0), [detail]);
-  const savedAmount = useMemo(() => (detail ? detail.savedAmount : 0), [detail]);
+  const collectedAmount = useMemo(() => (detail ? getCollectedAmount(detail) : 0), [detail]);
 
   const [simulatedRemainingDays, setSimulatedRemainingDays] = useState(originalRemainingDays);
   // 목표 계산기에서 입력한 절약 금액 총합 (게이지/요약에 반영)
@@ -40,7 +41,7 @@ const SavingSimulationPage = () => {
 
   const handleSavingTotalChange = (totalSavingAmount: number) => {
     // 조정 전 남은 목표 금액
-    const originalRemainingGoalAmount = Math.max((detail ? detail.targetAmount : 0) - savedAmount, 0);
+    const originalRemainingGoalAmount = Math.max((detail ? detail.targetAmount : 0) - collectedAmount, 0);
 
     // 줄어든 목표 금액 (남은 금액보다 더 줄일 수 없음)
     const reducedGoalAmount = Math.max(0, Math.min(totalSavingAmount, originalRemainingGoalAmount));

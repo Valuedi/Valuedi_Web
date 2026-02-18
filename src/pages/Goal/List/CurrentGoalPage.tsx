@@ -100,10 +100,12 @@ export const CurrentGoalPage = () => {
                         id: goal.goalId,
                         title: goal.title,
                         progress: goal.achievementRate,
-                        targetAmount: goal.savedAmount,
+                        targetAmount: goal.targetAmount ?? goal.savedAmount,
                         remainingDays: goal.remainingDays,
                         colorCode: goal.colorCode,
                         iconId: goal.iconId,
+                        savedAmount: goal.savedAmount,
+                        collectedAmount: goal.currentBalance,
                       }}
                       type="current"
                     />

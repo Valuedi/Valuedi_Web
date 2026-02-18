@@ -6,6 +6,8 @@ export interface Goal {
   goalId: number;
   title: string;
   savedAmount: number;
+  targetAmount?: number;
+  currentBalance?: number;
   remainingDays: number;
   achievementRate: number;
   status: GoalStatus;
@@ -62,6 +64,7 @@ export interface GoalDetail {
   goalId: number;
   title: string;
   savedAmount: number;
+  currentBalance?: number;
   targetAmount: number;
   remainingDays: number;
   achievementRate: number;
@@ -70,6 +73,8 @@ export interface GoalDetail {
   account: {
     bankName: string;
     accountNumber: string;
+    balanceAmount?: number;
+    currentBalance?: number;
   };
   status: GoalStatus;
   colorCode: string;

@@ -2,6 +2,7 @@ import { toHexColor } from '@/features/goal';
 import type { GoalDetail } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
+import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
 
 interface PastGoalSummarySectionProps {
   detail: GoalDetail;
@@ -18,8 +19,7 @@ export default function PastGoalSummarySection({ detail }: PastGoalSummarySectio
   const achievementPillClass =
     detail.status === 'COMPLETE' ? 'bg-primary-normal text-[#171714]' : 'bg-neutral-20 text-neutral-70';
 
-  /** 달성 성공이면 총 모인금액 = 목표 금액으로 표시 (서버가 0을 줄 수 있음) */
-  const totalCollectedAmount = detail.status === 'COMPLETE' ? detail.targetAmount : detail.savedAmount;
+  const totalCollectedAmount = getCollectedAmount(detail);
 
   return (
     <div className="relative overflow-hidden bg-primary-normal px-5 pt-5 pb-8">
@@ -41,7 +41,7 @@ export default function PastGoalSummarySection({ detail }: PastGoalSummarySectio
         <span className="text-sm font-semibold text-[#171714]">{detail.title}</span>
       </div>
 
-      <p className="text-sm font-medium text-neutral-50 mb-1">총 모인금액</p>
+      <p className="text-sm font-medium text-neutral-50 mb-1">현재 보유 자산</p>
       <div className="flex items-center gap-3 flex-wrap">
         <span className="text-2xl font-bold text-[#171714] leading-tight">{formatAmount(totalCollectedAmount)} 원</span>
         <span className={`px-3 py-1 rounded-full text-xs font-bold ${achievementPillClass}`}>{achievementLabel}</span>

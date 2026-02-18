@@ -1,6 +1,7 @@
 import { useGoalDetail, toHexColor } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
+import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
 interface GoalProgressGaugeProps {
   goalId: number;
   /** 목표 계산기에서 모으기로 한 금액 (원 단위, 전달되면 이 값만 모은 금액으로 사용) */
@@ -35,8 +36,8 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
   // 목표 금액: 항상 생성 시 입력한 원래 목표 금액 사용
   const targetAmount = goalData.targetAmount;
 
-  // 모인 금액: extraSavingAmount가 있으면 그 값만 사용, 없으면 API의 savedAmount 사용
-  const totalSavedForGauge = extraSavingAmount != null ? extraSavingAmount : goalData.savedAmount;
+  // 모인 금액: 현재 잔액 기준으로 계산하고, 시뮬레이션 값이 있으면 우선 적용
+  const totalSavedForGauge = extraSavingAmount != null ? extraSavingAmount : getCollectedAmount(goalData);
   const rawRate = targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
   // 0~100으로 클램프, 소수점은 반올림 처리
   const clampedRate = Math.min(Math.max(Math.round(rawRate), 0), 100);
@@ -67,7 +68,7 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
           <span className="text-sm font-semibold text-[#171714] font-pretendard">{goalData.title}</span>
         </div>
 
-        <div className="px-1 mb-1.5 text-sm font-medium text-gray-600 font-pretendard">총 모인 금액</div>
+        <div className="px-1 mb-1.5 text-sm font-medium text-gray-600 font-pretendard">현재 보유 자산</div>
 
         <div className="flex items-center gap-4 px-1">
           <span className="text-2xl font-bold text-black leading-tight font-pretendard">

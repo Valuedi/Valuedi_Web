@@ -139,3 +139,42 @@ export function maskAccountNumber(accountNumber: string): string {
   }
   return accountNumber;
 }
+
+interface GoalAmountSource {
+  savedAmount?: number | null;
+  currentBalance?: number | null;
+  account?: {
+    balanceAmount?: number | null;
+    currentBalance?: number | null;
+  } | null;
+  targetAmount?: number | null;
+}
+
+/** 목표의 "모은 금액"을 현재 잔액 기준으로 계산한다. */
+export function getCollectedAmount(goal: GoalAmountSource, fallback = 0): number {
+  const fromGoalCurrentBalance = goal.currentBalance;
+  if (typeof fromGoalCurrentBalance === 'number') return fromGoalCurrentBalance;
+
+  const fromAccountCurrentBalance = goal.account?.currentBalance;
+  if (typeof fromAccountCurrentBalance === 'number') return fromAccountCurrentBalance;
+
+  const fromAccountBalanceAmount = goal.account?.balanceAmount;
+  if (typeof fromAccountBalanceAmount === 'number') return fromAccountBalanceAmount;
+
+  const fromSavedAmount = goal.savedAmount;
+  if (typeof fromSavedAmount === 'number') return fromSavedAmount;
+
+  return fallback;
+}
+
+/** 남은 목표 금액 = 목표 금액 - 현재 잔액(모은 금액), 최소 0원 */
+export function getRemainingGoalAmount(goal: GoalAmountSource): number {
+  const targetAmount = goal.targetAmount ?? 0;
+  return Math.max(targetAmount - getCollectedAmount(goal), 0);
+}
+
+/** 목표 달성 여부 = 현재 잔액(모은 금액) >= 목표 금액 */
+export function isGoalAchieved(goal: GoalAmountSource): boolean {
+  const targetAmount = goal.targetAmount ?? 0;
+  return getCollectedAmount(goal) >= targetAmount;
+}

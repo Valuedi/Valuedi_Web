@@ -5,6 +5,7 @@ import CalendarIcon from '@/assets/icons/goal/CalendarIcon.svg';
 import { toHexColor, type GoalStatus } from '@/features/goal';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
+import { isGoalAchieved } from '@/shared/utils/goal/goalHelpers';
 
 interface GoalCardProps {
   goal: {
@@ -18,6 +19,7 @@ interface GoalCardProps {
     iconId?: number;
     status?: GoalStatus;
     savedAmount?: number;
+    collectedAmount?: number;
   };
   type?: 'current' | 'past';
 }
@@ -51,7 +53,12 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
       statusClass = 'bg-gray-200 text-gray-600';
     }
   } else {
-    statusLabel = `${goal.progress}% 달성`;
+    const achieved = isGoalAchieved({
+      targetAmount: goal.targetAmount,
+      currentBalance: goal.collectedAmount,
+      savedAmount: goal.savedAmount,
+    });
+    statusLabel = achieved ? '달성완료' : `${goal.progress}% 달성`;
     statusClass = 'bg-primary-normal text-[#171714]';
   }
 
@@ -97,7 +104,7 @@ const GoalCard = ({ goal, type = 'current' }: GoalCardProps) => {
               <span className="text-xs font-medium">달성금액</span>
             </div>
             <span className="text-xs font-semibold text-[#171714]">
-              {(goal.savedAmount ?? goal.targetAmount).toLocaleString()}원
+              {(goal.collectedAmount ?? goal.savedAmount ?? goal.targetAmount).toLocaleString()}원
             </span>
           </div>
         </div>
