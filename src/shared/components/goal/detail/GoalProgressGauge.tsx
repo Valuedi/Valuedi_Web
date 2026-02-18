@@ -1,4 +1,5 @@
 import { useGoalDetail, toHexColor } from '@/features/goal';
+import { useAccounts } from '@/features/asset';
 import { GOAL_ICON_SRC } from '@/shared/components/goal/goalIconAssets';
 import ExBank from '@/assets/icons/goal/ExBank.svg';
 import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
@@ -10,6 +11,7 @@ interface GoalProgressGaugeProps {
 
 const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps) => {
   const { data, isLoading: loading, error: queryError } = useGoalDetail(goalId);
+  const { data: accountsData } = useAccounts();
   const goalData = data?.result ?? null;
   const error = queryError ? '데이터를 불러오는데 실패했습니다.' : null;
 
@@ -36,8 +38,14 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
   // 목표 금액: 항상 생성 시 입력한 원래 목표 금액 사용
   const targetAmount = goalData.targetAmount;
 
-  // 모인 금액: 현재 잔액 기준으로 계산하고, 시뮬레이션 값이 있으면 우선 적용
-  const totalSavedForGauge = extraSavingAmount != null ? extraSavingAmount : getCollectedAmount(goalData);
+  // 연결된 목표의 계좌 잔액을 우선 사용 (없으면 목표 상세 응답의 잔액 계열 필드 fallback)
+  const linkedAccountBalance = accountsData?.result?.accountList?.find(
+    (account) => account.goalInfo?.goalId === goalId
+  )?.balanceAmount;
+
+  // 모인 금액: 시뮬레이션 값 > 연결 계좌 잔액 > 목표 상세 응답 순으로 사용
+  const totalSavedForGauge =
+    extraSavingAmount != null ? extraSavingAmount : (linkedAccountBalance ?? getCollectedAmount(goalData));
   const rawRate = targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
   // 0~100으로 클램프, 소수점은 반올림 처리
   const clampedRate = Math.min(Math.max(Math.round(rawRate), 0), 100);

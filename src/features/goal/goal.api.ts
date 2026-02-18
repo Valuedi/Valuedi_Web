@@ -60,26 +60,8 @@ export const goalApi = {
   // 목표 추가
 
   async createGoal(data: CreateGoalRequest): Promise<CreateGoalResponse> {
-    console.log('목표 생성 API 요청:', {
-      endpoint: GOALS_PATH_PREFIX,
-      method: 'POST',
-      data,
-    });
-
-    try {
-      const result = await apiPost<CreateGoalResponse['result']>(GOALS_PATH_PREFIX, data);
-      console.log('목표 생성 성공:', result);
-      return result as CreateGoalResponse;
-    } catch (error) {
-      if (error instanceof ApiError) {
-        console.error('서버 에러 응답:', {
-          code: error.code,
-          message: error.message,
-          status: error.status,
-        });
-      }
-      throw error;
-    }
+    const result = await apiPost<CreateGoalResponse['result']>(GOALS_PATH_PREFIX, data);
+    return result as CreateGoalResponse;
   },
 
   // 목표 상세 조회
@@ -121,47 +103,14 @@ export const goalApi = {
   // 목표-계좌 연결
 
   async linkAccount(goalId: number, data: LinkAccountRequest): Promise<LinkAccountResponse> {
-    console.log('목표-계좌 연결 API 요청:', {
-      endpoint: `${GOALS_PATH_PREFIX}/${goalId}/linked-accounts`,
-      method: 'PUT',
-      goalId,
-      data,
-    });
-
-    try {
-      const result = await apiPut<LinkAccountResponse['result']>(
-        `${GOALS_PATH_PREFIX}/${goalId}/linked-accounts`,
-        data
-      );
-      console.log('계좌 연결 성공:', result);
-      return result as LinkAccountResponse;
-    } catch (error) {
-      if (error instanceof ApiError) {
-        console.error('서버 에러 응답:', {
-          code: error.code,
-          message: error.message,
-          status: error.status,
-        });
-      }
-      throw error;
-    }
+    const result = await apiPut<LinkAccountResponse['result']>(`${GOALS_PATH_PREFIX}/${goalId}/linked-accounts`, data);
+    return result as LinkAccountResponse;
   },
 
   // 목표 수정
   async updateGoal(goalId: number, data: UpdateGoalRequest): Promise<UpdateGoalResponse> {
-    try {
-      const result = await apiPatch<UpdateGoalResponse['result']>(`${GOALS_PATH_PREFIX}/${goalId}`, data);
-      return result as UpdateGoalResponse;
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 400) {
-        console.error('목표 수정 400 에러 응답:', {
-          code: error.code,
-          message: error.message,
-          status: error.status,
-        });
-      }
-      throw error;
-    }
+    const result = await apiPatch<UpdateGoalResponse['result']>(`${GOALS_PATH_PREFIX}/${goalId}`, data);
+    return result as UpdateGoalResponse;
   },
 
   // 목표 삭제
