@@ -54,9 +54,12 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
   return (
     <div className="relative overflow-hidden bg-white min-h-[50px] flex flex-col justify-start pb-6 px-5  mx-5">
       <div
-        className="absolute bottom-0 left-0 w-full transition-all duration-1000 ease-out bg-primary-normal"
+        className="absolute bottom-0 left-0 w-full overflow-hidden transition-all duration-1000 ease-out bg-primary-normal"
         style={{ height: `${clampedRate}%` }}
-      />
+      >
+        <div className="goal-gauge-wave" />
+        <div className="goal-gauge-wave goal-gauge-wave-secondary" />
+      </div>
 
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-5 mt-5">

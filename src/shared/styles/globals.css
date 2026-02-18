@@ -158,3 +158,47 @@
   background-size: 200% 100%;
   pointer-events: none;
 }
+
+@keyframes goal-gauge-wave-primary {
+  0% {
+    transform: translateX(-14%) translateY(0);
+  }
+  50% {
+    transform: translateX(6%) translateY(-6px);
+  }
+  100% {
+    transform: translateX(-14%) translateY(0);
+  }
+}
+
+@keyframes goal-gauge-wave-secondary {
+  0% {
+    transform: translateX(12%) translateY(0);
+  }
+  50% {
+    transform: translateX(-8%) translateY(5px);
+  }
+  100% {
+    transform: translateX(12%) translateY(0);
+  }
+}
+
+.goal-gauge-wave {
+  position: absolute;
+  left: -18%;
+  top: -14px;
+  width: 136%;
+  height: 28px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.36);
+  filter: blur(0.2px);
+  animation: goal-gauge-wave-primary 1.45s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.goal-gauge-wave-secondary {
+  top: -8px;
+  height: 20px;
+  opacity: 0.55;
+  animation: goal-gauge-wave-secondary 1.25s ease-in-out infinite;
+}
