@@ -10,6 +10,7 @@ import { MoreViewButton } from '@/shared/components/buttons';
 import { useNavigate } from 'react-router-dom';
 import { ColorToken, getColorToken } from '@/shared/styles/design-system';
 import CheckDownIcon from '@/assets/icons/CheckDown.svg?react';
+import MoreViewIcon from '@/assets/icons/MoreView.svg?react';
 import { useGetAssetList } from '@/shared/hooks/Asset/useGetAssetList';
 import { BANKS } from '@/features/bank/constants/banks';
 import { CARDS } from '@/features/card/constants/cards';
@@ -177,7 +178,9 @@ export const AssetList = () => {
             은행 추가하기
           </Typography>
         </div>
-        <MoreViewButton />
+        <span className="flex items-center justify-center w-[15px] h-[10px] md:w-[20px] md:h-[20px]">
+          <MoreViewIcon className="text-neutral-50 w-full h-full" />
+        </span>
       </button>
 
       <button
@@ -193,7 +196,9 @@ export const AssetList = () => {
             카드 추가하기
           </Typography>
         </div>
-        <MoreViewButton />
+        <span className="flex items-center justify-center w-[15px] h-[10px] md:w-[20px] md:h-[20px]">
+          <MoreViewIcon className="text-neutral-50 w-full h-full" />
+        </span>
       </button>
     </div>
   );
