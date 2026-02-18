@@ -78,7 +78,10 @@ export const RecommendPage = () => {
   // Top3 추천 데이터 호출
   const { data: topData } = useTop3Recommendations();
 
-  const top3Products = topData?.products || [];
+  const top3Products = useMemo(() => {
+    const items = topData?.products || [];
+    return Array.from(new Map(items.map((item) => [item.finPrdtCd, item])).values());
+  }, [topData?.products]);
 
   // 추천 생성 성공 시 폴링 시작, 실패 시 폴링 중지
   useEffect(() => {
@@ -184,9 +187,9 @@ export const RecommendPage = () => {
                   'lg:gap-[24px]'
                 )}
               >
-                {top3Products.map((product) => (
+                {top3Products.map((product, index) => (
                   <RecommendBannerCard
-                    key={product.finPrdtCd}
+                    key={`${product.finPrdtCd}-${index}`}
                     title={product.finPrdtNm}
                     subTitle={product.korCoNm}
                     bankId={getBankIdByName(product.korCoNm)}
@@ -300,9 +303,9 @@ export const RecommendPage = () => {
                       <div
                         className={cn('flex flex-col gap-[4px] md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-[12px]')}
                       >
-                        {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product) => (
+                        {(isExpanded ? filteredList : filteredList.slice(0, 6)).map((product, index) => (
                           <RecommendListItem
-                            key={product.finPrdtCd}
+                            key={`${product.finPrdtCd}-${index}`}
                             bankName={product.korCoNm}
                             productName={product.finPrdtNm}
                             description={`${product.rsrvTypeNm} | ${product.korCoNm}`}

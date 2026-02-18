@@ -72,10 +72,6 @@ export const CategoryCompareSection = ({ isLoading = false }: CategoryCompareSec
     const total = items
       .filter((item) => normalizeCategoryCode(item.categoryCode, item.categoryName) === selectedCategory)
       .reduce((sum, item) => sum + (item.totalAmount ?? 0), 0);
-    // 디버깅용 로그: 카테고리별 원본 데이터와 계산 결과 확인
-    console.log('[CategoryCompare] raw items', items);
-    console.log('[CategoryCompare] selectedCategory', selectedCategory);
-    console.log('[CategoryCompare] myCategoryTotal', total);
     return total;
   }, [data, selectedCategory]);
 
