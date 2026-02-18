@@ -5,7 +5,7 @@ import ExBank from '@/assets/icons/goal/ExBank.svg';
 import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
 interface GoalProgressGaugeProps {
   goalId: number;
-  /** 목표 계산기에서 모으기로 한 금액 (원 단위, 전달되면 이 값만 모은 금액으로 사용) */
+  /** 목표 계산기에서 추가로 절약할 금액 (원 단위) */
   extraSavingAmount?: number;
 }
 
@@ -43,9 +43,10 @@ const GoalProgressGauge = ({ goalId, extraSavingAmount }: GoalProgressGaugeProps
     (account) => account.goalInfo?.goalId === goalId
   )?.balanceAmount;
 
-  // 모인 금액: 시뮬레이션 값 > 연결 계좌 잔액 > 목표 상세 응답 순으로 사용
-  const totalSavedForGauge =
-    extraSavingAmount != null ? extraSavingAmount : (linkedAccountBalance ?? getCollectedAmount(goalData));
+  const baseCollectedAmount = linkedAccountBalance ?? getCollectedAmount(goalData);
+
+  // 모인 금액: 기본 잔액 + (시뮬레이션 추가 절약 금액)
+  const totalSavedForGauge = extraSavingAmount != null ? baseCollectedAmount + extraSavingAmount : baseCollectedAmount;
   const rawRate = targetAmount > 0 ? (totalSavedForGauge / targetAmount) * 100 : 0;
   // 0~100으로 클램프, 소수점은 반올림 처리
   const clampedRate = Math.min(Math.max(Math.round(rawRate), 0), 100);

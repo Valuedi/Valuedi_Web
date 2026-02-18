@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { MobileLayout } from '@/shared/components/layout/MobileLayout';
+import { useAccounts } from '@/features/asset';
 import SavingList from '@/shared/components/goal/detail/SavingList';
 import GoalMoreActionsBottomSheet from '@/shared/components/goal/detail/GoalMoreActionsBottomSheet';
 import GoalDeleteConfirmModal from '@/shared/components/goal/detail/GoalDeleteConfirmModal';
@@ -10,6 +11,7 @@ import { useGoalDetailActions, useGoalDetailSheetInitials } from '@/shared/hooks
 import { getCollectedAmount } from '@/shared/utils/goal/goalHelpers';
 
 const SavingSimulationPage = () => {
+  const { data: accountsData } = useAccounts();
   const {
     id,
     isGoalLoading,
@@ -33,10 +35,18 @@ const SavingSimulationPage = () => {
 
   // ====== 목표 계산기 시뮬레이션 상태 ======
   const originalRemainingDays = useMemo(() => (detail ? detail.remainingDays : 0), [detail]);
-  const collectedAmount = useMemo(() => (detail ? getCollectedAmount(detail) : 0), [detail]);
+  const linkedAccountBalance = useMemo(
+    () =>
+      accountsData?.result?.accountList?.find((account) => account.goalInfo?.goalId === goal?.goalId)?.balanceAmount,
+    [accountsData, goal?.goalId]
+  );
+  const collectedAmount = useMemo(
+    () => linkedAccountBalance ?? (detail ? getCollectedAmount(detail) : 0),
+    [linkedAccountBalance, detail]
+  );
 
   const [simulatedRemainingDays, setSimulatedRemainingDays] = useState(originalRemainingDays);
-  // 목표 계산기에서 입력한 절약 금액 총합 (게이지/요약에 반영)
+  // 목표 계산기에서 입력한 추가 절약 금액 총합 (게이지/요약에 반영)
   const [simulatedSavingAmount, setSimulatedSavingAmount] = useState(0);
 
   const handleSavingTotalChange = (totalSavingAmount: number) => {
